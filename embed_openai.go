@@ -41,6 +41,14 @@ const (
 	embedResponseBodyLimit = 64 << 20
 )
 
+// UserAgentVersion is the SDK version stamped into the User-Agent header
+// of embedding requests so endpoint operators can attribute traffic. Bump
+// it with each release.
+const UserAgentVersion = "0.1"
+
+// userAgent is the full User-Agent header value of embedding requests.
+const userAgent = "go-graph-rag/" + UserAgentVersion
+
 // Sentinel errors for the OpenAI-compatible provider.
 var (
 	// ErrEmbedBaseURLRequired is returned when no base URL is configured.
@@ -236,7 +244,7 @@ func (p *OpenAICompatProvider) embedRequest(ctx context.Context, payload []byte)
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("User-Agent", "go-graph-rag/0.1")
+	req.Header.Set("User-Agent", userAgent)
 	req.Header.Set("Accept", "application/json")
 
 	if p.apiKey != "" {

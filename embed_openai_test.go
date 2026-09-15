@@ -20,11 +20,12 @@ import (
 // counts requests. Behaviour receives the decoded request and returns the
 // raw response body plus status.
 type embedServer struct {
-	server    *httptest.Server
-	requests  atomic.Int64
-	lastModel atomic.Value // string
-	lastAuth  atomic.Value // string
-	respond   func(req graphragEmbeddingsRequest, requestNumber int64) (int, string)
+	server         *httptest.Server
+	requests       atomic.Int64
+	lastModel      atomic.Value // string
+	lastAuth       atomic.Value // string
+	lastUserAgent  atomic.Value // string
+	respond        func(req graphragEmbeddingsRequest, requestNumber int64) (int, string)
 }
 
 // graphragEmbeddingsRequest mirrors the provider's wire request for asserts.
@@ -56,6 +57,10 @@ func newEmbedServer(
 		auth := r.Header.Get("Authorization")
 		if auth != "" {
 			embed.lastAuth.Store(auth)
+		}
+
+		if ua := r.Header.Get("User-Agent"); ua != "" {
+			embed.lastUserAgent.Store(ua)
 		}
 
 		status, body := respond(req, number)
@@ -154,6 +159,8 @@ func TestOpenAICompatProvider_EmbedsInInputOrder(t *testing.T) {
 
 	assert.Equal(t, "test-model", embed.lastModel.Load(), "model must be sent verbatim")
 	assert.Equal(t, "Bearer test-key", embed.lastAuth.Load(), "API key rides the Authorization header")
+	assert.Equal(t, "go-graph-rag/"+graphrag.UserAgentVersion, embed.lastUserAgent.Load(),
+		"User-Agent carries the stamped SDK version")
 }
 
 func TestOpenAICompatProvider_RetriesTransientFailures(t *testing.T) {

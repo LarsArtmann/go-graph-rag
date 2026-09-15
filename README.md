@@ -23,6 +23,15 @@ import graphrag "github.com/larsartmann/go-graph-rag"
 ```go
 provider := graphrag.NewHashProvider() // offline default; see providers below
 
+docs := []graphrag.Document{
+	{ID: "article:go", Kind: "article", Label: "Go concurrency", Text: "go concurrency channels goroutines"},
+	{ID: "article:rust", Kind: "article", Label: "Rust ownership", Text: "rust ownership borrowing lifetimes"},
+	{ID: "tag:go", Kind: "tag", Label: "Go"}, // vector-less hub: reachable via graph expansion
+}
+edges := []graphrag.Edge{
+	{Source: "article:go", Target: "tag:go", Relation: "tagged", Weight: 1},
+}
+
 result, err := graphrag.Build(ctx, provider, nil, docs, edges, graphrag.BuildOptions{})
 if err != nil {
 	return err
@@ -30,10 +39,16 @@ if err != nil {
 
 searcher := graphrag.NewSearcher(result.Nodes, result.Edges, result.Vectors)
 
-res, err := searcher.Search(ctx, provider, "kubernetes go", graphrag.SearchOptions{})
-// res.Hits: ranked nodes with graph neighborhoods
-// res.ContextText: deterministic, LLM-ready context block
+res, err := searcher.Search(ctx, provider, "go channels", graphrag.SearchOptions{})
+if err != nil {
+	return err
+}
+
+fmt.Print(res.ContextText) // ranked hits with graph neighborhoods, LLM-ready
 ```
+
+Runnable, output-verified versions of this flow live in
+[`example_test.go`](example_test.go) (also rendered on pkg.go.dev).
 
 ## What it does
 
@@ -87,6 +102,11 @@ policy assigns roles at search time:
 
 v0.x: the API is stable enough to consume but may still change before v1
 (ANN/HNSW backend and incremental indexing are open design decisions).
+
+## Security
+
+Found a vulnerability? Please report it privately — see
+[SECURITY.md](SECURITY.md). Never open a public issue for security problems.
 
 ## License
 
