@@ -1,10 +1,10 @@
 # Metaengine / System Adoption: PRO/CONTRA Deep Research
 
-|          |                                                                                                                                                                                                                                        |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Date     | 2026-09-15                                                                                                                                                                                                                             |
-| Question | Should `go-graph-rag` adopt `go-cqrs-lite/metaengine` and/or `go-cqrs-lite/system` (as store, as query layer, or at all)?                                                                                                             |
-| Method   | Primary sources only: both module trees read file-by-file (`metaengine/`, `system/`, engine subpackages), `go.mod` dependency analysis, repo `FEATURES.md`/`ROADMAP.md`/ADR-0123/ADR-0135 status, git tags, plus CV-side SUPERB plan context. Every claim below carries a file:line or doc citation. |
+|          |                                                                                                                                                                                                                                                                                                                                                     |
+| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date     | 2026-09-15                                                                                                                                                                                                                                                                                                                                          |
+| Question | Should `go-graph-rag` adopt `go-cqrs-lite/metaengine` and/or `go-cqrs-lite/system` (as store, as query layer, or at all)?                                                                                                                                                                                                                           |
+| Method   | Primary sources only: both module trees read file-by-file (`metaengine/`, `system/`, engine subpackages), `go.mod` dependency analysis, repo `FEATURES.md`/`ROADMAP.md`/ADR-0123/ADR-0135 status, git tags, plus CV-side SUPERB plan context. Every claim below carries a file:line or doc citation.                                                |
 | Verdict  | **Adopt neither into the SDK. `system` is a category error for a library; `metaengine` is capable but wrong-shaped (event-fed read-model planner, brute-force vectors, label/weight-less graph edges, breaks the dependency-light non-negotiable). Adoption belongs at the CV application layer, where SUPERB already plans it with proper gates.** |
 
 ## 1. TL;DR
@@ -44,21 +44,21 @@ changes. Revisit SDK-layer adoption only at the documented triggers (§9).
 
 ### 2.1 `metaengine/v4` — cost-based storage planner for event-sourced data
 
-| Fact             | Evidence                                                                                                                                  |
-| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| Version          | v4.13.0 (14 releases v4.0.0→v4.13.0; git tags)                                                                                            |
-| Status           | 🧪 Experimental — repo `FEATURES.md:1442-1463` (root + every engine submodule)                                                             |
-| Core model       | Developer declares `Query[Q,R]` + fold functions; operator provides `Engine`s with cost profiles; `Plan()` assigns queries to engines (`planner.go:138-210`) |
-| Write path       | `Store.Apply(ctx, eventType, payload)` dispatches all matching folds (`store.go:416-418`); full context via `ApplyRecord` (`:444-459`)      |
-| ADTs             | Map / Set / Counter / Graph / Multimap / Log / Scan / Vector / Search / Spatial — the fold return type IS the ADT (`README.md:185-200`)     |
-| Engines (10)     | memory (built-in), sqlite, turso, postgres, mysql, pebble, bbolt, badger, duckdb, dgraph — database/sql-style blank-import registration (`register.go:11-31`, ADR-0123 §3) |
-| Durability       | strict / normal / relaxed tiers; engines that cannot honor a tier must reject it (`durability.go:21-93`); surfaced in Doctor                |
-| Observability    | Doctor, ExplainPlan, health quarantine/failover (ADR-0137), engine stats, `otelobserver` counters                                          |
-| SSE              | `ServeSSE[V]` / `Watcher[V]` — materialized read-model values to browsers, in-memory ring replay (`sse.go`, skill ADR-0091 table)           |
-| Atomicity        | Per-engine `Transactional.RunInTx`; **cross-engine 2PC NOT supported** (`store.go:461-468`)                                                 |
-| Test mass        | 155 test files in root package alone, ≥355 across subpackages; 10M-event soak with heap assertions, fold-classifier fuzz, catch-up stress, restart/concurrency idempotency |
-| v5 churn         | `On`/`OnTyped` deprecated→removed v5 (`fold.go:293-309`); `NsPerRead` (`engine.go:34-37`); `RecordAwareFold` compat shim after Record-by-value race fix (`record_fold.go:14-22`) |
-| Deps (consumer)  | direct: `dedup`, `id`, `record`, `metaengine/sqliteengine`, `go-error-family`, `go-sse`; transitive: `branded-id`, `ulid/v2`, `modernc.org/sqlite` + libc chain — ~10 modules vs the SDK's current 3 |
+| Fact            | Evidence                                                                                                                                                                                             |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Version         | v4.13.0 (14 releases v4.0.0→v4.13.0; git tags)                                                                                                                                                       |
+| Status          | 🧪 Experimental — repo `FEATURES.md:1442-1463` (root + every engine submodule)                                                                                                                       |
+| Core model      | Developer declares `Query[Q,R]` + fold functions; operator provides `Engine`s with cost profiles; `Plan()` assigns queries to engines (`planner.go:138-210`)                                         |
+| Write path      | `Store.Apply(ctx, eventType, payload)` dispatches all matching folds (`store.go:416-418`); full context via `ApplyRecord` (`:444-459`)                                                               |
+| ADTs            | Map / Set / Counter / Graph / Multimap / Log / Scan / Vector / Search / Spatial — the fold return type IS the ADT (`README.md:185-200`)                                                              |
+| Engines (10)    | memory (built-in), sqlite, turso, postgres, mysql, pebble, bbolt, badger, duckdb, dgraph — database/sql-style blank-import registration (`register.go:11-31`, ADR-0123 §3)                           |
+| Durability      | strict / normal / relaxed tiers; engines that cannot honor a tier must reject it (`durability.go:21-93`); surfaced in Doctor                                                                         |
+| Observability   | Doctor, ExplainPlan, health quarantine/failover (ADR-0137), engine stats, `otelobserver` counters                                                                                                    |
+| SSE             | `ServeSSE[V]` / `Watcher[V]` — materialized read-model values to browsers, in-memory ring replay (`sse.go`, skill ADR-0091 table)                                                                    |
+| Atomicity       | Per-engine `Transactional.RunInTx`; **cross-engine 2PC NOT supported** (`store.go:461-468`)                                                                                                          |
+| Test mass       | 155 test files in root package alone, ≥355 across subpackages; 10M-event soak with heap assertions, fold-classifier fuzz, catch-up stress, restart/concurrency idempotency                           |
+| v5 churn        | `On`/`OnTyped` deprecated→removed v5 (`fold.go:293-309`); `NsPerRead` (`engine.go:34-37`); `RecordAwareFold` compat shim after Record-by-value race fix (`record_fold.go:14-22`)                     |
+| Deps (consumer) | direct: `dedup`, `id`, `record`, `metaengine/sqliteengine`, `go-error-family`, `go-sse`; transitive: `branded-id`, `ulid/v2`, `modernc.org/sqlite` + libc chain — ~10 modules vs the SDK's current 3 |
 
 ### 2.2 Vector capability (the overlap that matters)
 
@@ -90,17 +90,17 @@ changes. Revisit SDK-layer adoption only at the documented triggers (§9).
 
 ### 2.4 `system/v4` — deployer-driven composition root
 
-| Fact            | Evidence                                                                                                                                                |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Version         | v4.7.0 (git tags)                                                                                                                                       |
-| Status          | 🧪 Experimental — `FEATURES.md:1464`; notably NOT marked experimental inside the module itself (grep: zero hits in `system/*.go` + README) — doc inconsistency worth knowing |
-| Core model      | Consumer declares `DomainConfig` (Commands/Queries/Projections/Evolutions/coeffect gate, `config_types.go:19-114`); operator declares `DeploymentConfig` (Engines/Instances/Buses/durability/priority, `:127-159`); `system.New` wires everything |
-| Config loading  | `cqrs.yaml` via koanf + `CQRS_`-prefixed env overrides (`config_loader.go:14-107`); operators swap engines/DSNs/pragmas/durability without recompiling   |
-| Driver registry | Lives in metaengine; `system` bridges via `metaengine.LookupDriver` (`driver_registry.go:10-41`); unknown driver names fail at construction              |
-| Roles           | `RoleSourceOfTruth` / `RoleProjections` / commands/queries/snapshots per-engine binding; duplicate roles error (`roles.go`, `config_types.go:325-391`)   |
+| Fact            | Evidence                                                                                                                                                                                                                                                  |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Version         | v4.7.0 (git tags)                                                                                                                                                                                                                                         |
+| Status          | 🧪 Experimental — `FEATURES.md:1464`; notably NOT marked experimental inside the module itself (grep: zero hits in `system/*.go` + README) — doc inconsistency worth knowing                                                                              |
+| Core model      | Consumer declares `DomainConfig` (Commands/Queries/Projections/Evolutions/coeffect gate, `config_types.go:19-114`); operator declares `DeploymentConfig` (Engines/Instances/Buses/durability/priority, `:127-159`); `system.New` wires everything         |
+| Config loading  | `cqrs.yaml` via koanf + `CQRS_`-prefixed env overrides (`config_loader.go:14-107`); operators swap engines/DSNs/pragmas/durability without recompiling                                                                                                    |
+| Driver registry | Lives in metaengine; `system` bridges via `metaengine.LookupDriver` (`driver_registry.go:10-41`); unknown driver names fail at construction                                                                                                               |
+| Roles           | `RoleSourceOfTruth` / `RoleProjections` / commands/queries/snapshots per-engine binding; duplicate roles error (`roles.go`, `config_types.go:325-391`)                                                                                                    |
 | Known caveats   | Bus drivers: only `gochannel` in-process supported (README `:243-245`); durability-conflict rule (`:422-425`); EventAdapter.Save atomicity ladder — AtomicAppender→Transactional→**racy** fallback ("do NOT rely on it under concurrency", `doc.go:1-31`) |
-| Test mass       | 3 core tests + integration suites (sqlite lifecycle, badger, postgres env-gated, shutdown ordering) — far thinner than metaengine's                     |
-| Deps            | ~21 direct requires (koanf, go-codec, watermill, pebble, badger, pgx, otter, 12 go-cqrs-lite modules…); indirect pulls otel, prometheus client, sentry, cbor — the largest dep tree in the ecosystem |
+| Test mass       | 3 core tests + integration suites (sqlite lifecycle, badger, postgres env-gated, shutdown ordering) — far thinner than metaengine's                                                                                                                       |
+| Deps            | ~21 direct requires (koanf, go-codec, watermill, pebble, badger, pgx, otter, 12 go-cqrs-lite modules…); indirect pulls otel, prometheus client, sentry, cbor — the largest dep tree in the ecosystem                                                      |
 
 ### 2.5 Ecosystem trajectory (ADR-0123, ADR-0135)
 
@@ -114,17 +114,17 @@ changes. Revisit SDK-layer adoption only at the documented triggers (§9).
 
 ## 3. Fit against `go-graph-rag`'s actual shape
 
-| Dimension          | `go-graph-rag` today                                                                                          | metaengine offers                                                                                     | Fit |
-| ------------------ | ------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | --- |
-| Write model        | `Build(ctx, provider, cache, docs, edges)` — bulk corpus, full rebuild in one tx (`build.go`, `store.go`)      | `Apply(eventType, payload)` through per-query folds; events are the source of truth                    | ✗ conceptual inversion — would require fake events (`DocumentIndexed`, `EdgeAdded`) |
-| Vector search      | In-memory linear cosine scan over embedded nodes (~120 LOC, `vector.go` + `search.go`)                         | Brute-force O(N·D) in all shipped engines; <10K guidance; cosine/dot/euclidean; pre-filtering         | ≈ parity only — no gain, more deps |
-| Scale path         | Roadmap: ANN/HNSW (`sqlite-vec`, `hannoy`) behind the `Searcher` seam; ~50k-node trigger (`ROADMAP.md`)        | No ANN engine shipped; `VectorBackend` permits one in future                                          | ✗ does not unlock the roadmap |
-| Graph edges        | `Edge{Source, Target, Relation, Weight}` + derived `RelationSimilar`; relation vocabularies are caller-side    | `Edge{From, To}` — no label, no weight                                                                | ✗ loses typed/weighted semantics; metadata would flee to side Maps |
-| Graph reads        | Neighborhood expansion fused with two-tier ranking + context rendering (`search.go`)                          | `GraphNeighbors(node, depth)` BFS / recursive CTEs                                                    | ≈ primitive exists, composition missing — planner has no expand-and-rank notion |
-| Persistence        | One SQLite file, rebuildable derived index, single writer, `synchronous=OFF` (`store.go:19-47`)               | 10 engines, durability tiers, health/failover, quarantine, Doctor                                     | ✓ genuinely better ops story — for problems the SDK doesn't have yet |
-| Embedding cache    | Namespaced `content_hash × provider × model` BLOB table (`store.go:22-30`)                                     | Map ADT could hold it; binary codec lesson already absorbed                                           | ✗ trivial gain |
-| Dependency policy  | stdlib + `samber/lo` + `modernc.org/sqlite` — README-marketed non-negotiable                                   | ~10 consumer-visible modules (cqrs-lite core, go-sse, go-error-family, …); system: 30+ with otel/prometheus/sentry | ✗ breaks non-negotiable #3 |
-| Consumers          | Arbitrary public-SDK consumers (CV today, more later); CV consumes via module proxy                            | Designed for event-sourced applications; PROPRIETARY license (same author — fine for Lars, a constraint for third parties) | ≈ |
+| Dimension         | `go-graph-rag` today                                                                                        | metaengine offers                                                                                                          | Fit                                                                                 |
+| ----------------- | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Write model       | `Build(ctx, provider, cache, docs, edges)` — bulk corpus, full rebuild in one tx (`build.go`, `store.go`)   | `Apply(eventType, payload)` through per-query folds; events are the source of truth                                        | ✗ conceptual inversion — would require fake events (`DocumentIndexed`, `EdgeAdded`) |
+| Vector search     | In-memory linear cosine scan over embedded nodes (~120 LOC, `vector.go` + `search.go`)                      | Brute-force O(N·D) in all shipped engines; <10K guidance; cosine/dot/euclidean; pre-filtering                              | ≈ parity only — no gain, more deps                                                  |
+| Scale path        | Roadmap: ANN/HNSW (`sqlite-vec`, `hannoy`) behind the `Searcher` seam; ~50k-node trigger (`ROADMAP.md`)     | No ANN engine shipped; `VectorBackend` permits one in future                                                               | ✗ does not unlock the roadmap                                                       |
+| Graph edges       | `Edge{Source, Target, Relation, Weight}` + derived `RelationSimilar`; relation vocabularies are caller-side | `Edge{From, To}` — no label, no weight                                                                                     | ✗ loses typed/weighted semantics; metadata would flee to side Maps                  |
+| Graph reads       | Neighborhood expansion fused with two-tier ranking + context rendering (`search.go`)                        | `GraphNeighbors(node, depth)` BFS / recursive CTEs                                                                         | ≈ primitive exists, composition missing — planner has no expand-and-rank notion     |
+| Persistence       | One SQLite file, rebuildable derived index, single writer, `synchronous=OFF` (`store.go:19-47`)             | 10 engines, durability tiers, health/failover, quarantine, Doctor                                                          | ✓ genuinely better ops story — for problems the SDK doesn't have yet                |
+| Embedding cache   | Namespaced `content_hash × provider × model` BLOB table (`store.go:22-30`)                                  | Map ADT could hold it; binary codec lesson already absorbed                                                                | ✗ trivial gain                                                                      |
+| Dependency policy | stdlib + `samber/lo` + `modernc.org/sqlite` — README-marketed non-negotiable                                | ~10 consumer-visible modules (cqrs-lite core, go-sse, go-error-family, …); system: 30+ with otel/prometheus/sentry         | ✗ breaks non-negotiable #3                                                          |
+| Consumers         | Arbitrary public-SDK consumers (CV today, more later); CV consumes via module proxy                         | Designed for event-sourced applications; PROPRIETARY license (same author — fine for Lars, a constraint for third parties) | ≈                                                                                   |
 
 ## 4. PRO adopting `metaengine` (steelmanned)
 
@@ -206,12 +206,12 @@ changes. Revisit SDK-layer adoption only at the documented triggers (§9).
 
 ## 7. Decision matrix (the "and/or")
 
-| Option                    | Verdict | Rationale                                                                                                       |
-| ------------------------- | ------- | --------------------------------------------------------------------------------------------------------------- |
-| **Neither (status quo)**  | ✅ KEEP | SDK stays dependency-light, stable-seamed, roadmap-aligned (ANN behind `Searcher`). CV adopts at app layer per SUPERB. |
-| **metaengine only**       | ✗ REJECT | Wrong write model, no ANN, poorer edges, dep-policy break, experimental churn. Buys ops maturity for problems not yet had. |
-| **system only**           | ✗ REJECT | Category error for a library; nothing retrieval-relevant inside.                                                |
-| **Both**                  | ✗ REJECT | Worst of both: system requires the metaengine world anyway; maximal dep tree; maximal coupling.                 |
+| Option                      | Verdict                 | Rationale                                                                                                                                                                      |
+| --------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Neither (status quo)**    | ✅ KEEP                 | SDK stays dependency-light, stable-seamed, roadmap-aligned (ANN behind `Searcher`). CV adopts at app layer per SUPERB.                                                         |
+| **metaengine only**         | ✗ REJECT                | Wrong write model, no ANN, poorer edges, dep-policy break, experimental churn. Buys ops maturity for problems not yet had.                                                     |
+| **system only**             | ✗ REJECT                | Category error for a library; nothing retrieval-relevant inside.                                                                                                               |
+| **Both**                    | ✗ REJECT                | Worst of both: system requires the metaengine world anyway; maximal dep tree; maximal coupling.                                                                                |
 | **App-layer adoption (CV)** | ✅ PROCEED (as planned) | SUPERB T01/T29 gates, store-copy spike, tier decision matrix on measured read patterns — exactly how adoption should be evaluated. `go-graph-rag` needs zero changes for this. |
 
 ## 8. The middle paths (most of the value, none of the dependency)
@@ -234,13 +234,13 @@ changes. Revisit SDK-layer adoption only at the documented triggers (§9).
 
 ## 9. Revisit triggers (what would flip the verdict)
 
-| Trigger                                                                                                        | Flip                                    |
-| -------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
-| metaengine ships an ANN-capable engine (HNSW/PQ) behind `VectorBackend`                                        | Reconsider engine delegation at the scale trigger |
-| go-graph-rag needs multi-engine persistence (pebble/pg) with one API and cannot afford its own backend seam    | Reconsider metaengine-as-store          |
-| A consumer demands live SSE search results / watchable graph collections from the SDK itself                    | Consider the isolated adapter module (§8.3) |
-| metaengine + system graduate from Experimental and v5 lands (ADR-0123 executed, fold churn settled)            | Re-run this evaluation on stable ground |
-| The SDK becomes event-fed (documents arrive as a domain event stream rather than bulk `Build`)                 | The fold model starts to fit — re-evaluate honestly |
+| Trigger                                                                                                     | Flip                                                |
+| ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| metaengine ships an ANN-capable engine (HNSW/PQ) behind `VectorBackend`                                     | Reconsider engine delegation at the scale trigger   |
+| go-graph-rag needs multi-engine persistence (pebble/pg) with one API and cannot afford its own backend seam | Reconsider metaengine-as-store                      |
+| A consumer demands live SSE search results / watchable graph collections from the SDK itself                | Consider the isolated adapter module (§8.3)         |
+| metaengine + system graduate from Experimental and v5 lands (ADR-0123 executed, fold churn settled)         | Re-run this evaluation on stable ground             |
+| The SDK becomes event-fed (documents arrive as a domain event stream rather than bulk `Build`)              | The fold model starts to fit — re-evaluate honestly |
 
 ## 10. Evidence appendix
 
