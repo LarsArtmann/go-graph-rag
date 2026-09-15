@@ -80,6 +80,17 @@ see `embed_openai_live_test.go`).
   as a session regression. No `.buildflow.yml` skip entry exists on
   purpose: skipping the whole step would mute the linter's other rules too.
 
+## Owner decisions (2026-09-15)
+
+- Corpus stays well under ~50k nodes for the next 12 months: storage work
+  (ANN, incremental indexing) stays ROADMAP fuel, not near-term TODO work.
+- Pluggable store/search seam: DESIGN approved (scenario B in
+  `docs/research/2026-09-15_dgraph-adoption.md`); chosen, not started —
+  live tracker is the High row in `TODO_LIST.md`.
+- `docs/status/`, `docs/planning/`, `docs/research/` are point-in-time
+  records: annotate inline (docs-health ANNOTATE) or `git mv` fully-done
+  files to `<dir>/archived/`; never rewrite them.
+
 ## Upstream sync
 
 The CV repo consumes this module from the proxy (`v0.x`). The CV-side

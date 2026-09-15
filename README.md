@@ -39,7 +39,8 @@ if err != nil {
 
 searcher := graphrag.NewSearcher(result.Nodes, result.Edges, result.Vectors)
 
-res, err := searcher.Search(ctx, provider, "go channels", graphrag.SearchOptions{})
+res, err := searcher.Search(ctx, provider, "go channels",
+	graphrag.SearchOptions{MinScore: 0.25}) // drop weak hits; 0 keeps everything
 if err != nil {
 	return err
 }

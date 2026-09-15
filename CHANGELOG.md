@@ -33,6 +33,12 @@ All notable changes to this project are documented in this file.
 - `.githooks/pre-push` pristine-build guard (blocks pushes of trees that
   only build under `GOEXPERIMENT=jsonv2`); install via
   `git config core.hooksPath .githooks`.
+- Adoption research decision records: `docs/research/2026-09-15_dgraph-adoption.md`
+  (verdict: do not adopt into the SDK; revisit as a consumer-owned backend
+  at the ~50k trigger) and `docs/research/2026-09-15_metaengine-system-adoption.md`
+  (adopt neither into the SDK; CV app-layer adoption per SUPERB T01/T29),
+  plus the owner-decision package (license posture, v0.2.0 cadence) under
+  `docs/planning/` and a `docs/research/` index.
 
 ### Changed
 

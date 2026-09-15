@@ -16,9 +16,16 @@ Raw ideas:
   sqlite-vec, hannoy, in-process HNSW port)
 - Incremental indexing: upsert/delete of single documents instead of the
   `ReplaceGraph` full swap
-- Corpus-size triggers that flip the implementation automatically (README
-  names ~50k nodes as the revisit point)
+- Corpus-size triggers that flip the implementation automatically (~50k
+  nodes is the measured revisit point: Build/SimilarPairs scale quadratically,
+  ~373ms per 1000-doc build, ~15min extrapolated at 50k — `bench_test.go`)
 - Optional pruning of stale `RelationSimilar` edges on rebuild
+- Shared ANN benchmark harness (recall + p50/p95 latency vs the brute-force
+  scan) so backend candidates are comparable
+- Metadata-filtered vector-search semantics: kind filters + `MinScore`
+  composed with ANN, preserving today's linear-scan behavior
+- ADR for the ANN winner: choice, migration path, and `RelationSimilar`
+  derivation at ANN scale
 
 ### 2. Provider ecosystem
 
@@ -49,7 +56,6 @@ v0.x allows breaking changes; v1 freezes the surface.
 
 Raw ideas:
 
-- Settle `KindUnknown`'s public fate before v1 (see TODO_LIST)
 - Codify the wire contract (`Hit`, `SearchResult` JSON keys) as frozen
 - Document the migration path when ANN/incremental land
 
@@ -64,4 +70,7 @@ Things we are deliberately NOT pursuing and why:
 - **Multi-writer stores:** one writer per store file by design; coordination
   leases belong to the caller.
 - **External vector databases:** SQLite-only until scale demonstrably hurts;
-  every persisted artifact stays rebuildable from source data.
+  every persisted artifact stays rebuildable from source data. Evaluated
+  2026-09-15 (`docs/research/2026-09-15_dgraph-adoption.md`): verdict — do
+  not adopt into the SDK; revisit as a consumer-owned backend at the ~50k
+  trigger.
