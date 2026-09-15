@@ -30,15 +30,15 @@
 
 ## Embedding providers
 
-| Feature                                         | Status                | Notes                                                                                                            |
-| ----------------------------------------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| Offline hash provider (1024-dim, deterministic) | 🟢 `FULLY_FUNCTIONAL` | `embed_hash.go`; unigram+bigram hashing trick, L2-normalized; `embed_test.go:53`, `hardening_test.go:18`         |
-| OpenAI-compatible HTTP provider                 | 🟢 `FULLY_FUNCTIONAL` | `embed_openai.go`; verified against httptest doubles (`embed_openai_test.go`); no live-endpoint integration test |
-| Batching (64 texts/request) + input reordering  | 🟢 `FULLY_FUNCTIONAL` | `embed_openai.go:155`; `embed_openai_test.go:138`, `:242`                                                        |
-| Retry with linear backoff (429/5xx retryable)   | 🟢 `FULLY_FUNCTIONAL` | `embed_openai.go:184`; third-attempt win + 4xx fail-fast + backoff cancellation all pinned                       |
-| Response validation (count, dims, empty)        | 🟢 `FULLY_FUNCTIONAL` | `embed_openai.go:296`; `ErrEmbedCountMismatch` / `ErrEmbedDimsMismatch` / `ErrEmbedEmptyResponse`                |
-| Provider factory `NewProvider`                  | 🟢 `FULLY_FUNCTIONAL` | `embed.go:48`; empty name defaults to hash; unknown name → `ErrUnknownProvider` (`embed_test.go:77`)             |
-| Rune-boundary text truncation                   | 🟢 `FULLY_FUNCTIONAL` | `embed.go:79`; default budget 8000 chars (`embed.go:24`)                                                         |
+| Feature                                         | Status                | Notes                                                                                                                                                          |
+| ----------------------------------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Offline hash provider (1024-dim, deterministic) | 🟢 `FULLY_FUNCTIONAL` | `embed_hash.go`; unigram+bigram hashing trick, L2-normalized; `embed_test.go:53`, `hardening_test.go:18`                                                       |
+| OpenAI-compatible HTTP provider                 | 🟢 `FULLY_FUNCTIONAL` | `embed_openai.go`; verified against httptest doubles (`embed_openai_test.go`); opt-in live-endpoint smoke test exists (`embed_openai_live_test.go`, env-gated) |
+| Batching (64 texts/request) + input reordering  | 🟢 `FULLY_FUNCTIONAL` | `embed_openai.go:155`; `embed_openai_test.go:138`, `:242`                                                                                                      |
+| Retry with linear backoff (429/5xx retryable)   | 🟢 `FULLY_FUNCTIONAL` | `embed_openai.go:184`; third-attempt win + 4xx fail-fast + backoff cancellation all pinned                                                                     |
+| Response validation (count, dims, empty)        | 🟢 `FULLY_FUNCTIONAL` | `embed_openai.go:296`; `ErrEmbedCountMismatch` / `ErrEmbedDimsMismatch` / `ErrEmbedEmptyResponse`                                                              |
+| Provider factory `NewProvider`                  | 🟢 `FULLY_FUNCTIONAL` | `embed.go:48`; empty name defaults to hash; unknown name → `ErrUnknownProvider` (`embed_test.go:77`)                                                           |
+| Rune-boundary text truncation                   | 🟢 `FULLY_FUNCTIONAL` | `embed.go:79`; default budget 8000 chars (`embed.go:24`)                                                                                                       |
 
 ## Retrieval
 
@@ -72,11 +72,19 @@
 | Content hashing (`HashText`, SHA-256)       | 🟢 `FULLY_FUNCTIONAL` | `vector.go:119`; `embed_test.go:46`                                                 |
 | Koanf-tagged `Config` / `EmbeddingConfig`   | 🟢 `FULLY_FUNCTIONAL` | `config.go:9`, `config.go:33`; consumed by `NewProvider`; gating is caller-side     |
 
+## Developer experience
+
+| Feature                                     | Status                | Notes                                                                                         |
+| ------------------------------------------- | --------------------- | --------------------------------------------------------------------------------------------- |
+| Runnable godoc examples                     | 🟢 `FULLY_FUNCTIONAL` | `example_test.go`; `// Output:` blocks enforced by `go test`; README snippet compile-verified |
+| Benchmark suite (Build/Search/SimilarPairs) | 🟢 `FULLY_FUNCTIONAL` | `bench_test.go`; reference numbers in the file doc comment                                    |
+| Race-detector clean suite                   | 🟢 `FULLY_FUNCTIONAL` | `go test ./... -race` clean 2026-09-15; documented in CONTRIBUTING                            |
+| Opt-in live-endpoint smoke test             | 🟢 `FULLY_FUNCTIONAL` | `embed_openai_live_test.go`; env-gated (`GRAPHRAG_LIVE_EMBED_URL`), skips offline             |
+| Pristine-build pre-push guard               | 🟢 `FULLY_FUNCTIONAL` | `.githooks/pre-push`; blocks pushes that only build under `GOEXPERIMENT=jsonv2`               |
+
 ## Planned
 
-| Feature                          | Status       | Notes                                                                    |
-| -------------------------------- | ------------ | ------------------------------------------------------------------------ |
-| ANN/HNSW vector backend          | ⚪ `PLANNED` | `README.md:89`; retrieval is a linear scan today (`search.go:243`)       |
-| Incremental indexing             | ⚪ `PLANNED` | `README.md:80`; `ReplaceGraph` is a full swap; revisit around ~50k nodes |
-| Benchmark suite (Build + Search) | ⚪ `PLANNED` | zero `func Benchmark*` in the tree (verified by grep)                    |
-| Godoc runnable examples          | ⚪ `PLANNED` | zero `func Example*` in the tree (verified by grep)                      |
+| Feature                 | Status       | Notes                                                                                         |
+| ----------------------- | ------------ | --------------------------------------------------------------------------------------------- |
+| ANN/HNSW vector backend | ⚪ `PLANNED` | `README.md:89`; retrieval is a linear scan today (`search.go:243`)                            |
+| Incremental indexing    | ⚪ `PLANNED` | `README.md:80`; `ReplaceGraph` is a full swap; measured quadratic cost in `bench_test.go` doc |

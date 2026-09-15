@@ -11,7 +11,8 @@ Standalone GraphRAG SDK extracted from the CV repo's `graphrag/` module
   config can alias them; `NewProvider` consumes `EmbeddingConfig`.
 - `embed.go` / `embed_hash.go` / `embed_openai.go` — provider seam +
   deterministic offline hasher + OpenAI-compatible client (stdlib
-  `encoding/json` only, NOT json/v2).
+  `encoding/json` only, NOT json/v2). The UA header is stamped from
+  `UserAgentVersion` — bump it when cutting a release.
 - `graph.go` — `Node`/`Edge`/`Graph` + the `NodeKind`/`Relation` TYPES.
   Domain kind/relation vocabularies are caller-side (CV keeps its own in
   `internal/graphvocab`).
@@ -20,6 +21,12 @@ Standalone GraphRAG SDK extracted from the CV repo's `graphrag/` module
 - `store.go` — SQLite graph + embedding cache (namespaced
   content-hash x provider x model), snapshot load, health.
 - `vector.go` — cosine math + Vector type.
+- Tests: `example_test.go` (runnable godoc examples — keep the `// Output:`
+  blocks truthful, `go test` enforces them), `bench_test.go` (reference
+  numbers recorded in the file doc comment),
+  `embed_openai_live_test.go` (env-gated, skips offline).
+- `.githooks/pre-push` — pristine-build guard; install once per clone with
+  `git config core.hooksPath .githooks`.
 
 ## Non-negotiables
 
@@ -45,9 +52,15 @@ Standalone GraphRAG SDK extracted from the CV repo's `graphrag/` module
 GOTOOLCHAIN=go1.26.7 go build ./... && go vet ./... && go test ./...
 golangci-lint run ./...
 go mod tidy && git diff --exit-code go.mod go.sum   # tidy drift gate
+nix run nixpkgs#dprint -- check                     # markdown/json/yaml fmt
 ```
 
-CI (`.github/workflows/go-test.yml`) runs exactly these on every push.
+CI (`.github/workflows/go-test.yml`) runs exactly these on every push
+(including the dprint check) and master is branch-protected on the
+`build-test-lint` check. Occasional local extras: `go test ./... -race`
+(clean as of 2026-09-15), `go test -bench . -benchtime 100ms ./...`, and the
+opt-in live smoke test (`GRAPHRAG_LIVE_EMBED_URL`/`_KEY`/`_MODEL` env vars,
+see `embed_openai_live_test.go`).
 
 ## Gotchas
 

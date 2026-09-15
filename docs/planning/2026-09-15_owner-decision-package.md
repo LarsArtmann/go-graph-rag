@@ -17,12 +17,12 @@ PR submission needs explicit permission.
 
 ### Options
 
-| # | Option                                     | Pros                                                                       | Cons                                                                                                    |
-| - | ------------------------------------------ | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| 1 | **Keep as is** (public + proprietary)      | Zero action; code visible as portfolio/reference; no legal reuse by others | pkg.go.dev hosts docs nobody may legally use; "PRs welcome" reads contradictory; adoption ~0 by design   |
-| 2 | **Open source permissive** (MIT/Apache-2.0)| Real adoption possible; standard PR flow; ecosystem goodwill              | Anyone (including competing CV-matching products) may reuse the retrieval engine; license decision is one-way-ish |
-| 3 | **Source-available middle** (BUSL/PolyForm)| Grants usage on your terms (e.g. non-commercial)                           | Legally murky for random consumers; Go ecosystem frowns on non-OSI licenses; complexity for zero audience |
-| 4 | **Private repo**                           | Strongest protection; GOPRIVATE+nix pattern already proven in LarsArtmann repos | Kills discoverability, pkg.go.dev, portfolio value; CI/proxy machinery becomes private-path |
+| # | Option                                      | Pros                                                                            | Cons                                                                                                              |
+| - | ------------------------------------------- | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| 1 | **Keep as is** (public + proprietary)       | Zero action; code visible as portfolio/reference; no legal reuse by others      | pkg.go.dev hosts docs nobody may legally use; "PRs welcome" reads contradictory; adoption ~0 by design            |
+| 2 | **Open source permissive** (MIT/Apache-2.0) | Real adoption possible; standard PR flow; ecosystem goodwill                    | Anyone (including competing CV-matching products) may reuse the retrieval engine; license decision is one-way-ish |
+| 3 | **Source-available middle** (BUSL/PolyForm) | Grants usage on your terms (e.g. non-commercial)                                | Legally murky for random consumers; Go ecosystem frowns on non-OSI licenses; complexity for zero audience         |
+| 4 | **Private repo**                            | Strongest protection; GOPRIVATE+nix pattern already proven in LarsArtmann repos | Kills discoverability, pkg.go.dev, portfolio value; CI/proxy machinery becomes private-path                       |
 
 ### Recommendation (one pick)
 
