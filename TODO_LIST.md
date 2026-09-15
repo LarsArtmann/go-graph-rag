@@ -36,4 +36,4 @@
 
 | Task                                                          | Status         | Impact | Effort | Evidence                                                       |
 | ------------------------------------------------------------- | -------------- | ------ | ------ | -------------------------------------------------------------- |
-| Decide repo posture: public + PROPRIETARY license vs CONTRIBUTING "fork" flow | 🔵 `BLOCKED` | Low | owner decision | `README.md:66` PROPRIETARY; `CONTRIBUTING.md:7` invites forks |
+| Decide repo posture: public + PROPRIETARY license vs CONTRIBUTING "fork" flow | 🔵 `BLOCKED` | Low | owner decision | `README.md:93` PROPRIETARY; `CONTRIBUTING.md:9` PR flow |

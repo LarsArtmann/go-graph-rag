@@ -2,6 +2,29 @@
 
 All notable changes to this project are documented in this file.
 
+## [Unreleased]
+
+### Fixed
+
+- Restored the json-v1 build contract on `master`: a post-v0.1.0 push had
+  switched `embed_openai.go` and `store.go` to `encoding/json/v2`, which only
+  compiles with `GOEXPERIMENT=jsonv2` and broke CI on pristine toolchains.
+  The tagged v0.1.0 tree was never affected.
+
+### Added
+
+- Repository tooling: grouped dependabot updates (Go modules + Actions),
+  dprint formatting config, `.editorconfig`, `.gitattributes`, `.gitignore`,
+  and CONTRIBUTING.md.
+- Living project docs: FEATURES.md, TODO_LIST.md, ROADMAP.md, and
+  docs/DOMAIN_LANGUAGE.md.
+
+### Changed
+
+- golangci config: dropped CV-specific depguard rules; experiment build-tags
+  and goheader re-removed so the SDK lints exactly as it builds (without
+  experiments).
+
 ## [0.1.0] - 2026-09-15
 
 Initial extraction from the CV repository's in-repo `graphrag/` module.

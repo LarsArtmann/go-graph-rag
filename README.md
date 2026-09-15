@@ -1,11 +1,38 @@
 # go-graph-rag
 
+[![go-test](https://github.com/LarsArtmann/go-graph-rag/actions/workflows/go-test.yml/badge.svg)](https://github.com/LarsArtmann/go-graph-rag/actions/workflows/go-test.yml)
+
 Semantic retrieval primitives in Go: embedding providers, a typed knowledge
 graph, a SQLite-backed vector + graph store, and hybrid retrieval that blends
 vector similarity with graph expansion (GraphRAG).
 
+API reference: [pkg.go.dev/github.com/larsartmann/go-graph-rag](https://pkg.go.dev/github.com/larsartmann/go-graph-rag)
+
+## Installation
+
+```bash
+go get github.com/larsartmann/go-graph-rag@v0.1.0
+```
+
 ```go
 import graphrag "github.com/larsartmann/go-graph-rag"
+```
+
+## Quick start
+
+```go
+provider := graphrag.NewHashProvider() // offline default; see providers below
+
+result, err := graphrag.Build(ctx, provider, nil, docs, edges, graphrag.BuildOptions{})
+if err != nil {
+	return err
+}
+
+searcher := graphrag.NewSearcher(result.Nodes, result.Edges, result.Vectors)
+
+res, err := searcher.Search(ctx, provider, "kubernetes go", graphrag.SearchOptions{})
+// res.Hits: ranked nodes with graph neighborhoods
+// res.ContextText: deterministic, LLM-ready context block
 ```
 
 ## What it does

@@ -25,8 +25,8 @@
 | `RelationSimilar` edge derivation              | 🟢 `FULLY_FUNCTIONAL` | `build.go:255`; topK nearest same-kind neighbors above threshold, deduped per unordered pair            |
 | Same-kind rule for similar edges               | 🟢 `FULLY_FUNCTIONAL` | `build.go:269`; pinned by `store_test.go:161` (cross-kind pairs never link)                              |
 | Embedding cache integration during build       | 🟢 `FULLY_FUNCTIONAL` | `build.go:138`; second build fully served from cache (`store_test.go:148`: `CacheHits: 3, Embedded: 0`) |
-| Duplicate document-ID collapse (first wins)    | 🟢 `FULLY_FUNCTIONAL` | `build.go:110`; pinned incl. persistence by `hardening_test.go:91`                                       |
-| Deterministic ordering (nodes, edges, renders)  | 🟢 `FULLY_FUNCTIONAL` | `graph.go:67`, `graph.go:201`; byte-stable context pinned by golden test `hardening_test.go:269`        |
+| Duplicate document-ID collapse (first wins)    | 🟢 `FULLY_FUNCTIONAL` | `build.go:114`; pinned incl. persistence by `hardening_test.go:91`                                       |
+| Deterministic ordering (nodes, edges, renders)  | 🟢 `FULLY_FUNCTIONAL` | `graph.go:71`, `graph.go:202`; byte-stable context pinned by golden test `hardening_test.go:269`        |
 
 ## Embedding providers
 
@@ -46,7 +46,7 @@
 | ------------------------------------------------ | --------------------- | ---------------------------------------------------------------------------------------------- |
 | Hybrid search (vector ranking + graph expansion) | 🟢 `FULLY_FUNCTIONAL` | `search.go:137`; `search_test.go:75` (relevant docs first, expansion surfaces hubs)            |
 | Two-tier document/hub ranking                    | 🟢 `FULLY_FUNCTIONAL` | `search.go:239`; policy via `SearcherOptions.DocumentKinds` (`search.go:65`)                    |
-| Reference node + `RefMatch` scoring              | 🟢 `FULLY_FUNCTIONAL` | `search.go:104`; reference never hits, every hit carries similarity to it (`search_test.go:93`) |
+| Reference node + `RefMatch` scoring              | 🟢 `FULLY_FUNCTIONAL` | `search.go:108`; reference never hits, every hit carries similarity to it (`search_test.go:93`) |
 | `DetailKind` compact rendering                   | 🟢 `FULLY_FUNCTIONAL` | `search.go:375`; golden-pinned in `hardening_test.go:269`                                       |
 | Deterministic LLM-ready context rendering        | 🟢 `FULLY_FUNCTIONAL` | `search.go:350`; byte-identical across runs (`search_test.go:129`, golden `hardening_test.go:294`) |
 | `SimilarPairs` near-duplicate scan               | 🟢 `FULLY_FUNCTIONAL` | `search.go:183`; score-sorted, threshold-gated (`search_test.go:145`, `hardening_test.go:238`)  |
@@ -76,7 +76,7 @@
 
 | Feature                          | Status      | Notes                                                                     |
 | -------------------------------- | ----------- | ------------------------------------------------------------------------- |
-| ANN/HNSW vector backend          | ⚪ `PLANNED` | `README.md:61`; retrieval is a linear scan today (`search.go:243`)         |
-| Incremental indexing             | ⚪ `PLANNED` | `README.md:52`; `ReplaceGraph` is a full swap; revisit around ~50k nodes   |
+| ANN/HNSW vector backend          | ⚪ `PLANNED` | `README.md:89`; retrieval is a linear scan today (`search.go:243`)         |
+| Incremental indexing             | ⚪ `PLANNED` | `README.md:80`; `ReplaceGraph` is a full swap; revisit around ~50k nodes   |
 | Benchmark suite (Build + Search) | ⚪ `PLANNED` | zero `func Benchmark*` in the tree (verified by grep)                      |
 | Godoc runnable examples          | ⚪ `PLANNED` | zero `func Example*` in the tree (verified by grep)                        |
