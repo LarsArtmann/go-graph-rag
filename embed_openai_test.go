@@ -2,7 +2,7 @@ package graphrag_test
 
 import (
 	"context"
-	"encoding/json/v2"
+	"encoding/json"
 	"errors"
 	"io"
 	"net/http"

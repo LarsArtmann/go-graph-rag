@@ -29,8 +29,8 @@ const (
 // hashing trick: unigrams and bigrams are hashed into a fixed-width vector
 // which is then L2-normalized. It exists so that semantic search works with
 // zero configuration (and so tests never touch the network). Its quality is
-// far below a real embedding model; point graphrag.embedding.provider at an
-// OpenAI-compatible endpoint for production retrieval.
+// far below a real embedding model; configure the OpenAI-compatible
+// provider for production retrieval.
 type HashProvider struct{}
 
 // NewHashProvider returns the stateless hash embedder.

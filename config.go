@@ -2,13 +2,12 @@ package graphrag
 
 import "time"
 
-// Config is the canonical graphrag configuration (koanf-tagged so the root
-// module can alias it — same pattern as chat/groq.Config). It selects the
-// embedding provider, the SQLite index location, and the graph-tuning
-// knobs.
+// Config is the canonical graphrag configuration (koanf-tagged so a
+// consumer's root config can alias it). It selects the embedding
+// provider, the SQLite index location, and the graph-tuning knobs.
 type Config struct {
-	// Enabled gates the feature. When false, indexing and search answer
-	// with ErrDisabled instead of touching the store.
+	// Enabled lets the consumer gate the feature; a false value is a
+	// consumer-side decision (the SDK itself defines no disabled state).
 	Enabled bool `koanf:"enabled"`
 
 	// StoreDSN is the SQLite file backing the index (":memory:" for

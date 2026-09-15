@@ -3,7 +3,7 @@ package graphrag
 import (
 	"context"
 	"database/sql"
-	"encoding/json/v2"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"time"
@@ -79,16 +79,16 @@ type Store struct {
 // OpenStore opens (or creates) the SQLite database at dsn and migrates the
 // schema. Use ":memory:" for a throwaway store.
 func OpenStore(dsn string) (*Store, error) {
-	// accepted clone: sql.Open + SetMaxOpenConns(1) + schema-exec prologue
-	// shared with eventstore's SQLite store — graphrag is dependency-minimal
-	// by design; sharing would force a sqlite-carrying shared leaf for ~10
-	// lines (dedup-acceptance.md #19).
+	// accepted duplication: this open/max-conns/schema-exec prologue is ~10
+	// lines; extracting it would force a sqlite-carrying shared dependency,
+	// against the dependency-minimal design.
 	db, err := sql.Open("sqlite", dsn)
 	if err != nil {
 		return nil, fmt.Errorf("graphrag: open sqlite %s: %w", dsn, err)
 	}
 
-	// PRAGMAs only stick on the single pooled connection (repo-wide trap).
+	// PRAGMAs in storeSchemaSQL only stick on the connection that executes
+	// them, so the pool is pinned to a single connection.
 	db.SetMaxOpenConns(1)
 
 	ctx, cancel := context.WithTimeout(context.Background(), storeOperationTimeout)
@@ -124,10 +124,10 @@ func (s *Store) Shutdown(_ context.Context) error {
 }
 
 // HealthCheck satisfies the samber/do HealthcheckerWithContext duck type:
-// the DI scope sweep and the go-health dashboard ping the EXISTING pool —
-// never a fresh connection — so the graphrag.Store dashboard row is a real,
-// fail-capable check instead of green-by-default. A closed store reports
-// unhealthy instead of silently passing.
+// it pings the EXISTING pool (never a fresh connection), so a health
+// dashboard row backed by it is a real, fail-capable check instead of
+// green-by-default. A closed store reports unhealthy instead of silently
+// passing.
 func (s *Store) HealthCheck(ctx context.Context) error {
 	if s.closed {
 		return ErrStoreClosed
@@ -145,10 +145,10 @@ func (s *Store) DSN() string {
 	return s.dsn
 }
 
-// storeContext returns the per-operation bounded context.
-// accepted clone: every store method opens this bounded context and wraps
-// errors the same way — that IS the store's documented discipline; extracting
-// further would obscure per-method error context (dedup-acceptance.md #15).
+// storeContext returns the per-operation bounded context. Every store
+// method opens this bounded context and wraps errors the same way — that
+// IS the store's documented discipline; extracting further would obscure
+// per-method error context (accepted duplication by design).
 func (s *Store) storeContext() (context.Context, context.CancelFunc) {
 	return context.WithTimeout(context.Background(), storeOperationTimeout)
 }
@@ -184,8 +184,8 @@ func (s *Store) CachedEmbedding(provider, model, contentHash string) (Vector, bo
 // discipline: every method gets a timeout, caller cancellation is
 // deliberately not threaded) and returns a commit step that commits on
 // success and rolls back if invoked with a non-nil error.
-// accepted clone: the storeContext/begin/commit envelope shared by PutEmbeddings
-// and ReplaceGraph — statement bodies and labels differ entirely (dedup-acceptance.md #15).
+// accepted duplication: the begin/commit envelope is shared by PutEmbeddings
+// and ReplaceGraph; statement bodies and labels differ entirely.
 func (s *Store) statement(errPrefix string) (context.Context, *sql.Tx, func(error) error, error) {
 	ctx, cancel := s.storeContext()
 

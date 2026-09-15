@@ -249,9 +249,9 @@ func embedAll(ctx context.Context, provider Provider, misses []Document) (map[st
 // SAME kind. For each node the topK nearest neighbors above the threshold
 // get an edge; the edge is stored once per unordered pair with the pair's
 // cosine as weight. The same-kind rule keeps the semantic honest: hub nodes
-// (skills, companies) are embedded too, but "similar" means near-duplicate
-// postings, related projects, or sibling skills — never a job that merely
-// mentions a skill (that is what requires/at/uses edges express).
+// are embedded too, but "similar" means near-duplicate documents or sibling
+// hubs of one kind — never a document that merely mentions a hub (that is
+// what caller-supplied edges express).
 func similarEdges(nodes []Node, vectors map[string]Vector, topK int, threshold float64) []Edge {
 	embedded := make([]Node, 0, len(vectors))
 
