@@ -4,7 +4,7 @@ package graphrag
 import (
 	"bytes"
 	"context"
-	"encoding/json/v2"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -14,7 +14,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/LarsArtmann/CV/primitives/shared"
 	"github.com/samber/lo"
 )
 
@@ -167,6 +166,20 @@ func (p *OpenAICompatProvider) Embed(ctx context.Context, texts []string) ([]Vec
 	return vectors, nil
 }
 
+// sleepContext sleeps for d unless ctx is done first. It reports whether
+// the full duration elapsed.
+func sleepContext(ctx context.Context, d time.Duration) bool {
+	timer := time.NewTimer(d)
+	defer timer.Stop()
+
+	select {
+	case <-ctx.Done():
+		return false
+	case <-timer.C:
+		return true
+	}
+}
+
 // embedBatch performs the retry loop around one HTTP round trip.
 func (p *OpenAICompatProvider) embedBatch(ctx context.Context, batch []string) ([]Vector, error) {
 	payload, err := json.Marshal(embeddingsRequest{Model: p.model, Input: batch})
@@ -177,7 +190,7 @@ func (p *OpenAICompatProvider) embedBatch(ctx context.Context, batch []string) (
 	var lastErr error
 
 	for attempt := 0; attempt <= p.maxRetries; attempt++ {
-		if attempt > 0 && !shared.SleepContext(ctx, p.retryBackoff*time.Duration(attempt)) {
+		if attempt > 0 && !sleepContext(ctx, p.retryBackoff*time.Duration(attempt)) {
 			return nil, fmt.Errorf("graphrag: embeddings request cancelled: %w", ctx.Err())
 		}
 

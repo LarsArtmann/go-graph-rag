@@ -3,7 +3,7 @@ package graphrag_test
 import (
 	"testing"
 
-	"github.com/LarsArtmann/CV/graphrag"
+	"github.com/larsartmann/go-graph-rag"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -47,18 +47,18 @@ func TestStoreGraphPersistenceRoundTrip(t *testing.T) {
 	defer func() { _ = store.Close() }()
 
 	posted := []graphrag.Node{
-		{ID: "job:1", Kind: graphrag.KindJob, Label: "Platform Engineer", Attrs: graphrag.NodeAttrs{
+		{ID: "job:1", Kind: kindJob, Label: "Platform Engineer", Attrs: graphrag.NodeAttrs{
 			URL:      "https://jobs.test/1",
 			Source:   "greenhouse",
 			Location: "Remote",
 			Status:   "evaluated",
 			Score:    4.2,
 		}},
-		{ID: "skill:go", Kind: graphrag.KindSkill, Label: "Go", Attrs: graphrag.NodeAttrs{}},
+		{ID: "skill:go", Kind: kindSkill, Label: "Go", Attrs: graphrag.NodeAttrs{}},
 	}
 
 	edges := []graphrag.Edge{
-		{Source: "job:1", Target: "skill:go", Relation: graphrag.RelationRequires, Weight: 1},
+		{Source: "job:1", Target: "skill:go", Relation: relRequires, Weight: 1},
 	}
 
 	hashes := map[string]string{"job:1": graphrag.HashText("job one text")}
@@ -100,30 +100,30 @@ func TestBuildEndToEndWithCache(t *testing.T) {
 	docs := []graphrag.Document{
 		{
 			ID:    "job:k8s",
-			Kind:  graphrag.KindJob,
+			Kind:  kindJob,
 			Label: "K8s Platform Engineer",
 			Text:  "kubernetes go platform infrastructure remote",
 			Attrs: graphrag.NodeAttrs{},
 		},
 		{
 			ID:    "job:chef",
-			Kind:  graphrag.KindJob,
+			Kind:  kindJob,
 			Label: "K8s Infrastructure Role",
 			Text:  "kubernetes go platform infrastructure devops",
 			Attrs: graphrag.NodeAttrs{},
 		},
 		{
 			ID:    "job:pastry",
-			Kind:  graphrag.KindJob,
+			Kind:  kindJob,
 			Label: "Pastry Chef",
 			Text:  "baking croissants pastry kitchen butter",
 			Attrs: graphrag.NodeAttrs{},
 		},
-		{ID: "skill:go", Kind: graphrag.KindSkill, Label: "Go", Text: "", Attrs: graphrag.NodeAttrs{}},
+		{ID: "skill:go", Kind: kindSkill, Label: "Go", Text: "", Attrs: graphrag.NodeAttrs{}},
 	}
 
 	edges := []graphrag.Edge{
-		{Source: "job:k8s", Target: "skill:go", Relation: graphrag.RelationRequires, Weight: 1},
+		{Source: "job:k8s", Target: "skill:go", Relation: relRequires, Weight: 1},
 	}
 
 	first, err := graphrag.Build(
@@ -162,19 +162,19 @@ func TestBuildSimilarEdgesLinkSameKindOnly(t *testing.T) {
 	t.Parallel()
 
 	docs := []graphrag.Document{
-		{ID: "job:a", Kind: graphrag.KindJob, Label: "A", Text: "alpha beta gamma", Attrs: graphrag.NodeAttrs{}},
-		{ID: "job:b", Kind: graphrag.KindJob, Label: "B", Text: "alpha beta gamma delta", Attrs: graphrag.NodeAttrs{}},
-		{ID: "cv:x", Kind: graphrag.KindCV, Label: "CV", Text: "alpha beta gamma", Attrs: graphrag.NodeAttrs{}},
+		{ID: "job:a", Kind: kindJob, Label: "A", Text: "alpha beta gamma", Attrs: graphrag.NodeAttrs{}},
+		{ID: "job:b", Kind: kindJob, Label: "B", Text: "alpha beta gamma delta", Attrs: graphrag.NodeAttrs{}},
+		{ID: "cv:x", Kind: kindCV, Label: "CV", Text: "alpha beta gamma", Attrs: graphrag.NodeAttrs{}},
 		{
 			ID:    "skill:one",
-			Kind:  graphrag.KindSkill,
+			Kind:  kindSkill,
 			Label: "One",
 			Text:  "beta gamma epsilon",
 			Attrs: graphrag.NodeAttrs{},
 		},
 		{
 			ID:    "skill:two",
-			Kind:  graphrag.KindSkill,
+			Kind:  kindSkill,
 			Label: "Two",
 			Text:  "beta gamma epsilon zeta",
 			Attrs: graphrag.NodeAttrs{},

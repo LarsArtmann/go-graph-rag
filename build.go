@@ -15,10 +15,10 @@ const (
 	DefaultSimilarTopK = 3
 
 	// DefaultSimilarThreshold is the minimum cosine similarity for a
-	// RelationSimilar edge. It is calibrated for the offline hash provider
-	// (whose raw-count cosines run lower than neural embeddings): 0.75
-	// keeps near-duplicate postings while dropping merely topical overlap.
-	// Tune upward (0.85+) when running a real embedding model.
+	// RelationSimilar edge. The default suits the offline hash provider,
+	// whose raw-count cosines run lower than neural embeddings; with a
+	// real embedding model, calibrate upward (0.85+) and set
+	// BuildOptions.SimilarThreshold explicitly.
 	DefaultSimilarThreshold = 0.75
 )
 

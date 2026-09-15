@@ -2,7 +2,7 @@ package graphrag_test
 
 import (
 	"context"
-	"encoding/json/v2"
+	"encoding/json"
 	"errors"
 	"io"
 	"net/http"
@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/LarsArtmann/CV/graphrag"
+	"github.com/larsartmann/go-graph-rag"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

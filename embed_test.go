@@ -5,7 +5,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/LarsArtmann/CV/graphrag"
+	"github.com/larsartmann/go-graph-rag"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -115,7 +115,7 @@ func TestBuildPropagatesProviderErrors(t *testing.T) {
 		failingProvider{},
 		nil,
 		[]graphrag.Document{
-			{ID: "job:1", Kind: graphrag.KindJob, Label: "J", Text: "some text", Attrs: graphrag.NodeAttrs{}},
+			{ID: "job:1", Kind: kindJob, Label: "J", Text: "some text", Attrs: graphrag.NodeAttrs{}},
 		},
 		nil,
 		graphrag.BuildOptions{},

@@ -9,40 +9,23 @@ import (
 // NodeKind enumerates the entity types in the knowledge graph.
 type NodeKind string
 
-// The supported node kinds. Jobs, companies, and skills come from the
-// scanned pipeline; projects and the CV come from the CV data.
 // KindUnknown is NOT a graph kind: it is the zero value a placeholder node
 // carries when a vector's node vanished (search.go nodeOrPlaceholder) —
-// named here so the empty string stays grep-able.
+// named here so the empty string stays grep-able. Domain kinds are the
+// caller's vocabulary: define your own NodeKind constants per domain.
 const (
-	KindJob     NodeKind = "job"
-	KindCompany NodeKind = "company"
-	KindSkill   NodeKind = "skill"
-	KindProject NodeKind = "project"
-	KindCV      NodeKind = "cv"
-
 	KindUnknown NodeKind = ""
 )
 
 // Relation enumerates the edge types in the knowledge graph.
 type Relation string
 
-// The supported edge relations. RelationSimilar is derived at index time
-// from vector cosine similarity; everything else is extracted from source
-// data. All relations are traversed in both directions by the Searcher.
+// The rest of the edge-relation vocabulary is the caller's domain
+// vocabulary: define your own Relation constants per domain. RelationSimilar
+// is the one SDK-derived relation, computed at index time from vector
+// cosine similarity. All relations are traversed in both directions by the
+// Searcher.
 const (
-	// RelationAt links a job to the company that posted it.
-	RelationAt Relation = "at"
-
-	// RelationRequires links a job to a skill it demands.
-	RelationRequires Relation = "requires"
-
-	// RelationPrefers links a job to a nice-to-have skill.
-	RelationPrefers Relation = "prefers"
-
-	// RelationUses links a CV project (or the CV itself) to a skill.
-	RelationUses Relation = "uses"
-
 	// RelationSimilar links two embedded nodes whose vectors are close;
 	// its weight is the cosine similarity.
 	RelationSimilar Relation = "similar_to"
@@ -57,7 +40,11 @@ type NodeAttrs struct {
 	Location     string     `json:"location,omitempty"`
 	RemotePolicy string     `json:"remotePolicy,omitempty"`
 	Status       string     `json:"status,omitempty"`
-	Score        float64    `json:"score,omitzero"`
+	// Score is a display hint (e.g. a match score); zero means absent.
+	// Under GOEXPERIMENT=jsonv2 the omitempty option is a no-op on
+	// numerics, so the key may be emitted as 0 there; both engines decode
+	// it back to the same zero.
+	Score        float64    `json:"score,omitempty"`
 	PostedAt     *time.Time `json:"postedAt,omitempty"`
 }
 

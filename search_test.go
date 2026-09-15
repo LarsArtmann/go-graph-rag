@@ -3,7 +3,7 @@ package graphrag_test
 import (
 	"testing"
 
-	"github.com/LarsArtmann/CV/graphrag"
+	"github.com/larsartmann/go-graph-rag"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -16,38 +16,38 @@ func buildFixture(t *testing.T) *graphrag.Searcher {
 	docs := []graphrag.Document{
 		{
 			ID:    "job:k8s",
-			Kind:  graphrag.KindJob,
+			Kind:  kindJob,
 			Label: "Platform Engineer (K8s)",
 			Text:  "kubernetes go platform infrastructure observability remote",
 			Attrs: graphrag.NodeAttrs{},
 		},
 		{
 			ID:    "job:sre",
-			Kind:  graphrag.KindJob,
+			Kind:  kindJob,
 			Label: "Site Reliability Engineer",
 			Text:  "kubernetes go platform infrastructure incident response reliability",
 			Attrs: graphrag.NodeAttrs{},
 		},
 		{
 			ID:    "job:pastry",
-			Kind:  graphrag.KindJob,
+			Kind:  kindJob,
 			Label: "Pastry Chef",
 			Text:  "croissant baking pastry kitchen",
 			Attrs: graphrag.NodeAttrs{},
 		},
 		{
 			ID:    "cv:en",
-			Kind:  graphrag.KindCV,
+			Kind:  kindCV,
 			Label: "CV",
 			Text:  "go kubernetes platform infrastructure cloud",
 			Attrs: graphrag.NodeAttrs{},
 		},
-		{ID: "skill:go", Kind: graphrag.KindSkill, Label: "Go", Text: "", Attrs: graphrag.NodeAttrs{}},
-		{ID: "skill:kubernetes", Kind: graphrag.KindSkill, Label: "Kubernetes", Text: "", Attrs: graphrag.NodeAttrs{}},
-		{ID: "company:acme", Kind: graphrag.KindCompany, Label: "ACME", Text: "", Attrs: graphrag.NodeAttrs{}},
+		{ID: "skill:go", Kind: kindSkill, Label: "Go", Text: "", Attrs: graphrag.NodeAttrs{}},
+		{ID: "skill:kubernetes", Kind: kindSkill, Label: "Kubernetes", Text: "", Attrs: graphrag.NodeAttrs{}},
+		{ID: "company:acme", Kind: kindCompany, Label: "ACME", Text: "", Attrs: graphrag.NodeAttrs{}},
 		{
 			ID:    "project:p1",
-			Kind:  graphrag.KindProject,
+			Kind:  kindProject,
 			Label: "Infra Automation",
 			Text:  "kubernetes go terraform automation",
 			Attrs: graphrag.NodeAttrs{},
@@ -55,11 +55,11 @@ func buildFixture(t *testing.T) *graphrag.Searcher {
 	}
 
 	edges := []graphrag.Edge{
-		{Source: "job:k8s", Target: "skill:go", Relation: graphrag.RelationRequires, Weight: 1},
-		{Source: "job:k8s", Target: "skill:kubernetes", Relation: graphrag.RelationRequires, Weight: 1},
-		{Source: "job:k8s", Target: "company:acme", Relation: graphrag.RelationAt, Weight: 1},
-		{Source: "job:sre", Target: "skill:go", Relation: graphrag.RelationPrefers, Weight: 1},
-		{Source: "project:p1", Target: "skill:kubernetes", Relation: graphrag.RelationUses, Weight: 1},
+		{Source: "job:k8s", Target: "skill:go", Relation: relRequires, Weight: 1},
+		{Source: "job:k8s", Target: "skill:kubernetes", Relation: relRequires, Weight: 1},
+		{Source: "job:k8s", Target: "company:acme", Relation: relAt, Weight: 1},
+		{Source: "job:sre", Target: "skill:go", Relation: relPrefers, Weight: 1},
+		{Source: "project:p1", Target: "skill:kubernetes", Relation: relUses, Weight: 1},
 	}
 
 	result, err := graphrag.Build(t.Context(), graphrag.NewHashProvider(), nil, docs, edges, graphrag.BuildOptions{})
@@ -91,11 +91,11 @@ func TestSearchRanksRelevantJobsFirst(t *testing.T) {
 	skillSeen, companySeen := false, false
 
 	for _, related := range result.Hits[0].Related {
-		if related.Node.Kind == graphrag.KindSkill {
+		if related.Node.Kind == kindSkill {
 			skillSeen = true
 		}
 
-		if related.Node.Kind == graphrag.KindCompany {
+		if related.Node.Kind == kindCompany {
 			companySeen = true
 		}
 	}

@@ -6,7 +6,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/LarsArtmann/CV/graphrag"
+	"github.com/larsartmann/go-graph-rag"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -94,15 +94,15 @@ func TestBuildNodeIDCollisionPolicy(t *testing.T) {
 	docs := []graphrag.Document{
 		{
 			ID:    "skill:go",
-			Kind:  graphrag.KindSkill,
+			Kind:  kindSkill,
 			Label: "Go",
 			Text:  "go programming language",
 			Attrs: graphrag.NodeAttrs{},
 		},
-		{ID: "job:1", Kind: graphrag.KindJob, Label: "Go Engineer", Text: "go kubernetes", Attrs: graphrag.NodeAttrs{}},
+		{ID: "job:1", Kind: kindJob, Label: "Go Engineer", Text: "go kubernetes", Attrs: graphrag.NodeAttrs{}},
 		{
 			ID:    "skill:go",
-			Kind:  graphrag.KindSkill,
+			Kind:  kindSkill,
 			Label: "Go (duplicate)",
 			Text:  "go programming language",
 			Attrs: graphrag.NodeAttrs{},
@@ -217,7 +217,7 @@ func TestSearcherEdgeCases(t *testing.T) {
 		docs := []graphrag.Document{
 			{
 				ID:    "job:only",
-				Kind:  graphrag.KindJob,
+				Kind:  kindJob,
 				Label: "Only Role",
 				Text:  "go kubernetes platform",
 				Attrs: graphrag.NodeAttrs{},
@@ -239,10 +239,10 @@ func TestSearcherEdgeCases(t *testing.T) {
 		t.Parallel()
 
 		docs := []graphrag.Document{
-			{ID: "job:a", Kind: graphrag.KindJob, Label: "A", Text: "alpha beta gamma", Attrs: graphrag.NodeAttrs{}},
+			{ID: "job:a", Kind: kindJob, Label: "A", Text: "alpha beta gamma", Attrs: graphrag.NodeAttrs{}},
 			{
 				ID:    "job:b",
-				Kind:  graphrag.KindJob,
+				Kind:  kindJob,
 				Label: "B",
 				Text:  "alpha beta gamma delta",
 				Attrs: graphrag.NodeAttrs{},
@@ -271,17 +271,17 @@ func TestRenderContextGolden(t *testing.T) {
 
 	hits := []graphrag.Hit{
 		{
-			Node:  graphrag.Node{ID: "job:k8s", Kind: graphrag.KindJob, Label: "Platform Engineer (K8s)"},
+			Node:  graphrag.Node{ID: "job:k8s", Kind: kindJob, Label: "Platform Engineer (K8s)"},
 			Score: 0.82,
 			Related: []graphrag.RelatedNode{
 				{
-					Node:     graphrag.Node{ID: "skill:go", Kind: graphrag.KindSkill, Label: "Go"},
-					Relation: graphrag.RelationRequires,
+					Node:     graphrag.Node{ID: "skill:go", Kind: kindSkill, Label: "Go"},
+					Relation: relRequires,
 					Weight:   1,
 				},
 				{
-					Node:     graphrag.Node{ID: "company:acme", Kind: graphrag.KindCompany, Label: "ACME"},
-					Relation: graphrag.RelationAt,
+					Node:     graphrag.Node{ID: "company:acme", Kind: kindCompany, Label: "ACME"},
+					Relation: relAt,
 					Weight:   1,
 				},
 			},

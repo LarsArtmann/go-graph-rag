@@ -1,12 +1,12 @@
-// Package graphrag provides the semantic retrieval primitives behind the CV
-// pipeline: embedding providers (an OpenAI-compatible HTTP client and a
-// deterministic offline hasher), a typed knowledge graph, a SQLite-backed
-// embedding cache and graph store, and hybrid retrieval that blends vector
-// similarity with graph expansion (GraphRAG).
+// Package graphrag provides semantic retrieval primitives: embedding
+// providers (an OpenAI-compatible HTTP client and a deterministic offline
+// hasher), a typed knowledge graph, a SQLite-backed embedding cache and
+// graph store, and hybrid retrieval that blends vector similarity with
+// graph expansion (GraphRAG).
 //
 // The package is deliberately dependency-light: everything except the SQLite
 // store is stdlib-only, and every persisted artifact is derived data that can
-// be rebuilt from the event store at any time.
+// be rebuilt from source data at any time.
 package graphrag
 
 import (

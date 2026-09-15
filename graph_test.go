@@ -3,7 +3,7 @@ package graphrag_test
 import (
 	"testing"
 
-	"github.com/LarsArtmann/CV/graphrag"
+	"github.com/larsartmann/go-graph-rag"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -13,15 +13,15 @@ func TestGraphDeterministicOrdering(t *testing.T) {
 	t.Parallel()
 
 	nodes := []graphrag.Node{
-		{ID: "job:b", Kind: graphrag.KindJob, Label: "Second", Attrs: graphrag.NodeAttrs{}},
-		{ID: "job:a", Kind: graphrag.KindJob, Label: "First", Attrs: graphrag.NodeAttrs{}},
-		{ID: "skill:go", Kind: graphrag.KindSkill, Label: "Go", Attrs: graphrag.NodeAttrs{}},
+		{ID: "job:b", Kind: kindJob, Label: "Second", Attrs: graphrag.NodeAttrs{}},
+		{ID: "job:a", Kind: kindJob, Label: "First", Attrs: graphrag.NodeAttrs{}},
+		{ID: "skill:go", Kind: kindSkill, Label: "Go", Attrs: graphrag.NodeAttrs{}},
 	}
 
 	edges := []graphrag.Edge{
-		{Source: "job:a", Target: "skill:go", Relation: graphrag.RelationRequires, Weight: 1},
-		{Source: "job:b", Target: "skill:go", Relation: graphrag.RelationPrefers, Weight: 1},
-		{Source: "job:a", Target: "skill:go", Relation: graphrag.RelationRequires, Weight: 0.5},
+		{Source: "job:a", Target: "skill:go", Relation: relRequires, Weight: 1},
+		{Source: "job:b", Target: "skill:go", Relation: relPrefers, Weight: 1},
+		{Source: "job:a", Target: "skill:go", Relation: relRequires, Weight: 0.5},
 	}
 
 	graph := graphrag.NewGraph(nodes, edges)
@@ -42,7 +42,7 @@ func TestGraphDeterministicOrdering(t *testing.T) {
 
 	in := graph.InEdges("skill:go")
 	require.Len(t, in, 2)
-	assert.Equal(t, graphrag.RelationPrefers, in[0].Relation, "edges sort by relation first")
+	assert.Equal(t, relPrefers, in[0].Relation, "edges sort by relation first")
 }
 
 func nodeIDs(nodes []graphrag.Node) []string {
@@ -53,8 +53,8 @@ func TestGraphEdgeCloneSafety(t *testing.T) {
 	t.Parallel()
 
 	graph := graphrag.NewGraph(
-		[]graphrag.Node{{ID: "a", Kind: graphrag.KindSkill, Label: "A", Attrs: graphrag.NodeAttrs{}}},
-		[]graphrag.Edge{{Source: "x", Target: "a", Relation: graphrag.RelationUses, Weight: 1}},
+		[]graphrag.Node{{ID: "a", Kind: kindSkill, Label: "A", Attrs: graphrag.NodeAttrs{}}},
+		[]graphrag.Edge{{Source: "x", Target: "a", Relation: relUses, Weight: 1}},
 	)
 
 	out := graph.OutEdges("x")
@@ -69,11 +69,11 @@ func TestGraphNodesByKind(t *testing.T) {
 	t.Parallel()
 
 	graph := graphrag.NewGraph([]graphrag.Node{
-		{ID: "job:a", Kind: graphrag.KindJob, Label: "A", Attrs: graphrag.NodeAttrs{}},
-		{ID: "skill:b", Kind: graphrag.KindSkill, Label: "B", Attrs: graphrag.NodeAttrs{}},
-		{ID: "job:c", Kind: graphrag.KindJob, Label: "C", Attrs: graphrag.NodeAttrs{}},
+		{ID: "job:a", Kind: kindJob, Label: "A", Attrs: graphrag.NodeAttrs{}},
+		{ID: "skill:b", Kind: kindSkill, Label: "B", Attrs: graphrag.NodeAttrs{}},
+		{ID: "job:c", Kind: kindJob, Label: "C", Attrs: graphrag.NodeAttrs{}},
 	}, nil)
 
-	assert.Equal(t, []string{"job:a", "job:c"}, nodeIDs(graph.NodesByKind(graphrag.KindJob)))
-	assert.Empty(t, graph.NodesByKind(graphrag.KindCV))
+	assert.Equal(t, []string{"job:a", "job:c"}, nodeIDs(graph.NodesByKind(kindJob)))
+	assert.Empty(t, graph.NodesByKind(kindCV))
 }
