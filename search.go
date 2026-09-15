@@ -97,6 +97,7 @@ type Searcher struct {
 // without vectors still participate through graph expansion. Use
 // NewSearcherWithOptions to assign kind-specific search roles.
 func NewSearcher(nodes []Node, edges []Edge, vectors map[string]Vector) *Searcher {
+	//nolint:exhaustruct_v5 // the neutral policy IS the zero value
 	return NewSearcherWithOptions(nodes, edges, vectors, SearcherOptions{})
 }
 

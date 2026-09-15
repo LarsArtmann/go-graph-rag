@@ -3,7 +3,7 @@ package graphrag_test
 import (
 	"testing"
 
-	"github.com/larsartmann/go-graph-rag"
+	graphrag "github.com/larsartmann/go-graph-rag"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -90,7 +90,12 @@ func TestSearchRanksRelevantJobsFirst(t *testing.T) {
 	assert.Equal(t, "job:k8s", result.Hits[0].Node.ID, "the k8s job must outrank the pastry chef")
 	assert.NotContains(t, topHitIDs(result), "job:pastry", "zero-overlap jobs must not appear above the floor")
 
-	assert.Greater(t, result.Hits[0].RefMatch, 0.0, "reference similarity must be populated when a reference node exists")
+	assert.Greater(
+		t,
+		result.Hits[0].RefMatch,
+		0.0,
+		"reference similarity must be populated when a reference node exists",
+	)
 
 	skillSeen, companySeen := false, false
 

@@ -1,6 +1,6 @@
 package graphrag_test
 
-import "github.com/larsartmann/go-graph-rag"
+import graphrag "github.com/larsartmann/go-graph-rag"
 
 // Test-only fixture vocabulary. The SDK ships domain-neutral kind and
 // relation TYPES; these constants are the vocabulary the tests graph with.

@@ -6,7 +6,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/larsartmann/go-graph-rag"
+	graphrag "github.com/larsartmann/go-graph-rag"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

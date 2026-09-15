@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/larsartmann/go-graph-rag"
+	graphrag "github.com/larsartmann/go-graph-rag"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -104,7 +104,16 @@ func embedBody(dims int, shuffled bool, vectors ...[]float64) string {
 		data[0], data[1] = data[1], data[0]
 	}
 
-	body, _ := json.Marshal(map[string]any{"data": data, "model": "test-model", "usage": map[string]int{}})
+	response := struct {
+		Data  []datum        `json:"data"`
+		Model string         `json:"model"`
+		Usage map[string]int `json:"usage"`
+	}{Data: data, Model: "test-model", Usage: map[string]int{}}
+
+	body, err := json.Marshal(response)
+	if err != nil {
+		panic(err)
+	}
 
 	return string(body)
 }
