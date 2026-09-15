@@ -20,12 +20,12 @@ import (
 // counts requests. Behaviour receives the decoded request and returns the
 // raw response body plus status.
 type embedServer struct {
-	server         *httptest.Server
-	requests       atomic.Int64
-	lastModel      atomic.Value // string
-	lastAuth       atomic.Value // string
-	lastUserAgent  atomic.Value // string
-	respond        func(req graphragEmbeddingsRequest, requestNumber int64) (int, string)
+	server        *httptest.Server
+	requests      atomic.Int64
+	lastModel     atomic.Value // string
+	lastAuth      atomic.Value // string
+	lastUserAgent atomic.Value // string
+	respond       func(req graphragEmbeddingsRequest, requestNumber int64) (int, string)
 }
 
 // graphragEmbeddingsRequest mirrors the provider's wire request for asserts.

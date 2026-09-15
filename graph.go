@@ -9,10 +9,14 @@ import (
 // NodeKind enumerates the entity types in the knowledge graph.
 type NodeKind string
 
-// KindUnknown is NOT a graph kind: it is the zero value a placeholder node
-// carries when a vector's node vanished (search.go nodeOrPlaceholder) —
-// named here so the empty string stays grep-able. Domain kinds are the
-// caller's vocabulary: define your own NodeKind constants per domain.
+// KindUnknown is the zero value of NodeKind, not a domain kind. Build never
+// assigns it and no caller vocabulary should; it appears in exactly one
+// place: Searcher.SimilarPair placeholders, where a vector outlived its node
+// in the loaded snapshot (see search.go nodeOrPlaceholder). The constant
+// exists so the empty kind is named and grep-able — exhaustive kind switches
+// should treat it as "data hole", never as a matchable category. Domain
+// kinds are the caller's vocabulary: define your own NodeKind constants per
+// domain.
 const (
 	KindUnknown NodeKind = ""
 )
