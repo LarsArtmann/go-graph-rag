@@ -288,12 +288,13 @@ func TestRenderContextGolden(t *testing.T) {
 		},
 	}
 
-	got := graphrag.RenderContext("kubernetes go", hits)
+	got := graphrag.NewSearcherWithOptions(nil, nil, nil, graphrag.SearcherOptions{DetailKind: kindSkill}).
+		RenderContext("kubernetes go", hits)
 
 	const want = `Retrieval context for query: "kubernetes go"
 
 1. [job] Platform Engineer (K8s) (similarity 0.82)
-   skills: Go
+   skill: Go
    related: [company] ACME (at 1.00)
 `
 

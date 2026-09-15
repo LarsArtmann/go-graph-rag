@@ -65,7 +65,11 @@ func buildFixture(t *testing.T) *graphrag.Searcher {
 	result, err := graphrag.Build(t.Context(), graphrag.NewHashProvider(), nil, docs, edges, graphrag.BuildOptions{})
 	require.NoError(t, err)
 
-	return graphrag.NewSearcher(result.Nodes, result.Edges, result.Vectors)
+	return graphrag.NewSearcherWithOptions(result.Nodes, result.Edges, result.Vectors, graphrag.SearcherOptions{
+		ReferenceKind: kindCV,
+		DocumentKinds: []graphrag.NodeKind{kindJob, kindProject},
+		DetailKind:    kindSkill,
+	})
 }
 
 func TestSearchRanksRelevantJobsFirst(t *testing.T) {
@@ -86,7 +90,7 @@ func TestSearchRanksRelevantJobsFirst(t *testing.T) {
 	assert.Equal(t, "job:k8s", result.Hits[0].Node.ID, "the k8s job must outrank the pastry chef")
 	assert.NotContains(t, topHitIDs(result), "job:pastry", "zero-overlap jobs must not appear above the floor")
 
-	assert.Greater(t, result.Hits[0].CVMatch, 0.0, "CV similarity must be populated when a CV node exists")
+	assert.Greater(t, result.Hits[0].RefMatch, 0.0, "reference similarity must be populated when a reference node exists")
 
 	skillSeen, companySeen := false, false
 
