@@ -15,9 +15,14 @@
 
 ## Open items
 
-| Task                                                            | Status       | Impact | Effort | Evidence                                                                      |
-| --------------------------------------------------------------- | ------------ | ------ | ------ | ----------------------------------------------------------------------------- |
-| Decide license posture (public + PROPRIETARY + PR flow)         | 🔵 `BLOCKED` | High   | owner  | package prepared: `docs/planning/2026-09-15_owner-decision-package.md` Q1     |
-| Cut `v0.2.0` (godoc examples invisible on pkg.go.dev until tag) | 🔵 `BLOCKED` | High   | owner  | package prepared: `docs/planning/2026-09-15_owner-decision-package.md` Q2     |
-| QMD MCP `get`/`multi_get` returns serialized garbage            | 🔴 `TODO`    | Low    | 60min  | external: crush-config repo; repro captured in the 2026-09-15 pareto plan M14 |
-| CV-repo extraction-story annotations                            | 🔴 `TODO`    | Low    | 15min  | external: CV status report item c7/c8 + TODO_LIST graphrag row (plan M12)     |
+| Task                                                            | Status       | Impact | Effort | Evidence                                                                  |
+| --------------------------------------------------------------- | ------------ | ------ | ------ | ------------------------------------------------------------------------- |
+| Decide license posture (public + PROPRIETARY + PR flow)         | 🔵 `BLOCKED` | High   | owner  | package prepared: `docs/planning/2026-09-15_owner-decision-package.md` Q1 |
+| Cut `v0.2.0` (godoc examples invisible on pkg.go.dev until tag) | 🔵 `BLOCKED` | High   | owner  | package prepared: `docs/planning/2026-09-15_owner-decision-package.md` Q2 |
+
+## Closed outside this repo (2026-09-15, tracked upstream)
+
+- QMD MCP `get`/`multi_get` garbage output — root-caused (embedded-resource
+  content items), filed as tobi/qmd#959 and charmbracelet/crush#3846.
+- CV-repo extraction-story annotations — committed in the CV repo
+  (`16fc16c7`, daemon-committed; awaiting the CV repo's next push).
