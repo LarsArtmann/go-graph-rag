@@ -306,4 +306,15 @@ these are candidates for `docs-health` HARVEST, not commitments.
 
 ---
 
+## g) ANSWERED (same session, 19:38 CEST)
+
+1. Corpus reality: **NO** (owner) — the ~50k trigger is not expected within
+   12 months. Storage items 1-10 stay ROADMAP fuel; the Dgraph "later"
+   verdict stands reinforced.
+2. Store seam: **DESIGN NOW** (owner) — pluggable store/search seam chosen
+   as cheap insurance. Not started; awaiting go-ahead as next work item.
+3. Linter policy: **ACCEPT FLAT LAYOUT** (owner) — documented as policy in
+   project `AGENTS.md` Gotchas this session; the 8 findings are expected
+   gate noise, not regressions.
+
 Waiting for instructions.

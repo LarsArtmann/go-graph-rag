@@ -72,6 +72,13 @@ see `embed_openai_live_test.go`).
   repos together; the config requires the v2 binary.
 - Markdown is dprint-formatted (`dprint.json`: table alignment, `_em_`
   style); Go is tab-indented gofmt (`.editorconfig`).
+- `buildflow`'s go-structure-linter reports 8 `root-package-files` findings
+  (one per root `.go` file) on every run, and the buildflow findings gate
+  exits non-zero because of them. Accepted policy (owner decision,
+  2026-09-15): the flat single-package layout is deliberate for a v0 SDK.
+  Do NOT restructure into `pkg/` or `internal/`; do NOT treat the gate exit
+  as a session regression. No `.buildflow.yml` skip entry exists on
+  purpose: skipping the whole step would mute the linter's other rules too.
 
 ## Upstream sync
 
