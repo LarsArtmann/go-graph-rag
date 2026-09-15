@@ -18,12 +18,36 @@ All notable changes to this project are documented in this file.
   and CONTRIBUTING.md.
 - Living project docs: FEATURES.md, TODO_LIST.md, ROADMAP.md, and
   docs/DOMAIN_LANGUAGE.md.
+- Runnable godoc examples (`ExampleBuild`, `ExampleSearcher_Search`,
+  `ExampleSearcher_SimilarPairs`, `ExampleNewProvider`) with
+  output-verified comments; the README quick-start snippet is now
+  compile-verified against the module.
+- `UserAgentVersion` const: the OpenAI-compat User-Agent is version-stamped
+  (was a hardcoded string); asserted by httptest.
+- Benchmark suite (`bench_test.go`) for Build / Search / SimilarPairs over a
+  synthetic corpus, with reference numbers recorded in-file; the quadratic
+  pairwise cost (~373ms per 1000-doc build) now has measured backing.
+- SECURITY.md with GitHub private vulnerability reporting enabled.
+- Env-gated live-endpoint smoke test (`GRAPHRAG_LIVE_EMBED_URL` family);
+  skips cleanly offline.
+- `.githooks/pre-push` pristine-build guard (blocks pushes of trees that
+  only build under `GOEXPERIMENT=jsonv2`); install via
+  `git config core.hooksPath .githooks`.
 
 ### Changed
 
 - golangci config: dropped CV-specific depguard rules; experiment build-tags
   and goheader re-removed so the SDK lints exactly as it builds (without
   experiments).
+- `KindUnknown` stays exported; documented as the zero-value placeholder
+  contract (appears only on `SimilarPair` placeholders for vectors whose
+  node vanished).
+- CI: dprint format check step (SHA-pinned `dprint/check`); dependabot
+  actions bump merged (checkout v7.0.1, setup-go v7.0.0).
+- Repository: `master` branch protection requires the `build-test-lint`
+  check; topics, pkg.go.dev homepage, and private vulnerability reporting
+  configured.
+- Full test suite verified clean under `-race`.
 
 ## [0.1.0] - 2026-09-15
 
