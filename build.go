@@ -104,8 +104,8 @@ func Build(
 		return nil, err
 	}
 
-	// Duplicate document IDs (e.g. the same skill reached from a job and a
-	// CV project) collapse onto their FIRST occurrence so insertion order
+	// Duplicate document IDs (e.g. the same hub reached from two different
+	// documents) collapse onto their FIRST occurrence so insertion order
 	// stays deterministic and persistence never hits a unique constraint.
 	seen := make(map[string]struct{}, len(docs))
 	nodes := make([]Node, 0, len(docs))

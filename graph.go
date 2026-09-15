@@ -35,17 +35,17 @@ const (
 // simply not applicable to the node's kind; keeping one typed struct (rather
 // than per-kind payloads) keeps the storage layer and wire contracts flat.
 type NodeAttrs struct {
-	URL          string     `json:"url,omitempty"`
-	Source       string     `json:"source,omitempty"`
-	Location     string     `json:"location,omitempty"`
-	RemotePolicy string     `json:"remotePolicy,omitempty"`
-	Status       string     `json:"status,omitempty"`
+	URL          string `json:"url,omitempty"`
+	Source       string `json:"source,omitempty"`
+	Location     string `json:"location,omitempty"`
+	RemotePolicy string `json:"remotePolicy,omitempty"`
+	Status       string `json:"status,omitempty"`
 	// Score is a display hint (e.g. a match score); zero means absent.
 	// Under GOEXPERIMENT=jsonv2 the omitempty option is a no-op on
 	// numerics, so the key may be emitted as 0 there; both engines decode
 	// it back to the same zero.
-	Score        float64    `json:"score,omitempty"`
-	PostedAt     *time.Time `json:"postedAt,omitempty"`
+	Score    float64    `json:"score,omitempty"`
+	PostedAt *time.Time `json:"postedAt,omitempty"`
 }
 
 // Node is one entity in the knowledge graph.

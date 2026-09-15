@@ -236,7 +236,7 @@ func (p *OpenAICompatProvider) embedRequest(ctx context.Context, payload []byte)
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("User-Agent", "cv-graphrag/1.0")
+	req.Header.Set("User-Agent", "go-graph-rag/0.1")
 	req.Header.Set("Accept", "application/json")
 
 	if p.apiKey != "" {

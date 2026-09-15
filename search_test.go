@@ -108,7 +108,7 @@ func TestSearchRanksRelevantJobsFirst(t *testing.T) {
 	assert.True(t, companySeen, "graph expansion must surface the company")
 
 	assert.Contains(t, result.ContextText, "Platform Engineer (K8s)")
-	assert.Contains(t, result.ContextText, "skills:")
+	assert.Contains(t, result.ContextText, "skill:")
 }
 
 func topHitIDs(result *graphrag.SearchResult) []string {

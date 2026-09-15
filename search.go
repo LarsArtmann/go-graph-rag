@@ -106,11 +106,11 @@ func NewSearcher(nodes []Node, edges []Edge, vectors map[string]Vector) *Searche
 // that kind becomes the RefMatch reference.
 func NewSearcherWithOptions(nodes []Node, edges []Edge, vectors map[string]Vector, opts SearcherOptions) *Searcher {
 	searcher := &Searcher{
-		graph:    NewGraph(nodes, edges),
-		vectors:  vectors,
-		policy:   opts,
+		graph:     NewGraph(nodes, edges),
+		vectors:   vectors,
+		policy:    opts,
 		refVector: nil,
-		hasRef:   false,
+		hasRef:    false,
 	}
 
 	if opts.ReferenceKind == "" {
