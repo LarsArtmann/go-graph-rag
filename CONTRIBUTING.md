@@ -24,6 +24,14 @@ Run the following commands to set up your development environment:
 The module must build without `GOEXPERIMENT=jsonv2`; see AGENTS.md for the
 pristine-toolchain check and all canonical commands.
 
+Install the pre-push guard once per clone (blocks pushes of trees that only
+build under the dev shell's `GOEXPERIMENT=jsonv2`):
+
+    git config core.hooksPath .githooks
+
+Markdown/JSON/YAML formatting is enforced by dprint in CI; format locally
+with `nix run nixpkgs#dprint -- fmt` (or `dprint fmt`).
+
 ## Reporting Issues
 
 Please use GitHub Issues to report bugs or request features.
