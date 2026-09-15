@@ -1,0 +1,56 @@
+package graphrag
+
+import "time"
+
+// Config is the canonical graphrag configuration (koanf-tagged so the root
+// module can alias it — same pattern as chat/groq.Config). It selects the
+// embedding provider, the SQLite index location, and the graph-tuning
+// knobs.
+type Config struct {
+	// Enabled gates the feature. When false, indexing and search answer
+	// with ErrDisabled instead of touching the store.
+	Enabled bool `koanf:"enabled"`
+
+	// StoreDSN is the SQLite file backing the index (":memory:" for
+	// throwaway stores).
+	StoreDSN string `koanf:"store_dsn"`
+
+	// Embedding selects and parameterizes the provider.
+	Embedding EmbeddingConfig `koanf:"embedding"`
+
+	// SimilarTopK is the per-node nearest-neighbor count for
+	// similar_to edges (0 selects DefaultSimilarTopK).
+	SimilarTopK int `koanf:"similar_top_k"`
+
+	// SimilarThreshold is the minimum cosine for a similar_to edge
+	// (0 selects DefaultSimilarThreshold).
+	SimilarThreshold float64 `koanf:"similar_threshold"`
+}
+
+// EmbeddingConfig selects and parameterizes a Provider. It doubles as the
+// koanf-tagged configuration section (camel-cased keys mirror the struct
+// names used by the root config).
+type EmbeddingConfig struct {
+	// Provider selects the implementation: "" or "hash" (offline default),
+	// "openai-compat" for any OpenAI-compatible /embeddings endpoint.
+	Provider string `koanf:"provider"`
+
+	// BaseURL is the API root for openai-compat (e.g.
+	// https://api.openai.com/v1).
+	BaseURL string `koanf:"base_url"`
+
+	// APIKey is the bearer token for openai-compat (env-injected).
+	APIKey string `koanf:"api_key"`
+
+	// Model names the embedding model; switching it invalidates the cache.
+	Model string `koanf:"model"`
+
+	// Timeout bounds one embeddings request (0 selects the default).
+	Timeout time.Duration `koanf:"timeout"`
+
+	// MaxRetries is the retry budget for transient failures.
+	MaxRetries int `koanf:"max_retries"`
+
+	// MaxChars bounds each embedded text (0 selects the default).
+	MaxChars int `koanf:"max_chars"`
+}
