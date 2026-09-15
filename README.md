@@ -22,10 +22,10 @@ import graphrag "github.com/larsartmann/go-graph-rag"
 
 ## Embedding providers
 
-| Provider | Type | Notes |
-| --- | --- | --- |
-| `NewHashProvider` | offline, deterministic | 1024-dim hashing trick; no network, byte-stable across runs; cosine scores run lower than neural embeddings, so calibrate `SimilarThreshold` accordingly (default 0.75) |
-| `NewOpenAICompatProvider` | network | any OpenAI-style `/embeddings` endpoint (base URL, model, API key, timeout, retries) |
+| Provider                  | Type                   | Notes                                                                                                                                                                   |
+| ------------------------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `NewHashProvider`         | offline, deterministic | 1024-dim hashing trick; no network, byte-stable across runs; cosine scores run lower than neural embeddings, so calibrate `SimilarThreshold` accordingly (default 0.75) |
+| `NewOpenAICompatProvider` | network                | any OpenAI-style `/embeddings` endpoint (base URL, model, API key, timeout, retries)                                                                                    |
 
 Embeddings are cached namespaced by `content hash x provider x model` in the
 same SQLite file as the graph, so full rebuilds are cheap.
@@ -53,7 +53,7 @@ policy assigns roles at search time:
   transaction; the embedding cache makes that cheap. Revisit around ~50k nodes.
 - **One writer per store file**: take an ownership lease in the caller if more
   than one process might open the same DSN.
-- **Two-tier ranking is by design**: assert hub *reachability*, never
+- **Two-tier ranking is by design**: assert hub _reachability_, never
   `hits[0]` primacy, for hub labels.
 
 ## Status

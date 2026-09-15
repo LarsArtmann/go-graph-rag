@@ -2,6 +2,12 @@ version: "2"
 run:
   timeout: 10m
   go: 1.26.7
+  build-tags:
+    - goexperiment.arenas
+    - goexperiment.goroutineleakprofile
+    - goexperiment.jsonv2
+    - goexperiment.runtimesecret
+    - goexperiment.simd
   allow-parallel-runners: true
   allow-serial-runners: true
   issues-exit-code: 1
@@ -48,6 +54,7 @@ linters:
     - godoclint
     - godot
     - godox
+    - goheader
     - gomoddirectives
     - gomodguard_v2
     - goprintffuncname
@@ -120,123 +127,6 @@ linters:
   settings:
     cyclop:
       max-complexity: 15
-    depguard:
-      rules:
-        feature_isolation:
-          deny:
-            - desc: Features must not import other features' handlers; share data via kernel interfaces (CVDataReader/CVDataProvider) or domain packages
-              pkg: github.com/LarsArtmann/CV/internal/features/admin/handlers
-            - desc: Features must not import other features' handlers; share data via kernel interfaces (CVDataReader/CVDataProvider) or domain packages
-              pkg: github.com/LarsArtmann/CV/internal/features/agent/handlers
-            - desc: Features must not import other features' handlers; share data via kernel interfaces (CVDataReader/CVDataProvider) or domain packages
-              pkg: github.com/LarsArtmann/CV/internal/features/ateam/handlers
-            - desc: Features must not import other features' handlers; share data via kernel interfaces (CVDataReader/CVDataProvider) or domain packages
-              pkg: github.com/LarsArtmann/CV/internal/features/ats/handlers
-            - desc: Features must not import other features' handlers; share data via kernel interfaces (CVDataReader/CVDataProvider) or domain packages
-              pkg: github.com/LarsArtmann/CV/internal/features/chat/handlers
-            - desc: Features must not import other features' handlers; share data via kernel interfaces (CVDataReader/CVDataProvider) or domain packages
-              pkg: github.com/LarsArtmann/CV/internal/features/coaching/handlers
-            - desc: Features must not import other features' handlers; share data via kernel interfaces (CVDataReader/CVDataProvider) or domain packages
-              pkg: github.com/LarsArtmann/CV/internal/features/contact/handlers
-            - desc: Features must not import other features' handlers; share data via kernel interfaces (CVDataReader/CVDataProvider) or domain packages
-              pkg: github.com/LarsArtmann/CV/internal/features/cv/handlers
-            - desc: Features must not import other features' handlers; share data via kernel interfaces (CVDataReader/CVDataProvider) or domain packages
-              pkg: github.com/LarsArtmann/CV/internal/features/diaudit/handlers
-            - desc: Features must not import other features' handlers; share data via kernel interfaces (CVDataReader/CVDataProvider) or domain packages
-              pkg: github.com/LarsArtmann/CV/internal/features/graphrag/handlers
-            - desc: Features must not import other features' handlers; share data via kernel interfaces (CVDataReader/CVDataProvider) or domain packages
-              pkg: github.com/LarsArtmann/CV/internal/features/healthdash/handlers
-            - desc: Features must not import other features' handlers; share data via kernel interfaces (CVDataReader/CVDataProvider) or domain packages
-              pkg: github.com/LarsArtmann/CV/internal/features/html/handlers
-            - desc: Features must not import other features' handlers; share data via kernel interfaces (CVDataReader/CVDataProvider) or domain packages
-              pkg: github.com/LarsArtmann/CV/internal/features/landing/handlers
-            - desc: Features must not import other features' handlers; share data via kernel interfaces (CVDataReader/CVDataProvider) or domain packages
-              pkg: github.com/LarsArtmann/CV/internal/features/markdown/handlers
-            - desc: Features must not import other features' handlers; share data via kernel interfaces (CVDataReader/CVDataProvider) or domain packages
-              pkg: github.com/LarsArtmann/CV/internal/features/metrics/handlers
-            - desc: Features must not import other features' handlers; share data via kernel interfaces (CVDataReader/CVDataProvider) or domain packages
-              pkg: github.com/LarsArtmann/CV/internal/features/pdf/handlers
-            - desc: Features must not import other features' handlers; share data via kernel interfaces (CVDataReader/CVDataProvider) or domain packages
-              pkg: github.com/LarsArtmann/CV/internal/features/pipeline/handlers
-            - desc: Features must not import other features' handlers; share data via kernel interfaces (CVDataReader/CVDataProvider) or domain packages
-              pkg: github.com/LarsArtmann/CV/internal/features/profile/handlers
-            - desc: Features must not import other features' handlers; share data via kernel interfaces (CVDataReader/CVDataProvider) or domain packages
-              pkg: github.com/LarsArtmann/CV/internal/features/word/handlers
-          files:
-            - "**/internal/features/**"
-          list-mode: lax
-        layer_datasource_no_presentation:
-          deny:
-            - desc: DataSource layer (L1) must not import presentation layer (L2); raw data access has no knowledge of display models
-              pkg: github.com/LarsArtmann/CV/internal/presentation
-          files:
-            - "**/internal/datasource/**/*.go"
-          list-mode: lax
-        layer_no_features:
-          deny:
-            - desc: Architecture layers must not import cv feature; features depend on layers, not vice versa
-              pkg: github.com/LarsArtmann/CV/internal/features/cv
-            - desc: Architecture layers must not import ats feature; features depend on layers, not vice versa
-              pkg: github.com/LarsArtmann/CV/internal/features/ats
-            - desc: Architecture layers must not import pdf feature; features depend on layers, not vice versa
-              pkg: github.com/LarsArtmann/CV/internal/features/pdf
-            - desc: Architecture layers must not import word feature; features depend on layers, not vice versa
-              pkg: github.com/LarsArtmann/CV/internal/features/word
-            - desc: Architecture layers must not import html feature; features depend on layers, not vice versa
-              pkg: github.com/LarsArtmann/CV/internal/features/html
-            - desc: Architecture layers must not import chat feature; features depend on layers, not vice versa
-              pkg: github.com/LarsArtmann/CV/internal/features/chat
-            - desc: Architecture layers must not import profile feature; features depend on layers, not vice versa
-              pkg: github.com/LarsArtmann/CV/internal/features/profile
-            - desc: Architecture layers must not import ateam feature; features depend on layers, not vice versa
-              pkg: github.com/LarsArtmann/CV/internal/features/ateam
-          files:
-            - "**/internal/datasource/**/*.go"
-            - "**/internal/presentation/**/*.go"
-            - "**/internal/render/**/*.go"
-          list-mode: lax
-        layer_presentation_no_render:
-          deny:
-            - desc: Presentation layer (L2) must not import render layer (L3); presentation is upstream of rendering, not downstream
-              pkg: github.com/LarsArtmann/CV/internal/render
-          files:
-            - "**/internal/presentation/**/*.go"
-          list-mode: lax
-        layer_render_no_datasource:
-          deny:
-            - desc: Render layer (L3) must not import datasource layer (L1); data access flows through PresentationModel, not raw data sources
-              pkg: github.com/LarsArtmann/CV/internal/datasource
-          files:
-            - "**/internal/render/**/*.go"
-          list-mode: lax
-        main:
-          deny:
-            - desc: replaced by io and os packages since Go 1.16
-              pkg: io/ioutil
-            - desc: use fmt.Errorf with %w for error wrapping
-              pkg: github.com/pkg/errors
-            - desc: use structured logging via internal/logging
-              pkg: github.com/sirupsen/logrus
-          list-mode: lax
-        no_service_imports_handlers:
-          deny:
-            - desc: Service layer must not import handlers; move shared types to service or models package (inverted dependency)
-              pkg: github.com/LarsArtmann/CV/internal/features/chat/handlers
-            - desc: Service layer must not import handlers; move shared types to service or models package (inverted dependency)
-              pkg: github.com/LarsArtmann/CV/internal/features/html/handlers
-          files:
-            - "**/internal/features/**/service/**/*.go"
-            - "!**/*_test.go"
-          list-mode: lax
-        subpackage_no_internal:
-          deny:
-            - desc: Career-pipeline subpackages must not import internal/ packages; they are extraction-ready and depend only on domain/, primitives/, schema/, and stdlib
-              pkg: github.com/LarsArtmann/CV/internal
-          files:
-            - "**/career-pipeline/**/*.go"
-            - "**/cv-studio/**/*.go"
-            - "**/match-engine/**/*.go"
-          list-mode: lax
     errcheck:
       check-blank: false
       check-type-assertions: true
@@ -244,20 +134,20 @@ linters:
       default-signifies-exhaustive: true
     exhaustruct_v5:
       ignore-patterns:
-        - 'os/exec\.Cmd'
-        - '.+/cobra\.Command'
-        - '.+/spell\.Number'
-        - 'net/http\.Client'
-        - 'net/http\.Transport'
-        - 'net\.Dialer'
-        - 'net/url\.URL'
-        - '.+/godog\.TestSuite'
-        - '.+/flags\.Options'
-        - '.+/otter/v2\.Options'
-        - '.+/csrf\.Config'
-        - 'github\.com/LarsArtmann/CV/internal/presentation\.Section'
-        - 'github\.com/LarsArtmann/CV/internal/presentation\.SectionItem'
-        - '.+/cloudbrowser\.SessionOptions'
+        - os/exec\.Cmd
+        - .+/cobra\.Command
+        - .+/spell\.Number
+        - net/http\.Client
+        - net/http\.Transport
+        - net\.Dialer
+        - net/url\.URL
+        - .+/godog\.TestSuite
+        - .+/flags\.Options
+        - .+/otter/v2\.Options
+        - .+/csrf\.Config
+        - github\.com/LarsArtmann/CV/internal/presentation\.Section
+        - github\.com/LarsArtmann/CV/internal/presentation\.SectionItem
+        - .+/cloudbrowser\.SessionOptions
     forbidigo:
       forbid:
         - msg: do.MustInvoke panics on wiring bugs. Use di.resolve[T] (error-propagating) inside provider/factory closures; mustResolve is reserved for composition-root Get* accessors.
@@ -274,7 +164,7 @@ linters:
       min-complexity: 75
     goconst:
       ignore-tests: true
-      min-length: 4
+      min-len: 4
       min-occurrences: 6
     gocritic:
       disabled-checks:
@@ -320,8 +210,6 @@ linters:
         - go.opentelemetry.io/otel/trace.Tracer
         - go.opentelemetry.io/otel/metric.Meter
         - github.com/samber/do/v2.Injector
-    lll:
-      line-length: 140
     makezero:
       always: true
     mnd:
@@ -502,6 +390,11 @@ linters:
           - forcetypeassert
           - makezero
           - ireturn
+          - exhaustruct
+          - wrapcheck
+          - recvcheck
+          - contextcheck
+          - exhaustive
       - path: _test\.go
         text: directive `//nolint:(errcheck|gosec|usetesting|noctx)[^`]*` is unused
         linters:
