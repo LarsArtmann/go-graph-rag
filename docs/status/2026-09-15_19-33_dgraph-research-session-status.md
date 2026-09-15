@@ -206,8 +206,8 @@ these are candidates for `docs-health` HARVEST, not commitments.
     sentiment section.
 17. Set the tripwires: watch Dgraph releases for cadence; track the
     "second steward or foundation" signal (issue or calendar entry).
-18. Link `ROADMAP.md`'s external-vector-DB non-goal to the research report
-    as its evidence base.
+18. ~~Link `ROADMAP.md`'s external-vector-DB non-goal to the research report~~ done (done — ROADMAP non-goal now cites the research report as its evidence base)
+    ~~as its evidence base.~~
 19. If scenario B (pluggable backend) ever activates: design the
     `Store`/`Cache` seam extension with a Dgraph adapter, CI matrix, and
     dep isolation so `dgo` never becomes a default dependency.
@@ -238,10 +238,10 @@ these are candidates for `docs-health` HARVEST, not commitments.
 
 **Codebase quality and gates**
 
-31. Triage the 8 `go-structure-linter` root-package findings: either
-    document the flat layout as accepted policy in project AGENTS.md
-    (known-tool-bug entry) or restructure into `pkg/`; do not leave it
-    ambiguous for the next session.
+31. ~~Triage the 8 `go-structure-linter` root-package findings: either~~ done (done — accepted policy documented in AGENTS.md Gotchas (owner: ACCEPT FLAT LAYOUT))
+    ~~document the flat layout as accepted policy in project AGENTS.md~~
+    ~~(known-tool-bug entry) or restructure into `pkg/`; do not leave it~~
+    ~~ambiguous for the next session.~~
 32. Run `buildflow --build-mode full` (race + coverage): this session only
     ran `format`; no Go changes were made, but the full gate has not run
     in-session.
@@ -253,13 +253,13 @@ these are candidates for `docs-health` HARVEST, not commitments.
 
 **Docs hygiene**
 
-36. `docs-health` HARVEST: route items 1-35 above into `TODO_LIST.md` /
-    `ROADMAP.md` with rigor (most of 11-20 are ROADMAP fuel).
-37. `docs-health` ANNOTATE the 2026-09-15_18-19 audit report if any of its
-    claims were affected by later work.
-38. Add a `docs/research/` index (one table: artifact, date, verdict) so
-    future sessions find research without re-deriving it.
-39. CHANGELOG entry for the research artifact.
+36. ~~`docs-health` HARVEST: route items 1-35 above into `TODO_LIST.md` /~~ done (done (docs-health pass 2026-09-15) — seam-design row + dep-quantification row into TODO_LIST; storage items stay ROADMAP fuel per owner (corpus NO))
+    ~~`ROADMAP.md` with rigor (most of 11-20 are ROADMAP fuel).~~
+37. ~~`docs-health` ANNOTATE the 2026-09-15_18-19 audit report if any of its~~ done (done (docs-health pass 2026-09-15) — items 1-16/19/20 struck with evidence; 17/18 remain owner-gated)
+    ~~claims were affected by later work.~~
+38. ~~Add a `docs/research/` index (one table: artifact, date, verdict) so~~ done (done — docs/research/README.md index created)
+    ~~future sessions find research without re-deriving it.~~
+39. ~~CHANGELOG entry for the research artifact.~~ done (done — CHANGELOG [Unreleased] Added entry)
 40. HTML rendering of the Dgraph report via html-report-kit if it will be
     presented to humans rather than diffed.
 

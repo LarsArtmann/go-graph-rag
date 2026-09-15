@@ -58,7 +58,7 @@ Nothing catastrophic: no code touched, no builds broken, report committed and fo
 
 1. Owner decision on the verdict's framing (see g1) — everything below keys off it.
 2. Quantify the dep-tree claim: scratch module, `go mod graph`/`go.sum` delta for metaengine-only vs system+metaengine vs status quo (30 min, hardens CONTRA #1 into numbers).
-3. Encode the revisit triggers where they'll be seen: one TODO_LIST.md row pointing at the report §9 (NOT a copy — a pointer), or an explicit decision that dated research docs are the only record.
+3. ~~Encode the revisit triggers where they'll be seen: one TODO_LIST.md row pointing at the report §9 (NOT a copy — a pointer), or an explicit decision that dated research docs are the only record.~~ done (encoded 2026-09-15 — verdicts/triggers reachable via the docs/research/README.md index + ROADMAP non-goal cross-link)
 4. Report the `modules.md` "system EXPERIMENTAL" wording fix to the go-cqrs-lite skill (skill-creator; 10 min).
 5. CV-side cross-link decision (g2): one-line pointer in CV's SUPERB plan or docs/research to this report, or nothing.
 
@@ -74,10 +74,10 @@ Nothing catastrophic: no code touched, no builds broken, report committed and fo
 
 11. License posture decision package (BLOCKED on owner — TODO_LIST Q1).
 12. Cut v0.2.0 so godoc examples become visible (BLOCKED on owner — TODO_LIST Q2).
-13. QMD MCP `get`/`multi_get` garbage bug — external (crush-config repo), TODO_LIST row; my session re-confirmed the repro.
-14. CV-repo extraction-story annotations (TODO_LIST; 15 min, external).
-15. SDK master CI red triage (post-v0.1.0 daemon push, run `34971957570`) — carried from the CV extraction status report; state unknown as of this session, I did not check.
-16. Branch protection + dependabot + repo topics on `larsartmann/go-graph-rag` (extraction status item 21-23).
+13. ~~QMD MCP `get`/`multi_get` garbage bug — external (crush-config repo), TODO_LIST row; my session re-confirmed the repro.~~ done (root-caused both sides; filed tobi/qmd#959 + charmbracelet/crush#3846 (upstream fix pending, tracked in TODO_LIST))
+14. ~~CV-repo extraction-story annotations (TODO_LIST; 15 min, external).~~ done at `16fc16c7`
+15. ~~SDK master CI red triage (post-v0.1.0 daemon push, run `34971957570`) — carried from the CV extraction status report; state unknown as of this session, I did not check.~~ done (resolved — CI green since the 2026-09-15 push (master 07b558d; status 19-33 header))
+16. ~~Branch protection + dependabot + repo topics on `larsartmann/go-graph-rag` (extraction status item 21-23).~~ done (done 2026-09-15 — branch protection + dependabot closed + topics/homepage active (status 19-33 §a.1/a.4))
 
 **P3 — bigger arcs this research feeds:**
 

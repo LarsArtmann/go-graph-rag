@@ -2,7 +2,7 @@
 
 - **Date:** 2026-09-15 18:19 CEST
 - **Session scope:** Full docs-health AUDIT (BUILD + HARVEST + VERIFY) over all 27 repo files, per the user's demand ("View ALL files... SUPERBLY"). Everything reported here happened in this session.
-- **State at report:** All five quality gates green on pristine toolchains locally; 4 commits ahead of `origin/master` (daemon heuristic commits); **remote CI still red until pushed**.
+- **State at report:** All five quality gates green on pristine toolchains locally; 4 commits ahead of `origin/master` (daemon heuristic commits); ~~**remote CI still red until pushed**~~ pushed and green the same day (master `07b558d`).
 
 ---
 
@@ -25,8 +25,8 @@
 
 ## b) PARTIALLY DONE
 
-1. **Master is not green REMOTELY** — fix is committed locally but unpushed; `origin/master..HEAD` = 4 commits (5750980 + my three). CI run `34971957570` stays red and the dependabot actions-PR inherits it until someone pushes. Blocker: push needs explicit owner authorization. Effort: S.
-2. **dprint formatting unverified** — dprint is not installed locally; my hand-aligned markdown tables follow the style but were never machine-checked. Blocker: tooling absent from devshell/CI (TODO_LIST row exists). Effort: S.
+1. ~~**Master is not green REMOTELY** — fix is committed locally but unpushed; `origin/master..HEAD` = 4 commits (5750980 + my three). CI run `34971957570` stays red and the dependabot actions-PR inherits it until someone pushes. Blocker: push needs explicit owner authorization. Effort: S.~~ done (resolved same day — pushed, CI green on HEAD (master 07b558d))
+2. ~~**dprint formatting unverified** — dprint is not installed locally; my hand-aligned markdown tables follow the style but were never machine-checked. Blocker: tooling absent from devshell/CI (TODO_LIST row exists). Effort: S.~~ done (resolved — dprint step in CI + local format pass clean (status 19-33 §a.8))
 3. **Health report lacked post-fix scores** — I scored the found state (5.25/5.25) but never computed a formal "after" number; closure was qualitative ("all findings fixed except 2 owner-gated"). Effort: S.
 4. **CV-leak standard applied inconsistently** — stripped CV references from prod files but left `store_health_test.go:8` ("DI scope sweep (go-health dashboard)") under the fixtures rule; that rule covers test vocabulary, arguably not consumer-infra comments. Effort: S.
 
@@ -67,30 +67,30 @@ Nothing catastrophic: no data loss, no build broken by me, all gates green befor
 
 **P0 — unblock remote truth:**
 
-1. Push the 4 pending commits to `origin/master` (CI turns green; dependabot PR unblocks). Critical / S / Bug.
-2. Watch the resulting `go-test` run to completion; confirm green. Critical / S / Quality.
-3. Enable branch protection on `master` requiring `go-test`. High / S / Quality.
-4. Merge or close the dependabot actions-bump PR once green. Medium / S / Cleanup.
+1. ~~Push the 4 pending commits to `origin/master` (CI turns green; dependabot PR unblocks). Critical / S / Bug.~~ done (pushed 2026-09-15, CI green on HEAD (master 07b558d))
+2. ~~Watch the resulting `go-test` run to completion; confirm green. Critical / S / Quality.~~ done (go-test green on HEAD, incl. the dprint step)
+3. ~~Enable branch protection on `master` requiring `go-test`. High / S / Quality.~~ done (protection active, requires build-test-lint (status 19-33 §a.1))
+4. ~~Merge or close the dependabot actions-bump PR once green. Medium / S / Cleanup.~~ done at `41beb47`
 
 **P1 — SDK repo health (all TODO_LIST rows, evidence-cited there):**
-5. `example_test.go` godoc examples for `Build`/`Search`/`SimilarPairs` (also compile-verifies the README snippet). High / M / Documentation.
-6. `SECURITY.md` (go-cqrs-lite parity). Medium / S / Documentation.
-7. Repo topics + homepage via `gh repo edit`. Medium / S / Documentation.
-8. Version-stamp the OpenAI UA (`embed_openai.go:239`). Medium / S / Feature.
-9. Decide `KindUnknown`'s public fate (`graph.go:16`). Medium / S / Design.
-10. Benchmark suite: Build + Search on a synthetic corpus. Medium / M / Quality.
-11. Wire `dprint.json` into CI (or delete it). Medium / S / Quality.
-12. Run `go test ./... -race` once (CONTRIBUTING promises it; never run this session). Low / S / Quality.
-13. Run dprint over all markdown once installed; fix table drift. Low / S / Cleanup.
-14. Add the pristine-build (`env -u GOEXPERIMENT`) check as a pre-push hook. Medium / S / Quality.
+5. ~~`example_test.go` godoc examples for `Build`/`Search`/`SimilarPairs` (also compile-verifies the README snippet). High / M / Documentation.~~ done (status 19-33 §a.2 — example_test.go, output-verified)
+6. ~~`SECURITY.md` (go-cqrs-lite parity). Medium / S / Documentation.~~ done (status 19-33 §a.3)
+7. ~~Repo topics + homepage via `gh repo edit`. Medium / S / Documentation.~~ done (status 19-33 §a.4)
+8. ~~Version-stamp the OpenAI UA (`embed_openai.go:239`). Medium / S / Feature.~~ done (status 19-33 §a.5 — UserAgentVersion const + httptest assert)
+9. ~~Decide `KindUnknown`'s public fate (`graph.go:16`). Medium / S / Design.~~ done (status 19-33 §a.6 — kept exported, contract documented in graph.go)
+10. ~~Benchmark suite: Build + Search on a synthetic corpus. Medium / M / Quality.~~ done (status 19-33 §a.7 — bench_test.go, reference numbers in-file)
+11. ~~Wire `dprint.json` into CI (or delete it). Medium / S / Quality.~~ done (status 19-33 §a.8 — SHA-pinned dprint/check CI step)
+12. ~~Run `go test ./... -race` once (CONTRIBUTING promises it; never run this session). Low / S / Quality.~~ done (status 19-33 §a.9 — -race clean)
+13. ~~Run dprint over all markdown once installed; fix table drift. Low / S / Cleanup.~~ done (status 19-33 §a.8 — format pass applied, check clean)
+14. ~~Add the pristine-build (`env -u GOEXPERIMENT`) check as a pre-push hook. Medium / S / Quality.~~ done (status 19-33 §a.10 — .githooks/pre-push, both paths proven)
 
 **P2 — cross-repo / owner-gated:**
-15. Annotate CV status report `2026-09-15_17-09` item c7 ("SDK master is RED") as resolved, citing `40fa417` + the push. Medium / S / Documentation (CV repo).
-16. Annotate the CV TODO_LIST pin-equality row's graphrag part (carried there since extraction day). Low / S / Documentation (CV repo).
+15. ~~Annotate CV status report `2026-09-15_17-09` item c7 ("SDK master is RED") as resolved, citing `40fa417` + the push. Medium / S / Documentation (CV repo).~~ done at `16fc16c7`
+16. ~~Annotate the CV TODO_LIST pin-equality row's graphrag part (carried there since extraction day). Low / S / Documentation (CV repo).~~ done at `16fc16c7`
 17. License-posture decision (public + PROPRIETARY + PR flow). Owner / S / Decision.
 18. Release cadence: v0.1.1 for the json-v1 restore + docs, or ride [Unreleased]? Owner / S / Decision.
-19. File/fix the QMD `get`/`multi_get` serialization bug (returns `&{ptr}` objects). Medium / M / Tooling (crush config repo).
-20. Optional: live-endpoint smoke test for the openai-compat provider behind an env flag (wire contract is httptest-verified only). Low / M / Quality.
+19. ~~File/fix the QMD `get`/`multi_get` serialization bug (returns `&{ptr}` objects). Medium / M / Tooling (crush config repo).~~ done (filed tobi/qmd#959 + charmbracelet/crush#3846; upstream fix pending (TODO_LIST))
+20. ~~Optional: live-endpoint smoke test for the openai-compat provider behind an env flag (wire contract is httptest-verified only). Low / M / Quality.~~ done (embed_openai_live_test.go env-gated, offline skip verified (status 19-33 §a.14))
 
 ## g) QUESTIONS (cannot answer myself)
 
