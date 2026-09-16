@@ -4,18 +4,35 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- Nothing yet.
+
+### Changed
+
+- Nothing yet.
+
+### Fixed
+
+- Nothing yet.
+
+## [0.2.0] - 2026-09-16
+
+The public-SDK-face release: runnable godoc examples, the version-stamped
+`UserAgentVersion` const, benchmark reference numbers, and a full living-doc
+set are now what pkg.go.dev renders. No breaking changes; v0.1.0 consumers
+can bump freely.
+
 ### Fixed
 
 - `SECURITY.md` pointed at a 404 GitHub docs URL (the privately-report-a-
   vulnerability page moved); replaced with the verified live URL.
 - README named the full-rebuild operation as a backticked `Reindex` — no
   such identifier exists; now names the real `ReplaceGraph`.
-
-### Restored the json-v1 build contract on `master`: a post-v0.1.0 push had
-  switched `embed_openai.go` and `store.go` to `encoding/json/v2`, which only
+- Restored the json-v1 build contract: a post-v0.1.0 push had switched
+  `embed_openai.go` and `store.go` to `encoding/json/v2`, which only
   compiles with `GOEXPERIMENT=jsonv2` and broke CI on pristine toolchains.
   The tagged v0.1.0 tree was never affected.
-
 - The json-v1 contract regressed again (2026-09-16): `store.go`,
   `embed_openai.go`, and `embed_openai_test.go` came back as
   `encoding/json/v2` via auto-committed session work run under the
@@ -48,7 +65,6 @@ All notable changes to this project are documented in this file.
   `BenchmarkStoreRoundTrip` (persist + snapshot load on a real SQLite file,
   1k/10k) shows persistence is not the rebuild bottleneck (10k nodes
   round-trip in ~0.2s against a ~37s rebuild).
-- Seam ADR `docs/planning/2026-09-16_13-25_seam-store-search-adr.md`: the
 - Benchmark suite (`bench_test.go`) for Build / Search / SimilarPairs over a
   synthetic corpus, with reference numbers recorded in-file; the quadratic
   pairwise cost (~373ms per 1000-doc build) now has measured backing.
