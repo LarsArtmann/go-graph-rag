@@ -82,7 +82,11 @@ Executed 2026-09-16 (release date); notes below recorded inline.
 [x] Phase 6: go list -m -versions github.com/larsartmann/go-graph-rag shows v0.2.0
 [x] Phase 6: go get in a clean /tmp module resolves + builds (trash the dir after)
 [ ] Phase 6: pkg.go.dev shows the examples under Build/Search/SimilarPairs/NewProvider
-    (2026-09-16: proxy indexed v0.2.0; pkg.go.dev doc processing pending — re-check later)
+    (2026-09-16: proxy indexed v0.2.0; pkg.go.dev doc processing still pending hours
+    later. Deeper finding: v0.1.0's page says "Documentation not displayed due to
+    license restrictions" — no LICENSE file pkg.go.dev recognizes, so godoc is
+    hidden for every version. The public-face payoff of releases stays blocked on
+    the Q1 license decision; see TODO_LIST High row.)
 [x] Phase 7: GitHub Release created for v0.2.0 — NOT via workflow: the tag-push
     release.yml failed on the awk -v escape bug (fixed on master, 350b815);
     release created manually with the same extraction logic and notes
