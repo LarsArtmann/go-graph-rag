@@ -10,20 +10,28 @@ import (
 
 // Benchmarks measure the offline end-to-end paths with the hash provider
 // (1024-dim vectors) over synthetic corpora of unique texts with overlapping
-// vocabularies. Reference numbers, 2026-09-15, x86_64 (32 threads, single
-// goroutine does the work), Go 1.26.7, -benchtime=100ms — treat as orders of
-// magnitude, not absolutes:
+// vocabularies. Reference numbers, 2026-09-16, AMD Ryzen AI MAX+ 395
+// (x86_64, single goroutine does the work), Go 1.26.7,
+// `go test -bench . -count 10` (StoreRoundTrip: -count 3), summarized with
+// benchstat (golang.org/x/perf v0.0.0-20260908200009) — treat as orders of
+// magnitude, not absolutes; ± figures are the benchstat spread:
 //
-//	Build/docs=100       ~4.2 ms/op    (4,950 pairwise cosines)
-//	Build/docs=1000      ~373 ms/op    (499,500 pairwise cosines)
-//	Search/docs=100      ~111 µs/op
-//	Search/docs=1000     ~927 µs/op
-//	SimilarPairs/docs=1000 ~408 ms/op
+//	Build/docs=100             3.961 ms/op  ± 2%  (4,950 pairwise cosines)
+//	Build/docs=1000            369.5 ms/op  ± 2%  (499,500 pairwise cosines)
+//	Search/docs=100            101.1 µs/op  ± 1%
+//	Search/docs=1000           948.6 µs/op  ± 1%
+//	SimilarPairs/docs=1000     391.1 ms/op  ± 1%
+//	StoreRoundTrip/docs=1000   21.6 ms/op         (ReplaceGraph + LoadGraph
+//	                               + LoadEmbeddings on a real SQLite file)
+//	StoreRoundTrip/docs=10000  197.4 ms/op
 //
 // The Build/SimilarPairs scaling is quadratic in embedded-node count (10x
 // docs -> ~90x time): at ~50k nodes a full rebuild extrapolates to ~15
-// minutes. That is the measured trigger behind ROADMAP's "revisit around
-// ~50k nodes" item (ANN/HNSW backend, incremental indexing).
+// minutes. StoreRoundTrip shows persistence is NOT the bottleneck (10k
+// nodes round-trip in ~0.2s against a ~37s rebuild) — the rebuild cost is
+// pairwise cosine compute. That is the measured trigger behind ROADMAP's
+// "revisit around ~50k nodes" item (ANN/HNSW backend, incremental
+// indexing).
 
 // benchCorpus generates n deterministic documents over a fixed vocabulary:
 // overlapping token sets exercise similar-edge derivation without any

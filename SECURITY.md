@@ -15,7 +15,7 @@ If you discover a security vulnerability in go-graph-rag, please report it
 responsibly:
 
 1. **Do NOT open a public GitHub issue.**
-2. Use [GitHub private vulnerability reporting](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-reviewing/privately-reporting-a-security-vulnerability)
+2. Use [GitHub private vulnerability reporting](https://docs.github.com/en/code-security/how-tos/report-and-fix-vulnerabilities/privately-reporting-a-security-vulnerability)
    on this repository (Security tab → "Report a vulnerability").
 3. Include a proof of concept or steps to reproduce if possible.
 4. You will receive an acknowledgment within 48 hours.

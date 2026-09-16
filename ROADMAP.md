@@ -21,7 +21,7 @@ Raw ideas:
   `ReplaceGraph` full swap
 - Corpus-size triggers that flip the implementation automatically (~50k
   nodes is the measured revisit point: Build/SimilarPairs scale quadratically,
-  ~373ms per 1000-doc build, ~15min extrapolated at 50k — `bench_test.go`)
+  ~370ms per 1000-doc build, ~15min extrapolated at 50k — `bench_test.go`)
 - Optional pruning of stale `RelationSimilar` edges on rebuild
 - Shared ANN benchmark harness (recall + p50/p95 latency vs the brute-force
   scan) so backend candidates are comparable
