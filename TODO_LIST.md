@@ -17,10 +17,9 @@
 
 ### High Impact
 
-| Task                                                            | Status       | Impact | Effort | Evidence                                                                  |
-| --------------------------------------------------------------- | ------------ | ------ | ------ | ------------------------------------------------------------------------- |
-| Decide license posture (public + PROPRIETARY + PR flow)         | 🔵 `BLOCKED` | High   | owner  | package prepared: `docs/planning/2026-09-15_owner-decision-package.md` Q1 |
-| Cut `v0.2.0` (godoc examples invisible on pkg.go.dev until tag) | 🔵 `BLOCKED` | High   | owner  | package prepared: `docs/planning/2026-09-15_owner-decision-package.md` Q2 |
+| Task                                                    | Status       | Impact | Effort | Evidence                                                                  |
+| ------------------------------------------------------- | ------------ | ------ | ------ | ------------------------------------------------------------------------- |
+| Decide license posture (public + PROPRIETARY + PR flow) | 🔵 `BLOCKED` | High   | owner  | package prepared: `docs/planning/2026-09-15_owner-decision-package.md` Q1 |
 
 ### Medium Impact
 

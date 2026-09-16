@@ -69,19 +69,25 @@ real story is "public face complete".
 ### v0.2.0 go-release checklist (execute on your word)
 
 ```text
-[ ] Phase 0: confirm master green (CI) and tree clean
-[ ] Phase 1: version = v0.2.0 (minor: new exported const + docs face)
-[ ] Phase 2: CHANGELOG — move [Unreleased] into [0.2.0] - 2026-09-15(?), leave empty placeholders
-[ ] Phase 3: go.mod clean — no replace directives (verified 2026-09-15), go mod tidy + verify
-[ ] Phase 4: env -u GOEXPERIMENT GOTOOLCHAIN=go1.26.7 go build ./... && go vet ./... && go test ./... -race -count=1
-[ ] Phase 4: golangci-lint run ./... (v2.13.2) — 0 issues
-[ ] Phase 5: git tag -a v0.2.0 -m "..." at the verified commit; git show v0.2.0 --stat sanity check
-[ ] Phase 5: push master + tag together
-[ ] Phase 6: go list -m -versions github.com/larsartmann/go-graph-rag shows v0.2.0
-[ ] Phase 6: go get in a clean /tmp module resolves + builds (trash the dir after)
+Executed 2026-09-16 (release date); notes below recorded inline.
+
+[x] Phase 0: confirm master green (CI) and tree clean
+[x] Phase 1: version = v0.2.0 (minor: new exported const + docs face)
+[x] Phase 2: CHANGELOG — moved [Unreleased] into [0.2.0] - 2026-09-16, empty placeholders left
+[x] Phase 3: go.mod clean — no replace directives (verified 2026-09-15), go mod tidy + verify
+[x] Phase 4: env -u GOEXPERIMENT GOTOOLCHAIN=go1.26.7 go build ./... && go vet ./... && go test ./... -race -count=1
+[x] Phase 4: golangci-lint run ./... (v2.13.2) — 0 issues
+[x] Phase 5: git tag -a v0.2.0 -m "..." at the verified commit; git show v0.2.0 --stat sanity check
+[x] Phase 5: push master + tag together
+[x] Phase 6: go list -m -versions github.com/larsartmann/go-graph-rag shows v0.2.0
+[x] Phase 6: go get in a clean /tmp module resolves + builds (trash the dir after)
 [ ] Phase 6: pkg.go.dev shows the examples under Build/Search/SimilarPairs/NewProvider
-[ ] Phase 7: GitHub Release (gh release create v0.2.0 --prerelease=false — v0.x, notes from CHANGELOG)
+    (2026-09-16: proxy indexed v0.2.0; pkg.go.dev doc processing pending — re-check later)
+[x] Phase 7: GitHub Release created for v0.2.0 — NOT via workflow: the tag-push
+    release.yml failed on the awk -v escape bug (fixed on master, 350b815);
+    release created manually with the same extraction logic and notes
 [ ] Phase 8: CV repo: go get github.com/larsartmann/go-graph-rag@v0.2.0 (go-ecosystem-upgrade flow)
+    (pending — consumer-side bump, separate session)
 ```
 
 Tags are immutable once the proxy caches them: if anything is wrong after
