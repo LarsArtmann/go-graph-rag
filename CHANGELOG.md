@@ -42,6 +42,10 @@ All notable changes to this project are documented in this file.
 - Tag protection: a `protect-tags` ruleset (repo rulesets, enforcement
   active) covers `refs/tags/*` with deletion and non-fast-forward rules and
   no bypass actors, so tags can no longer be moved or deleted silently.
+- Release automation (`.github/workflows/release.yml`): a future `v*` tag
+  push publishes a GitHub Release with notes extracted from the matching
+  `CHANGELOG.md` section; an empty extraction fails the run. Drafted only —
+  no release executed; the v0.2.0 cut stays owner-gated.
 - Seam ADR `docs/planning/2026-09-16_13-25_seam-store-search-adr.md`: the
   binding design for pluggable persistence (`GraphStore`) and vector ranking
   (`VectorIndex`) — three backend classes (embedded ANN libs / metaengine
