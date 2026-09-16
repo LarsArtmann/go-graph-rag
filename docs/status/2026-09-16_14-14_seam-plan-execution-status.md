@@ -188,16 +188,13 @@ _ANSWERED (inline, strikethrough per policy):_
    `chore: auto-commit` messages (578 insertions, 13 files, all verified present). Push them
    as-is, or squash/reword into per-task detailed commits first (local-only rewrite) before
    pushing?~~ → **ANSWERED: leave history intact, push as-is.** Rules: never rewrite what the
-   daemon committed; the heuristic trail is expected behavior. Executed in F10.3 (push at
-   14:2x CEST, `go-test` run 35086042525 green on HEAD `577c9c7`; run-URL comment left on the
-   ADR + report annotated).
+   daemon committed; the heuristic trail is expected behavior.
 2. ~~**Commit the two external skill-repo changes?** (a) `~/projects/SKILLS` docs-health tooling
    (guard fix, dotted IDs, check-rows.py, test rewrite); (b) go-cqrs-lite `modules.md` wording
    fix — and bump the flake input so the installed skill actually receives it. Yes to both,
-   which, or leave for their own sessions?~~ → **ANSWERED: commit both in their own repos now.**
-   Executed after the F10.1 gates: SKILLS repo `0cb0d4d` (2 files, detailed message), go-cqrs-lite
-   `e526f68` (modules.md only — the pre-existing workflow changes were left untouched), flake
-   bumped (`2cd4e4b`), store path rewritten, `system` row reads true in the INSTALLED skill.
+   which, or leave for their own sessions?~~ → **ANSWERED: commit both in their own repos now**
+   (go-cqrs-lite gets ONLY the modules.md change — its pre-existing workflow changes stay
+   untouched), plus the flake-input bump so the installed skill receives the fix.
 3. ~~**The offered upstream patches (qmd#959, crush#3846): send them now, or hold past the
    2026-09-22 window?** Both upstreams are still silent after ~24h.~~ → **ANSWERED: hold past
    the window (no grace-period reminder pings); if asked "did you send it", the patch exists in

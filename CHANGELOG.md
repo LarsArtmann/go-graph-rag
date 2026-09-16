@@ -6,7 +6,12 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
-- Restored the json-v1 build contract on `master`: a post-v0.1.0 push had
+- `SECURITY.md` pointed at a 404 GitHub docs URL (the privately-report-a-
+  vulnerability page moved); replaced with the verified live URL.
+- README named the full-rebuild operation as a backticked `Reindex` — no
+  such identifier exists; now names the real `ReplaceGraph`.
+
+### Restored the json-v1 build contract on `master`: a post-v0.1.0 push had
   switched `embed_openai.go` and `store.go` to `encoding/json/v2`, which only
   compiles with `GOEXPERIMENT=jsonv2` and broke CI on pristine toolchains.
   The tagged v0.1.0 tree was never affected.
@@ -22,8 +27,22 @@ All notable changes to this project are documented in this file.
   `ExampleSearcher_SimilarPairs`, `ExampleNewProvider`) with
   output-verified comments; the README quick-start snippet is now
   compile-verified against the module.
+- Two more output-verified examples: `ExampleOpenStore` (persist +
+  round-trip: store-as-cache, `ReplaceGraph`, `LoadGraph`/`Stats`) and
+  `ExampleNewSearcherWithOptions` (search-time roles: `ReferenceKind`
+  ref-match line, `DocumentKinds` two-tier ranking, `DetailKind` compact
+  rendering); README's Search-time-roles section points at the latter.
 - `UserAgentVersion` const: the OpenAI-compat User-Agent is version-stamped
   (was a hardcoded string); asserted by httptest.
+- `Build` doc comment now states the identical-text rule: shared content
+  hash = one provider call, first document in slice order gets the vector,
+  siblings stay expansion-only until a warm-cache build fills them in.
+- Benchmarks upgraded to a benchstat protocol (`-count 10`, spread ±1–2%)
+  with the reference table rewritten in `bench_test.go`; new
+  `BenchmarkStoreRoundTrip` (persist + snapshot load on a real SQLite file,
+  1k/10k) shows persistence is not the rebuild bottleneck (10k nodes
+  round-trip in ~0.2s against a ~37s rebuild).
+- Seam ADR `docs/planning/2026-09-16_13-25_seam-store-search-adr.md`: the
 - Benchmark suite (`bench_test.go`) for Build / Search / SimilarPairs over a
   synthetic corpus, with reference numbers recorded in-file; the quadratic
   pairwise cost (~373ms per 1000-doc build) now has measured backing.
