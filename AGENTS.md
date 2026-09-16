@@ -91,6 +91,15 @@ see `embed_openai_live_test.go`).
   records: annotate inline (docs-health ANNOTATE) or `git mv` fully-done
   files to `<dir>/archived/`; never rewrite them.
 
+## Owner decisions (2026-09-16)
+
+- STATUS reports archive too: once every item in a `docs/status/` report is
+  resolved (annotated), `git mv` it to `docs/status/archived/`.
+- Seam-design deliverable (when it starts): ADR under `docs/planning/` WITH a
+  Go interface sketch (seam signatures) — binding before any code lands.
+- ROADMAP removes settled ideas entirely (decision trail lives in CHANGELOG +
+  code docs); no struck-through zombies.
+
 ## Upstream sync
 
 The CV repo consumes this module from the proxy (`v0.x`). The CV-side
