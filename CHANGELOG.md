@@ -39,6 +39,15 @@ All notable changes to this project are documented in this file.
   (adopt neither into the SDK; CV app-layer adoption per SUPERB T01/T29),
   plus the owner-decision package (license posture, v0.2.0 cadence) under
   `docs/planning/` and a `docs/research/` index.
+- Tag protection: a `protect-tags` ruleset (repo rulesets, enforcement
+  active) covers `refs/tags/*` with deletion and non-fast-forward rules and
+  no bypass actors, so tags can no longer be moved or deleted silently.
+- Seam ADR `docs/planning/2026-09-16_13-25_seam-store-search-adr.md`: the
+  binding design for pluggable persistence (`GraphStore`) and vector ranking
+  (`VectorIndex`) — three backend classes (embedded ANN libs / metaengine
+  projection / consumer-owned server DBs), compiling Go interface sketch,
+  CGO-in-adapters-only stance, measured dependency-isolation numbers
+  (metaengine: +27 modules; +system: 6.6×), and trigger-gated adapter plan.
 
 ### Changed
 

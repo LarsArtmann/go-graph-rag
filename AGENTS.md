@@ -72,6 +72,9 @@ see `embed_openai_live_test.go`).
   repos together; the config requires the v2 binary.
 - Markdown is dprint-formatted (`dprint.json`: table alignment, `_em_`
   style); Go is tab-indented gofmt (`.editorconfig`).
+- New research artifacts get a row in `docs/research/README.md` (artifact,
+  date, question, verdict, reopen-triggers). The index stays research-only:
+  planning docs (ADRs, SUPERB plans, owner packages) never get rows.
 - `buildflow`'s go-structure-linter reports 8 `root-package-files` findings
   (one per root `.go` file) on every run, and the buildflow findings gate
   exits non-zero because of them. Accepted policy (owner decision,
