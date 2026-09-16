@@ -81,6 +81,13 @@ type BuildResult struct {
 // graph, and derives RelationSimilar edges between all embedded nodes whose
 // cosine similarity clears the threshold. It is a pure function of its
 // inputs: same documents, same provider, same edges out.
+//
+// Identical texts embed once per build: documents whose Text shares a
+// content hash cost a single provider call, and in a cold build only the
+// first document in slice order receives the vector — its siblings stay
+// embedded-less nodes that still participate through graph expansion.
+// BuildResult.EmbeddingHash records the shared hash for every sibling, so a
+// later build over a warm cache hands them the same vector via lookup.
 func Build(
 	ctx context.Context,
 	provider Provider,

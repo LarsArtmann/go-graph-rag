@@ -88,6 +88,9 @@ policy assigns roles at search time:
 - `DetailKind`: related nodes of this kind render as a compact label list in
   `RenderContext` output.
 
+See `ExampleNewSearcherWithOptions` in the godoc examples for a runnable
+walkthrough of all three roles.
+
 ## Design constraints (deliberate)
 
 - **Dependency-light**: stdlib-only except `samber/lo` and `modernc.org/sqlite`.
