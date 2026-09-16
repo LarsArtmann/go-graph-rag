@@ -38,7 +38,11 @@ Standalone GraphRAG SDK extracted from the CV repo's `graphrag/` module
    it turns CI red). The one `omitempty`-on-float (`NodeAttrs.Score`) is
    documented for the v2-engine no-op behavior.
 3. **stdlib-only except `samber/lo` + `modernc.org/sqlite`**
-   (`testify` in tests). Adding a dependency needs a hard reason.
+   (`testify` in tests). Adding a dependency needs a hard reason. Backend
+   work is governed by the seam ADR
+   (`docs/planning/2026-09-16_13-25_seam-store-search-adr.md`): adapters own
+   their dependencies in separate modules; core `go.mod` never grows; core
+   stays CGO-free.
 4. **No `primitives` / CV-repo imports.** The extraction cut exactly that
    dependency (`sleepContext` is inlined in `embed_openai.go`).
 5. **golangci config mirrors CV's, minus CV-specific depguard rules,
