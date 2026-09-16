@@ -17,18 +17,18 @@
 
 ### High Impact
 
-| Task                                                            | Status       | Impact | Effort | Evidence                                                          |
-| --------------------------------------------------------------- | ------------ | ------ | ------ | ----------------------------------------------------------------- |
+| Task                                                            | Status       | Impact | Effort | Evidence                                                                  |
+| --------------------------------------------------------------- | ------------ | ------ | ------ | ------------------------------------------------------------------------- |
 | Decide license posture (public + PROPRIETARY + PR flow)         | 🔵 `BLOCKED` | High   | owner  | package prepared: `docs/planning/2026-09-15_owner-decision-package.md` Q1 |
 | Cut `v0.2.0` (godoc examples invisible on pkg.go.dev until tag) | 🔵 `BLOCKED` | High   | owner  | package prepared: `docs/planning/2026-09-15_owner-decision-package.md` Q2 |
 
 ### Medium Impact
 
-| Task                                                                     | Status       | Impact | Effort | Evidence                                                                                              |
-| ------------------------------------------------------------------------ | ------------ | ------ | ------ | ----------------------------------------------------------------------------------------------------- |
-| Run live smoke test against a real endpoint                              | 🔵 `BLOCKED` | Med    | S      | `embed_openai_live_test.go` asserts never executed; needs `GRAPHRAG_LIVE_EMBED_*` creds                |
+| Task                                                                     | Status       | Impact | Effort | Evidence                                                                                                                                                               |
+| ------------------------------------------------------------------------ | ------------ | ------ | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Run live smoke test against a real endpoint                              | 🔵 `BLOCKED` | Med    | S      | `embed_openai_live_test.go` asserts never executed; needs `GRAPHRAG_LIVE_EMBED_*` creds                                                                                |
 | Watch tobi/qmd#959 + charmbracelet/crush#3846; send offered PR if silent | 🔴 `TODO`    | Med    | M      | both filed 2026-09-15; re-checked 2026-09-16: qmd#959 OPEN, crush#3846 (issue) OPEN, zero maintainer activity; decide on the offered PR at the 2026-09-22 window close |
-| Apply CONTRIBUTING inbound-grant line                                    | 🔵 `BLOCKED` | Med    | S      | drafted in the owner package; presumes license answer (Q1)                                             |
+| Apply CONTRIBUTING inbound-grant line                                    | 🔵 `BLOCKED` | Med    | S      | drafted in the owner package; presumes license answer (Q1)                                                                                                             |
 
 ## Closed outside this repo (2026-09-15, tracked upstream)
 

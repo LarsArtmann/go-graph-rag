@@ -1,12 +1,12 @@
 # Status Report — SUPERB seam-ADR plan execution (M1–M9 done, M10 paused at the push gate)
 
-|          |                                                                                                                                          |
-| -------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| Date     | 2026-09-16 14:14 CEST                                                                                                                    |
-| Session  | Executed `docs/planning/2026-09-16_12-15_SUPERB-seam-adr-execution-plan.md` (10 medium / 46 fine tasks) after the owner's "GET SHIT DONE" |
-| Verdict  | M1–M9 executed with every fine-task verify gate green. M10 stopped at its designed stopping point: F10.2 done, F10.1/F10.3 await the owner |
-| Git      | Working tree CLEAN; master = 10 heuristic auto-daemon commits AHEAD of origin/master (nothing pushed); CI green on origin HEAD `bd14092` |
-| Honesty  | 3 self-inflicted bugs found and fixed by the session's own gates (§d); 2 scope expansions beyond the plan (§b); 1 claim corrected (§g/note) |
+|         |                                                                                                                                             |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date    | 2026-09-16 14:14 CEST                                                                                                                       |
+| Session | Executed `docs/planning/2026-09-16_12-15_SUPERB-seam-adr-execution-plan.md` (10 medium / 46 fine tasks) after the owner's "GET SHIT DONE"   |
+| Verdict | M1–M9 executed with every fine-task verify gate green. M10 stopped at its designed stopping point: F10.2 done, F10.1/F10.3 await the owner  |
+| Git     | Working tree CLEAN; master = 10 heuristic auto-daemon commits AHEAD of origin/master (nothing pushed); CI green on origin HEAD `bd14092`    |
+| Honesty | 3 self-inflicted bugs found and fixed by the session's own gates (§d); 2 scope expansions beyond the plan (§b); 1 claim corrected (§g/note) |
 
 ## 1. What this session delivered in one paragraph
 
@@ -28,18 +28,18 @@ chunks, verified via MCP status: needs-embedding 0).
 
 ## a) FULLY DONE (every fine task's verify gate passed)
 
-| Block | Fine tasks | Evidence |
-| ----- | ---------- | -------- |
-| M1 Seam ADR | F1.1–F1.9 | ADR at `docs/planning/2026-09-16_13-25_seam-store-search-adr.md`; sketch compiled verbatim in /tmp (`env -u GOEXPERIMENT go build` OK) + `var _ GraphStoreQ = (*gr.Store)(nil)` proves the real store satisfies it; ROADMAP Theme 1 cross-links it; research README left research-only; dprint clean; all referenced paths exist |
-| M2 Dep quantification | F2.1–F2.5 | Measured: 31 mod/77 edges/60 go.sum → +metaengine+sqliteengine 58/168/94 → +system 205/1020/395; table in ADR §6; ONE inline annotation (quantified blockquote) on metaengine report CONTRA #1; /tmp module trashed; root `go.mod`/`go.sum` diff-clean |
-| M5 Tag protection | F5.1–F5.4 | Ruleset `protect-tags` id 23541172: target=tag, enforcement=active, `refs/tags/*`, deletion + non_fast_forward, NO bypass actors; API echo verified; AGENTS research-index rule added; CHANGELOG entry |
-| M3 Doc truth | F3.1–F3.5 | `Build` doc comment documents identical-text → first-doc-wins rule incl. warm-cache nuance; `ExampleOpenStore` + `ExampleNewSearcherWithOptions` output-verified under `go test`; build/vet/test/lint green; README points at the roles example |
-| M4 Benchmarks | F4.1–F4.6 | benchstat (golang.org/x/perf v0.0.0-20260908200009): Build/100 3.961ms ±2%, Build/1000 369.5ms ±2%, Search 101.1µs/948.6µs ±1%, SimilarPairs 391.1ms ±1%; NEW `BenchmarkStoreRoundTrip` (1k/10k on real SQLite file): 21.6ms / 197.4ms; file doc comment rewritten with protocol + numbers; ROADMAP citation synced 373→370ms; gates green |
-| M6 Tooling (core) | F6.1–F6.3 | `outside_code_spans`/`already_annotated` guard fix; NEW `check-rows.py` per-row completeness checker; regression suite ALL GREEN: self-tests pass, archived plan = COMPLETE exit 0 (0 false positives), planted miss = 51/52 with row named (0 false negatives), F12.1 dry-run proceeds (the historical false trip is dead) |
-| M7 Docs close-out | F7.1–F7.4 | dprint fmt+check clean; lychee 6/6 OK 0 errors after fix; F12.1 render check VERIFIED via GitHub markdown API (strikethrough renders, literal tildes protected inside code span); DOMAIN_LANGUAGE 20-row audit vs code — all accurate (SHA-256 confirmed in vector.go); SECURITY.md 404 fixed (new URL fetched and verified live); README `Reindex` phantom fixed |
-| M9 Release automation | F9.1–F9.3 | `.github/workflows/release.yml`: on `v*` tag, extracts the tag's CHANGELOG section, FAILS on empty extraction, least-privilege `contents: write`, pinned checkout SHA; actionlint 1.7.12 + YAML parse clean; CHANGELOG entry states "drafted only, no release executed" |
-| M8 Externals | F8.1–F8.2 | qmd#959 OPEN + silent; crush#3846 OPEN + silent (it is an ISSUE, not a PR — see §g note); window ends 2026-09-22; `qmd embed` ran: 1677 chunks / 173 docs / 11m48s; MCP status verified "Needs embedding: 0" |
-| M10 sync (part) | F10.2 | TODO_LIST rewritten: 10 done rows deleted, watch row evidence updated with 2026-09-16 states, BLOCKED rows untouched; FEATURES PLANNED rows re-cited (line-number rot fixed → identifier refs) + seam row now says "design DONE, implementation trigger-gated"; AGENTS non-negotiable #3 now points at the ADR's adapter/dep rules |
+| Block                 | Fine tasks | Evidence                                                                                                                                                                                                                                                                                                                                                          |
+| --------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M1 Seam ADR           | F1.1–F1.9  | ADR at `docs/planning/2026-09-16_13-25_seam-store-search-adr.md`; sketch compiled verbatim in /tmp (`env -u GOEXPERIMENT go build` OK) + `var _ GraphStoreQ = (*gr.Store)(nil)` proves the real store satisfies it; ROADMAP Theme 1 cross-links it; research README left research-only; dprint clean; all referenced paths exist                                  |
+| M2 Dep quantification | F2.1–F2.5  | Measured: 31 mod/77 edges/60 go.sum → +metaengine+sqliteengine 58/168/94 → +system 205/1020/395; table in ADR §6; ONE inline annotation (quantified blockquote) on metaengine report CONTRA #1; /tmp module trashed; root `go.mod`/`go.sum` diff-clean                                                                                                            |
+| M5 Tag protection     | F5.1–F5.4  | Ruleset `protect-tags` id 23541172: target=tag, enforcement=active, `refs/tags/*`, deletion + non_fast_forward, NO bypass actors; API echo verified; AGENTS research-index rule added; CHANGELOG entry                                                                                                                                                            |
+| M3 Doc truth          | F3.1–F3.5  | `Build` doc comment documents identical-text → first-doc-wins rule incl. warm-cache nuance; `ExampleOpenStore` + `ExampleNewSearcherWithOptions` output-verified under `go test`; build/vet/test/lint green; README points at the roles example                                                                                                                   |
+| M4 Benchmarks         | F4.1–F4.6  | benchstat (golang.org/x/perf v0.0.0-20260908200009): Build/100 3.961ms ±2%, Build/1000 369.5ms ±2%, Search 101.1µs/948.6µs ±1%, SimilarPairs 391.1ms ±1%; NEW `BenchmarkStoreRoundTrip` (1k/10k on real SQLite file): 21.6ms / 197.4ms; file doc comment rewritten with protocol + numbers; ROADMAP citation synced 373→370ms; gates green                        |
+| M6 Tooling (core)     | F6.1–F6.3  | `outside_code_spans`/`already_annotated` guard fix; NEW `check-rows.py` per-row completeness checker; regression suite ALL GREEN: self-tests pass, archived plan = COMPLETE exit 0 (0 false positives), planted miss = 51/52 with row named (0 false negatives), F12.1 dry-run proceeds (the historical false trip is dead)                                       |
+| M7 Docs close-out     | F7.1–F7.4  | dprint fmt+check clean; lychee 6/6 OK 0 errors after fix; F12.1 render check VERIFIED via GitHub markdown API (strikethrough renders, literal tildes protected inside code span); DOMAIN_LANGUAGE 20-row audit vs code — all accurate (SHA-256 confirmed in vector.go); SECURITY.md 404 fixed (new URL fetched and verified live); README `Reindex` phantom fixed |
+| M9 Release automation | F9.1–F9.3  | `.github/workflows/release.yml`: on `v*` tag, extracts the tag's CHANGELOG section, FAILS on empty extraction, least-privilege `contents: write`, pinned checkout SHA; actionlint 1.7.12 + YAML parse clean; CHANGELOG entry states "drafted only, no release executed"                                                                                           |
+| M8 Externals          | F8.1–F8.2  | qmd#959 OPEN + silent; crush#3846 OPEN + silent (it is an ISSUE, not a PR — see §g note); window ends 2026-09-22; `qmd embed` ran: 1677 chunks / 173 docs / 11m48s; MCP status verified "Needs embedding: 0"                                                                                                                                                      |
+| M10 sync (part)       | F10.2      | TODO_LIST rewritten: 10 done rows deleted, watch row evidence updated with 2026-09-16 states, BLOCKED rows untouched; FEATURES PLANNED rows re-cited (line-number rot fixed → identifier refs) + seam row now says "design DONE, implementation trigger-gated"; AGENTS non-negotiable #3 now points at the ADR's adapter/dep rules                                |
 
 ## b) PARTIALLY DONE
 
@@ -80,8 +80,8 @@ chunks, verified via MCP status: needs-embedding 0).
    43s into the background run. I wrote the assertion without tracing where the rows come from.
    Fixed by passing the store as cache (the real pipeline shape). Cost: one wasted 43s run.
 2. **My first completeness checker was wrong twice.** (a) The doubled-backtick regex
-   (`` ``[^`]+`` ``) can't match spans CONTAINING backticks; (b) I required every struck cell to
-   END with `~~`, which misreads the annotator's own output format (marker appended INSIDE the
+   (`[^`]+`) can't match spans CONTAINING backticks; (b) I required every struck cell to
+   END with`~~`, which misreads the annotator's own output format (marker appended INSIDE the
    first cell after the closing tildes) — it flagged the fully-annotated archived plan as 0/15
    and 0/52 struck. I wrote a validator for a format I hadn't re-read. F6.3's regression-first
    discipline caught both before anything trusted the tool.
