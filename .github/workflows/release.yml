@@ -24,8 +24,11 @@ jobs:
       - name: Extract CHANGELOG notes for the tag
         run: |
           version="${GITHUB_REF_NAME#v}"
-          awk -v pat="^## \\[${version}\\]" '
-            $0 ~ pat { found = 1; next }
+          header="## [${version}]"
+          # Plain-substring match via index(): passing the pattern through
+          # awk -v would eat the \[ escapes and break the regex match.
+          awk -v hdr="$header" '
+            index($0, hdr) == 1 { found = 1; next }
             found && /^## / { exit }
             found { print }
           ' CHANGELOG.md > RELEASE_NOTES.md
