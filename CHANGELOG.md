@@ -16,6 +16,12 @@ All notable changes to this project are documented in this file.
   compiles with `GOEXPERIMENT=jsonv2` and broke CI on pristine toolchains.
   The tagged v0.1.0 tree was never affected.
 
+- The json-v1 contract regressed again (2026-09-16): `store.go`,
+  `embed_openai.go`, and `embed_openai_test.go` came back as
+  `encoding/json/v2` via auto-committed session work run under the
+  machine-wide `GOEXPERIMENT=jsonv2` dev shell; the pre-push pristine-build
+  gate blocked the push. Imports restored to `encoding/json`.
+
 ### Added
 
 - Repository tooling: grouped dependabot updates (Go modules + Actions),
