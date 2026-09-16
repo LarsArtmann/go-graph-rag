@@ -99,6 +99,11 @@ see `embed_openai_live_test.go`).
   Go interface sketch (seam signatures) — binding before any code lands.
 - ROADMAP removes settled ideas entirely (decision trail lives in CHANGELOG +
   code docs); no struck-through zombies.
+- Next work session: the seam design itself (ADR + interface sketch, f.6).
+- metaengine dep-tree quantification: run soon (owner 2026-09-16), not
+  trigger-gated.
+- CGO stance for the seam ADR: core stays CGO-free; CGO is acceptable inside
+  optional adapter modules only.
 
 ## Upstream sync
 

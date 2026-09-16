@@ -234,3 +234,17 @@ commitments. TODO_LIST-grade rows are already routed.
    constraint written down; only you can set it.
 
 Waiting for instructions.
+
+## g) ANSWERED (same session, 08:10 CEST)
+
+1. Next session: **SEAM DESIGN** (owner) — f.6 is the confirmed next work
+   item: ADR + Go interface sketch, three backend classes.
+2. Dep quantification: **RUN SOON** (owner) — not trigger-gated; TODO_LIST
+   Medium row updated.
+3. CGO stance: **CGO IN OPTIONAL ADAPTERS ONLY** (owner) — core stays
+   CGO-free; the seam ADR writes this constraint down.
+
+All three recorded in `AGENTS.md` (Owner decisions 2026-09-16) and
+`TODO_LIST.md` (seam row + dep-quant row).
+
+Waiting for instructions.
