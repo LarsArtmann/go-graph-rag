@@ -309,4 +309,16 @@ session's harvest), items 18+ are spike/ROADMAP/hygiene fuel, not commitments.
    removal as the pattern, or keep settled ideas in ROADMAP struck through as
    a visible decision trail?
 
+## g) ANSWERED (same session, 02:15 CEST)
+
+1. Archive policy: **ARCHIVE** (owner) — fully-resolved status reports get
+   `git mv` to `docs/status/archived/`, same as planning docs.
+2. Seam deliverable: **ADR + Go interface sketch** (owner) — signatures
+   inline, binding before any code lands.
+3. ROADMAP settled ideas: **REMOVE** (owner) — removal confirmed as the
+   pattern; no struck-through zombies.
+
+All three recorded in `AGENTS.md` (Owner decisions 2026-09-16) and, where
+relevant, `TODO_LIST.md`.
+
 Waiting for instructions.
