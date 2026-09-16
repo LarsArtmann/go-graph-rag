@@ -1,14 +1,14 @@
 # ADR — The store/search seam: pluggable persistence and vector ranking
 
-|          |                                                                                                                                                          |
-| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Date     | 2026-09-16                                                                                                                                               |
-| Status   | Proposed → binding design for all future storage work (owner decision 2026-09-16: ADR + Go interface sketch BEFORE any code)                             |
-| Question | How do embedded ANN libraries, metaengine engines, and raw server databases plug into `go-graph-rag` without ever forcing a breaking SDK change?         |
-| Decision | Two small core interfaces — `VectorIndex` (ranking) and `GraphStore` (persistence) — introduced as ADDITIONS in v0.x, with the current linear scan and   |
-|          | SQLite store as the reference implementations. Every backend lands in a separate adapter module. Core `go.mod` never grows. Core stays CGO-free.         |
-| Method   | Seam surfaces re-read file-by-file (store.go, search.go, embed.go, build.go, graph.go); dependency trees measured in a scratch consumer module;          |
-|          | semantics taken from the two research reports (cited inline). No seam code enters core in this ADR.                                                      |
+|          |                                                                                                                                                        |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Date     | 2026-09-16                                                                                                                                             |
+| Status   | Proposed → binding design for all future storage work (owner decision 2026-09-16: ADR + Go interface sketch BEFORE any code)                           |
+| Question | How do embedded ANN libraries, metaengine engines, and raw server databases plug into `go-graph-rag` without ever forcing a breaking SDK change?       |
+| Decision | Two small core interfaces — `VectorIndex` (ranking) and `GraphStore` (persistence) — introduced as ADDITIONS in v0.x, with the current linear scan and |
+|          | SQLite store as the reference implementations. Every backend lands in a separate adapter module. Core `go.mod` never grows. Core stays CGO-free.       |
+| Method   | Seam surfaces re-read file-by-file (store.go, search.go, embed.go, build.go, graph.go); dependency trees measured in a scratch consumer module;        |
+|          | semantics taken from the two research reports (cited inline). No seam code enters core in this ADR.                                                    |
 
 ## 1. Context
 
@@ -53,14 +53,14 @@ happen.
 
 ## 3. Extension points (re-read 2026-09-16)
 
-| Surface                | Today                                                                                       | Seam                                       |
-| ---------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------ |
-| Embedding cache        | `Cache` interface (`store.go:60-66`), `Store` implements                                     | Unchanged — already pluggable              |
-| Embedding provider     | `Provider` interface (`embed.go:32-43`), `NewProvider` factory                               | Unchanged — already pluggable              |
-| Graph persistence      | Concrete `*Store` (`store.go:73`): `ReplaceGraph`/`LoadGraph`/`LoadEmbeddings`/`Stats`       | `GraphStore` interface (sketch §5) — `*Store` already satisfies it |
-| Vector ranking         | `rankHits` linear scan over `map[string]Vector` (`search.go:239`)                            | `VectorIndex` interface (sketch §5)        |
-| Searcher warm start    | `NewSearcher`/`NewSearcherWithOptions` over nodes+edges+vectors (`search.go:99-133`)         | Index-backed constructor added later, non-breaking |
-| Vocabulary and wire    | `Node`/`Edge`/`Graph`/`Hit`/`SearchResult` (`graph.go`, `search.go`)                         | Never delegated — frozen at v1             |
+| Surface             | Today                                                                                  | Seam                                                               |
+| ------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| Embedding cache     | `Cache` interface (`store.go:60-66`), `Store` implements                               | Unchanged — already pluggable                                      |
+| Embedding provider  | `Provider` interface (`embed.go:32-43`), `NewProvider` factory                         | Unchanged — already pluggable                                      |
+| Graph persistence   | Concrete `*Store` (`store.go:73`): `ReplaceGraph`/`LoadGraph`/`LoadEmbeddings`/`Stats` | `GraphStore` interface (sketch §5) — `*Store` already satisfies it |
+| Vector ranking      | `rankHits` linear scan over `map[string]Vector` (`search.go:239`)                      | `VectorIndex` interface (sketch §5)                                |
+| Searcher warm start | `NewSearcher`/`NewSearcherWithOptions` over nodes+edges+vectors (`search.go:99-133`)   | Index-backed constructor added later, non-breaking                 |
+| Vocabulary and wire | `Node`/`Edge`/`Graph`/`Hit`/`SearchResult` (`graph.go`, `search.go`)                   | Never delegated — frozen at v1                                     |
 
 ## 4. The three backend classes
 
@@ -68,38 +68,38 @@ happen.
 
 Candidates from ROADMAP Theme 1: `sqlite-vec`, `hannoy` (pure-Go HNSW), an in-process HNSW port.
 
-| Property            | Semantics                                                                                                                                                            |
-| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ANN                 | Native. This is the only class that actually unlocks the ~50k trigger.                                                                                                |
-| Scores              | Returned per hit (cosine distance by the index; converted to cosine SIMILARITY at the adapter boundary so core never sees a distance). `VectorMatch.Scored = true`.  |
-| Metric coupling     | Chosen at index creation, frozen for the index's lifetime. Adapter must declare it (`Metric()`) and refuse `Replace`/`Search` on mismatch with the core's expectation. |
-| Filters             | Split by sub-candidate: `sqlite-vec` pre-filters in SQL (`WHERE` before the scan — exact candidate sets); HNSW-family libs post-filter after the graph walk — selective filters under post-filtering cost recall and MUST be mitigated by overfetch (fetch k', filter, trim to k). The adapter documents which semantics it implements; the core applies `MinScore` after the backend returns regardless. |
-| Ops footprint       | Same process, same file model as today (vectors as BLOBs, index rebuilt on load or extension-managed). No new deployment story.                                        |
-| CGO                 | `sqlite-vec` typically builds through CGO or a precompiled extension → adapter module carries it; `hannoy`/HNSW-port stay pure Go. Core never does.                    |
+| Property        | Semantics                                                                                                                                                                                                                                                                                                                                                                                                 |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ANN             | Native. This is the only class that actually unlocks the ~50k trigger.                                                                                                                                                                                                                                                                                                                                    |
+| Scores          | Returned per hit (cosine distance by the index; converted to cosine SIMILARITY at the adapter boundary so core never sees a distance). `VectorMatch.Scored = true`.                                                                                                                                                                                                                                       |
+| Metric coupling | Chosen at index creation, frozen for the index's lifetime. Adapter must declare it (`Metric()`) and refuse `Replace`/`Search` on mismatch with the core's expectation.                                                                                                                                                                                                                                    |
+| Filters         | Split by sub-candidate: `sqlite-vec` pre-filters in SQL (`WHERE` before the scan — exact candidate sets); HNSW-family libs post-filter after the graph walk — selective filters under post-filtering cost recall and MUST be mitigated by overfetch (fetch k', filter, trim to k). The adapter documents which semantics it implements; the core applies `MinScore` after the backend returns regardless. |
+| Ops footprint   | Same process, same file model as today (vectors as BLOBs, index rebuilt on load or extension-managed). No new deployment story.                                                                                                                                                                                                                                                                           |
+| CGO             | `sqlite-vec` typically builds through CGO or a precompiled extension → adapter module carries it; `hannoy`/HNSW-port stay pure Go. Core never does.                                                                                                                                                                                                                                                       |
 
 ### 4.2 Class B — metaengine engines (adapter = projection, not replacement)
 
-| Property        | Semantics                                                                                                                                                              |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Property        | Semantics                                                                                                                                                                                                                                                                                                |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | ANN             | None shipped. Every engine's vector path is brute-force O(N·D) with a documented <10K-vector comfort cap (`vector_search.go:152-156`); `VectorBackend` PERMITS HNSW/PQ but no engine implements one. Adopting metaengine buys zero scale headroom over the core's own scan — same complexity, more code. |
-| Scores          | Computed by the engine (cosine/dot/euclidean per query); `Scored = true`. Core accepts cosine only and rejects other metrics at the adapter boundary.                   |
-| Metric coupling | Per query — the loosest of the three classes.                                                                                                                           |
-| Filters         | `VectorFilterBackend` pre-filters BEFORE ranking — good semantics, exists today.                                                                                        |
-| Graph model     | `Edge{From, To}` — no relation labels, no weights (`types.go:45-48`). The SDK's `Edge{Source, Target, Relation, Weight}` + derived `RelationSimilar` are the core of hybrid ranking and CANNOT be expressed; they would flee to side Maps, doubling write paths and losing single-edge atomicity. |
-| Consequence     | An adapter is a PROJECTION: the SDK graph/types stay the source of truth; metaengine mirrors vector + neighbor lookups for consumers already living in that world (CV app-layer per SUPERB T01/T29). It never becomes the SDK's store. |
-| Deps            | Measured in §6: +27 modules into every consumer graph for metaengine + sqliteengine alone.                                                                              |
+| Scores          | Computed by the engine (cosine/dot/euclidean per query); `Scored = true`. Core accepts cosine only and rejects other metrics at the adapter boundary.                                                                                                                                                    |
+| Metric coupling | Per query — the loosest of the three classes.                                                                                                                                                                                                                                                            |
+| Filters         | `VectorFilterBackend` pre-filters BEFORE ranking — good semantics, exists today.                                                                                                                                                                                                                         |
+| Graph model     | `Edge{From, To}` — no relation labels, no weights (`types.go:45-48`). The SDK's `Edge{Source, Target, Relation, Weight}` + derived `RelationSimilar` are the core of hybrid ranking and CANNOT be expressed; they would flee to side Maps, doubling write paths and losing single-edge atomicity.        |
+| Consequence     | An adapter is a PROJECTION: the SDK graph/types stay the source of truth; metaengine mirrors vector + neighbor lookups for consumers already living in that world (CV app-layer per SUPERB T01/T29). It never becomes the SDK's store.                                                                   |
+| Deps            | Measured in §6: +27 modules into every consumer graph for metaengine + sqliteengine alone.                                                                                                                                                                                                               |
 
 ### 4.3 Class C — raw server databases (Dgraph exemplar)
 
-| Property        | Semantics                                                                                                                                                              |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ANN             | Native HNSW server-side (`@index(hnsw(metric:"cosine", ...))` since v24). Tunables (`exponent`, `efConstruction`, `efSearch`) are adapter/consumer domain.             |
-| Metric coupling | Coupled in the SCHEMA at index time — changing metric means a schema migration. Declared via `Metric()`, enforced at construction.                                       |
+| Property        | Semantics                                                                                                                                                                                                                                                                                                                       |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ANN             | Native HNSW server-side (`@index(hnsw(metric:"cosine", ...))` since v24). Tunables (`exponent`, `efConstruction`, `efSearch`) are adapter/consumer domain.                                                                                                                                                                      |
+| Metric coupling | Coupled in the SCHEMA at index time — changing metric means a schema migration. Declared via `Metric()`, enforced at construction.                                                                                                                                                                                              |
 | Scores          | Path-dependent: the GraphQL kNN surface returns `vector_distance`, but DQL `similar_to` returns matching uids ordered by distance without per-hit distances — uidS-WITHOUT-DISTANCES. The seam therefore allows `Scored = false`; the core then re-scores candidates by cosine over the loaded snapshot vectors before ranking. |
-| Filters         | Server-side composition of metadata predicates with kNN was NOT verified in the 2026-09-15 research — an explicit spike question before any adapter is written.         |
-| Concurrency     | Concurrent writers meet `ErrAborted` transaction retries; the SDK's one-writer model does not surface this today, so the adapter owns a retry policy.                   |
-| Ops footprint   | Categorically different: 2 processes minimum (Zero + Alpha), prod 3+3, Linux-only, Alpha sized 8+ cores/16GB+/3000+ IOPS, client majors hard-coupled to server majors (`dgo/v240`, `dgo/v250`). CONSUMER-owned deployment (dgraph report scenario C); the SDK ships at most a pattern, not a default. |
-| Non-negotiable  | `dgo` (gRPC + protobuf) NEVER enters core `go.mod` — see §6.                                                                                                            |
+| Filters         | Server-side composition of metadata predicates with kNN was NOT verified in the 2026-09-15 research — an explicit spike question before any adapter is written.                                                                                                                                                                 |
+| Concurrency     | Concurrent writers meet `ErrAborted` transaction retries; the SDK's one-writer model does not surface this today, so the adapter owns a retry policy.                                                                                                                                                                           |
+| Ops footprint   | Categorically different: 2 processes minimum (Zero + Alpha), prod 3+3, Linux-only, Alpha sized 8+ cores/16GB+/3000+ IOPS, client majors hard-coupled to server majors (`dgo/v240`, `dgo/v250`). CONSUMER-owned deployment (dgraph report scenario C); the SDK ships at most a pattern, not a default.                           |
+| Non-negotiable  | `dgo` (gRPC + protobuf) NEVER enters core `go.mod` — see §6.                                                                                                                                                                                                                                                                    |
 
 ## 5. Interface sketch (binding shape, v0.x additions)
 
@@ -196,14 +196,14 @@ type GraphStore interface {
 
 ### 5.1 What core exports vs what adapters own
 
-| Core (this module) owns                                            | Adapter modules own                                                        |
-| ------------------------------------------------------------------ | -------------------------------------------------------------------------- |
+| Core (this module) owns                                                       | Adapter modules own                                                                   |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
 | `VectorIndex`/`GraphStore`/`VectorQuery`/`VectorMatch`/`DeclaredMetric` types | Construction: `Open*` functions with backend-specific knobs (ef, metric params, DSNs) |
-| The reference `VectorIndex`: today's linear scan, promoted          | Index-time metric and parameter choices, schema management (class C)        |
-| Two-tier ranking, `SearcherOptions` roles, `MinScore` re-application | Pre- vs post-filter strategy + its documentation                            |
-| Graph expansion, `RenderContext`, determinism guarantees            | Distance→similarity conversion; `Scored=false` handling inputs              |
-| `Cache`/`Provider` seams (unchanged), SQLite `*Store` as default     | Retry policies (`ErrAborted`), health checks, CGO build tags               |
-| `go.mod`: the permanent 3-dependency budget                         | ALL third-party dependencies (ANN libs, `dgo`, metaengine), in THEIR go.mod |
+| The reference `VectorIndex`: today's linear scan, promoted                    | Index-time metric and parameter choices, schema management (class C)                  |
+| Two-tier ranking, `SearcherOptions` roles, `MinScore` re-application          | Pre- vs post-filter strategy + its documentation                                      |
+| Graph expansion, `RenderContext`, determinism guarantees                      | Distance→similarity conversion; `Scored=false` handling inputs                        |
+| `Cache`/`Provider` seams (unchanged), SQLite `*Store` as default              | Retry policies (`ErrAborted`), health checks, CGO build tags                          |
+| `go.mod`: the permanent 3-dependency budget                                   | ALL third-party dependencies (ANN libs, `dgo`, metaengine), in THEIR go.mod           |
 
 ### 5.2 Planned module layout
 
@@ -225,11 +225,11 @@ Scratch consumer module in /tmp requiring `go-graph-rag v0.1.0` from the proxy, 
 `go list -m all` + `go mod graph` + `go.sum` line count (Go 1.26.7, 2026-09-16, module trashed
 afterwards; root repo verified diff-clean):
 
-| Consumer scenario                              | modules (`go list -m all`) | `go mod graph` edges | `go.sum` lines |
-| ---------------------------------------------- | ------------------------- | -------------------- | -------------- |
-| `go-graph-rag` only (status quo)               | 31                        | 77                   | 60             |
-| + `metaengine/v4` + `sqliteengine/v4`          | 58 (+27)                  | 168 (+91)            | 94 (+34)       |
-| + `system/v4` (brings metaengine world)        | 205 (+174)                | 1020 (+943)          | 395 (+335)     |
+| Consumer scenario                       | modules (`go list -m all`) | `go mod graph` edges | `go.sum` lines |
+| --------------------------------------- | -------------------------- | -------------------- | -------------- |
+| `go-graph-rag` only (status quo)        | 31                         | 77                   | 60             |
+| + `metaengine/v4` + `sqliteengine/v4`   | 58 (+27)                   | 168 (+91)            | 94 (+34)       |
+| + `system/v4` (brings metaengine world) | 205 (+174)                 | 1020 (+943)          | 395 (+335)     |
 
 What the +system column pulls into every consumer graph: `cockroachdb/pebble`,
 `dgraph-io/badger`, `jackc/pgx`, `knadh/koanf`, `ThreeDotsLabs/watermill` + redisstream,
@@ -277,14 +277,14 @@ degradation explicit at the type level instead of discovering it in production.
 
 ## 9. Decision triggers (when adapters get built)
 
-| Trigger                                                                                    | Unlocks                                    |
-| ------------------------------------------------------------------------------------------ | ------------------------------------------ |
-| Sustained corpus approaching ~50k nodes, or measured build/scan pain at real size           | Class A spike (`hannoy`/`sqlite-vec`/HNSW port) |
-| Shared ANN benchmark harness shows a candidate beating the scan on recall AND p50/p95       | Class A adapter module                     |
-| A second SDK consumer demands metaengine projection of the graph                            | Class B adapter module (§4.2 projection)   |
-| A consumer explicitly requires server-side multi-hop queries or Dgraph compatibility        | Class C pattern doc; consumer-owned adapter |
-| metaengine ships an ANN engine behind `VectorBackend`                                       | Re-run the metaengine evaluation           |
-| The SDK becomes event-fed (documents arrive as a domain event stream)                       | Re-evaluate the write model honestly       |
+| Trigger                                                                               | Unlocks                                         |
+| ------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| Sustained corpus approaching ~50k nodes, or measured build/scan pain at real size     | Class A spike (`hannoy`/`sqlite-vec`/HNSW port) |
+| Shared ANN benchmark harness shows a candidate beating the scan on recall AND p50/p95 | Class A adapter module                          |
+| A second SDK consumer demands metaengine projection of the graph                      | Class B adapter module (§4.2 projection)        |
+| A consumer explicitly requires server-side multi-hop queries or Dgraph compatibility  | Class C pattern doc; consumer-owned adapter     |
+| metaengine ships an ANN engine behind `VectorBackend`                                 | Re-run the metaengine evaluation                |
+| The SDK becomes event-fed (documents arrive as a domain event stream)                 | Re-evaluate the write model honestly            |
 
 Until one fires: no adapter code, no new dependencies, core unchanged. The ROADMAP Theme 1
 ideas (ANN benchmark harness, metadata-filtered ANN semantics, ANN-winner ADR) are refinements

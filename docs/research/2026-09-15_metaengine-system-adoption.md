@@ -153,6 +153,14 @@ changes. Revisit SDK-layer adoption only at the documented triggers (§9).
    metaengine drags cqrs-lite core modules (`record`, `id`, `dedup`), `go-error-family`, `go-sse`,
    and their transitive tree into every consumer's `go.sum` — including consumers that will never
    run an event-sourced system.
+   > **Quantified 2026-09-16** (owner: "run soon"; scratch consumer module in /tmp, `go mod
+   > graph`, Go 1.26.7): status quo 31 modules / 77 graph edges / 60 `go.sum` lines → adding
+   > `metaengine/v4` + `sqliteengine/v4` 58 / 168 / 94 (+27 / +91 / +34, including ginkgo,
+   > gomega, go-snaps, templ, protobuf leaking into the build list) → adding `system/v4` on top
+   > 205 / 1020 / 395 (6.6× modules; pebble, badger, pgx, koanf, watermill + redisstream,
+   > OpenTelemetry, Prometheus, sentry, cbor, redis, testcontainers + the Docker client all
+   > enter the consumer graph). Full table:
+   > `docs/planning/2026-09-16_13-25_seam-store-search-adr.md` §6.
 2. **Conceptual inversion.** metaengine's write path IS its design: folds over events, cost-planned
    per query. `Build(docs, edges)` has no event stream. You would either fake events (paying the
    abstraction and getting replay/catch-up machinery you cannot use — the store is deliberately a

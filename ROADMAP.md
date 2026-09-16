@@ -8,7 +8,10 @@
 ### 1. Retrieval at scale
 
 The index is a full-rebuild, linear-scan design that is deliberately simple.
-Scale changes the math, not the API.
+Scale changes the math, not the API. The integration point for everything in
+this theme is decided: `docs/planning/2026-09-16_13-25_seam-store-search-adr.md`
+(VectorIndex/GraphStore seams, three backend classes, adapter modules keep core
+dependency-free).
 
 Raw ideas:
 
