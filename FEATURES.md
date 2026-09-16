@@ -84,8 +84,8 @@
 
 ## Planned
 
-| Feature                 | Status       | Notes                                                                                         |
-| ----------------------- | ------------ | --------------------------------------------------------------------------------------------- |
-| ANN/HNSW vector backend | ⚪ `PLANNED` | `README.md:89`; retrieval is a linear scan today (`search.go:243`)                            |
-| Incremental indexing    | ⚪ `PLANNED` | `README.md:80`; `ReplaceGraph` is a full swap; measured quadratic cost in `bench_test.go` doc |
+| Feature                                         | Status       | Notes                                                                                                                                                                  |
+| ----------------------------------------------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ANN/HNSW vector backend                         | ⚪ `PLANNED` | `README.md:89`; retrieval is a linear scan today (`search.go:243`)                                                                                                     |
+| Incremental indexing                            | ⚪ `PLANNED` | `README.md:80`; `ReplaceGraph` is a full swap; measured quadratic cost in `bench_test.go` doc                                                                          |
 | Pluggable store/search seam (external backends) | ⚪ `PLANNED` | owner-approved design 2026-09-15 (`TODO_LIST.md` High row; dgraph report §6 scenario B); no code exists; adapters must keep `dgo`/metaengine deps out of core `go.mod` |
