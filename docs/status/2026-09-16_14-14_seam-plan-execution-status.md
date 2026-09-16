@@ -189,12 +189,23 @@ _ANSWERED (inline, strikethrough per policy):_
    as-is, or squash/reword into per-task detailed commits first (local-only rewrite) before
    pushing?~~ → **ANSWERED: leave history intact, push as-is.** Rules: never rewrite what the
    daemon committed; the heuristic trail is expected behavior.
+   _Executed: pushed `bd14092..f79c58a` (13 commits incl. the daemon's sweep of the CHANGELOG
+   and this report; pre-push pristine guard passed); `go-test` run `35099876210` GREEN on the
+   new HEAD._
 2. ~~**Commit the two external skill-repo changes?** (a) `~/projects/SKILLS` docs-health tooling
    (guard fix, dotted IDs, check-rows.py, test rewrite); (b) go-cqrs-lite `modules.md` wording
    fix — and bump the flake input so the installed skill actually receives it. Yes to both,
    which, or leave for their own sessions?~~ → **ANSWERED: commit both in their own repos now**
    (go-cqrs-lite gets ONLY the modules.md change — its pre-existing workflow changes stay
    untouched), plus the flake-input bump so the installed skill receives the fix.
+   _Executed: SKILLS repo — the daemon had already committed the bulk (`ff8cda2`, `db47b0e`);
+   my follow-up fix round landed as `0d1aca6` with a detailed message. go-cqrs-lite — my
+   explicit commit was blocked by its pre-commit `nix fmt` hook (which also flagged 17
+   unrelated in-progress vector-file changes from a parallel work stream, left untouched);
+   the daemon committed modules.md in `b13e17bba` instead. No lock-file bump exists: the
+   installed skill is linked by the go-cqrs-lite devShell hook to the flake's own source, so
+   it was re-linked to the fresh source (`3bdhizr9…`) and the installed modules.md now reads
+   true (verified)._
 3. ~~**The offered upstream patches (qmd#959, crush#3846): send them now, or hold past the
    2026-09-22 window?** Both upstreams are still silent after ~24h.~~ → **ANSWERED: hold past
    the window (no grace-period reminder pings); if asked "did you send it", the patch exists in
@@ -202,4 +213,6 @@ _ANSWERED (inline, strikethrough per policy):_
 
 ---
 
-_Next instruction: F10.1 final pristine gates → push → CI watch (items 1–3), on the owner's go._
+_F10.1 ran ALL GREEN (pristine build/vet/test, golangci 0 issues, tidy drift clean, dprint
+check clean) before the push; F10.3 is COMPLETE: master = origin/master = `f79c58a`, CI green
+(run `35099876210`). M1–M10 all executed._
