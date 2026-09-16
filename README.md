@@ -95,8 +95,9 @@ walkthrough of all three roles.
 
 - **Dependency-light**: stdlib-only except `samber/lo` and `modernc.org/sqlite`.
   No `encoding/json/v2` (builds without `GOEXPERIMENT=jsonv2`).
-- **Full rebuild, not incremental**: `Reindex` replaces the whole graph in one
-  transaction; the embedding cache makes that cheap. Revisit around ~50k nodes.
+- **Full rebuild, not incremental**: `ReplaceGraph` swaps the whole persisted
+  graph in one transaction; the embedding cache makes that cheap. Revisit
+  around ~50k nodes.
 - **One writer per store file**: take an ownership lease in the caller if more
   than one process might open the same DSN.
 - **Two-tier ranking is by design**: assert hub _reachability_, never
