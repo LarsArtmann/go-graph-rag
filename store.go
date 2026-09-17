@@ -3,7 +3,7 @@ package graphrag
 import (
 	"context"
 	"database/sql"
-	"encoding/json/v2"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"time"
