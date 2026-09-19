@@ -25,7 +25,8 @@ Standalone GraphRAG SDK extracted from the CV repo's `graphrag/` module
   blocks truthful, `go test` enforces them), `bench_test.go` (reference
   numbers recorded in the file doc comment),
   `embed_openai_live_test.go` (env-gated, skips offline).
-- `.githooks/pre-push` — pristine-build guard; install once per clone with
+- `.githooks/pre-push` — three-gate guard (pristine build, tidy drift,
+  dprint check); install once per clone with
   `git config core.hooksPath .githooks`.
 - `.github/workflows/release.yml` — GitHub Release automation on `v*` tags
   (notes extracted from the matching CHANGELOG section; empty extraction fails
@@ -83,9 +84,11 @@ numbers are re-measured.
 ## Gotchas
 
 - The dev shell exports `GOEXPERIMENT=jsonv2` machine-wide; CI does not.
-  Before pushing, pristine-check with
-  `env -u GOEXPERIMENT GOTOOLCHAIN=go1.27.1 go build ./...` — it is the only
-  guard against experiment-gated stdlib sneaking in.
+  The `.githooks/pre-push` guard now runs ALL THREE gates on every push
+  (pristine build, tidy drift, dprint check — install with
+  `git config core.hooksPath .githooks`), and the dprint/tidy gates ALSO
+  catch non-experiment drift. All three blocking paths were proven by
+  planted-failure dry-run pushes (2026-09-19).
 - golangci-lint is pinned to v2.13.2 in CI (parity with CV's pin). Bump both
   repos together; the config requires the v2 binary.
 - The json-v2 regression is RECURRING, not historical: it has slipped in

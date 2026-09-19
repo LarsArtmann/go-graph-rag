@@ -24,13 +24,17 @@ Run the following commands to set up your development environment:
 The module must build without `GOEXPERIMENT=jsonv2`; see AGENTS.md for the
 pristine-toolchain check and all canonical commands.
 
-Install the pre-push guard once per clone (blocks pushes of trees that only
-build under the dev shell's `GOEXPERIMENT=jsonv2`):
+Install the pre-push guard once per clone — it runs all three gates on
+every push and blocks on any failure:
 
     git config core.hooksPath .githooks
 
-Markdown/JSON/YAML formatting is enforced by dprint in CI; format locally
-with `nix run nixpkgs#dprint -- fmt` (or `dprint fmt`).
+1. Pristine build — the tree must build without `GOEXPERIMENT=jsonv2`.
+2. Tidy drift — `go mod tidy` must leave go.mod/go.sum unchanged.
+3. dprint check — markdown/json/yaml formatting must be clean.
+
+Markdown/JSON/YAML formatting is enforced by dprint in CI and by the hook
+locally; format with `nix run nixpkgs#dprint -- fmt` (or `dprint fmt`).
 
 ## Reporting Issues
 
