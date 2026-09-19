@@ -39,8 +39,8 @@ Standalone GraphRAG SDK extracted from the CV repo's `graphrag/` module
    semantics, no CV-calibrated defaults in doc comments. Fixtures in tests
    may use any vocabulary.
 2. **`encoding/json` (v1) only.** The SDK must build without
-   `GOEXPERIMENT=jsonv2` (json/v2 is experiment-gated in Go 1.26; importing
-   it turns CI red). The one `omitempty`-on-float (`NodeAttrs.Score`) is
+   `GOEXPERIMENT=jsonv2` (json/v2 is experiment-gated; importing it turns
+   CI red). The one `omitempty`-on-float (`NodeAttrs.Score`) is
    documented for the v2-engine no-op behavior.
 3. **stdlib-only except `samber/lo` + `modernc.org/sqlite`**
    (`testify` in tests). Adding a dependency needs a hard reason. Backend
@@ -50,9 +50,12 @@ Standalone GraphRAG SDK extracted from the CV repo's `graphrag/` module
    stays CGO-free.
 4. **No `primitives` / CV-repo imports.** The extraction cut exactly that
    dependency (`sleepContext` is inlined in `embed_openai.go`).
-5. **golangci config mirrors CV's, minus CV-specific depguard rules,
-   experiment build-tags, and goheader** (the SDK lints exactly as it
-   builds: without experiments). Keep the two in sync when tightening
+5. **golangci config mirrors CV's, minus CV-specific depguard rules.**
+   Since the Go 1.27.1 alignment (af3be2c, 2026-09-19, owner-requested) the
+   config ALSO carries CV's experiment build-tags (`goexperiment.*`) and
+   goheader, so the linter type-checks the experiment-enabled surface;
+   the `env -u GOEXPERIMENT` pristine BUILD gate below remains the actual
+   json-v2 regression guard. Keep the two configs in sync when tightening
    linters; the v2 config format is required.
 
 ## Commands

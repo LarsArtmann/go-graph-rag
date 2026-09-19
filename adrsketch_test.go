@@ -17,6 +17,7 @@ package graphrag_test
 
 import (
 	"context"
+	"maps"
 	"sort"
 	"testing"
 
@@ -115,8 +116,10 @@ type GraphStore interface {
 var _ GraphStore = (*graphrag.Store)(nil)
 
 // The fake below is a legal adapter under the binding shape.
-var _ VectorIndex = (*fakeVectorIndex)(nil)
-var _ GraphStore = (*fakeGraphStore)(nil)
+var (
+	_ VectorIndex = (*fakeVectorIndex)(nil)
+	_ GraphStore  = (*fakeGraphStore)(nil)
+)
 
 // ---- Fakes ----
 
@@ -134,12 +137,8 @@ func (f *fakeVectorIndex) Metric() DeclaredMetric {
 }
 
 func (f *fakeVectorIndex) Replace(vectors map[string]graphrag.Vector) error {
-	replace := make(map[string]graphrag.Vector, len(vectors))
-	for id, vector := range vectors {
-		replace[id] = vector
-	}
-
-	f.vectors = replace
+	f.vectors = make(map[string]graphrag.Vector, len(vectors))
+	maps.Copy(f.vectors, vectors)
 
 	return nil
 }
@@ -220,9 +219,9 @@ func TestADRSketch_VectorIndexComposition(t *testing.T) {
 	index := &fakeVectorIndex{}
 
 	require.NoError(t, index.Replace(map[string]graphrag.Vector{
-		"near":  graphrag.Vector{1, 0, 0, 0},
-		"close": graphrag.Vector{0.8, 0.6, 0, 0},
-		"far":   graphrag.Vector{0, 1, 0, 0},
+		"near":  {1, 0, 0, 0},
+		"close": {0.8, 0.6, 0, 0},
+		"far":   {0, 1, 0, 0},
 	}), "Replace is the full-rebuild entry point")
 
 	query := graphrag.Vector{1, 0, 0, 0}
@@ -238,7 +237,7 @@ func TestADRSketch_VectorIndexComposition(t *testing.T) {
 	})
 	require.NoError(t, err)
 	require.Len(t, matches, 2, "backend MUST honor Filter")
-	assert.True(t, matches[0].Score >= matches[1].Score, "results are best first")
+	assert.GreaterOrEqual(t, matches[0].Score, matches[1].Score, "results are best first")
 
 	coreVisible := make([]VectorMatch, 0, len(matches))
 	for _, match := range matches {
