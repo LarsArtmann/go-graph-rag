@@ -22,22 +22,22 @@
 | Feature                                        | Status                | Notes                                                                                                   |
 | ---------------------------------------------- | --------------------- | ------------------------------------------------------------------------------------------------------- |
 | `Build` index construction                     | 🟢 `FULLY_FUNCTIONAL` | `build.go:91`; documents + caller edges in, graph + vectors out; end-to-end `store_test.go:90`          |
-| `RelationSimilar` edge derivation              | 🟢 `FULLY_FUNCTIONAL` | `build.go:255`; topK nearest same-kind neighbors above threshold, deduped per unordered pair            |
-| Same-kind rule for similar edges               | 🟢 `FULLY_FUNCTIONAL` | `build.go:276`; pinned by `store_test.go:161` (cross-kind pairs never link)                             |
+| `RelationSimilar` edge derivation              | 🟢 `FULLY_FUNCTIONAL` | `build.go:288`; topK nearest same-kind neighbors above threshold, deduped per unordered pair            |
+| Same-kind rule for similar edges               | 🟢 `FULLY_FUNCTIONAL` | `build.go:302`; pinned by `store_test.go:161` (cross-kind pairs never link)                             |
 | Embedding cache integration during build       | 🟢 `FULLY_FUNCTIONAL` | `build.go:138`; second build fully served from cache (`store_test.go:148`: `CacheHits: 3, Embedded: 0`) |
-| Duplicate document-ID collapse (first wins)    | 🟢 `FULLY_FUNCTIONAL` | `build.go:114`; pinned incl. persistence by `hardening_test.go:91`                                      |
-| Deterministic ordering (nodes, edges, renders) | 🟢 `FULLY_FUNCTIONAL` | `graph.go:71`, `graph.go:202`; byte-stable context pinned by golden test `hardening_test.go:269`        |
+| Duplicate document-ID collapse (first wins)    | 🟢 `FULLY_FUNCTIONAL` | `build.go:114`; pinned incl. persistence by `hardening_test.go:92`                                      |
+| Deterministic ordering (nodes, edges, renders) | 🟢 `FULLY_FUNCTIONAL` | `graph.go:71`, `graph.go:202`; byte-stable context pinned by golden test `hardening_test.go:270`        |
 
 ## Embedding providers
 
 | Feature                                         | Status                | Notes                                                                                                                                                          |
 | ----------------------------------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Offline hash provider (1024-dim, deterministic) | 🟢 `FULLY_FUNCTIONAL` | `embed_hash.go`; unigram+bigram hashing trick, L2-normalized; `embed_test.go:53`, `hardening_test.go:18`                                                       |
+| Offline hash provider (1024-dim, deterministic) | 🟢 `FULLY_FUNCTIONAL` | `embed_hash.go`; unigram+bigram hashing trick, L2-normalized; `embed_test.go:53`, `hardening_test.go:19`                                                       |
 | OpenAI-compatible HTTP provider                 | 🟢 `FULLY_FUNCTIONAL` | `embed_openai.go`; verified against httptest doubles (`embed_openai_test.go`); opt-in live-endpoint smoke test exists (`embed_openai_live_test.go`, env-gated) |
-| Batching (64 texts/request) + input reordering  | 🟢 `FULLY_FUNCTIONAL` | `embed_openai.go:155`; `embed_openai_test.go:138`, `:242`                                                                                                      |
+| Batching (64 texts/request) + input reordering  | 🟢 `FULLY_FUNCTIONAL` | `embed_openai.go:178`; `embed_openai_test.go:147`, `:253`                                                                                                      |
 | Opt-in concurrent embed batches                 | 🟢 `FULLY_FUNCTIONAL` | `EmbeddingConfig.EmbedConcurrency` (default 1 = identical serial path); bounded stdlib worker pool, order-preserving; overlap, order, and cancellation pinned (`embed_openai_test.go`), overhead benched (`bench_test.go`) |
-| Retry with linear backoff (429/5xx retryable)   | 🟢 `FULLY_FUNCTIONAL` | `embed_openai.go:184`; third-attempt win + 4xx fail-fast + backoff cancellation all pinned                                                                     |
-| Response validation (count, dims, empty)        | 🟢 `FULLY_FUNCTIONAL` | `embed_openai.go:296`; `ErrEmbedCountMismatch` / `ErrEmbedDimsMismatch` / `ErrEmbedEmptyResponse`                                                              |
+| Retry with linear backoff (429/5xx retryable)   | 🟢 `FULLY_FUNCTIONAL` | `embed_openai.go:293`; third-attempt win + 4xx fail-fast + backoff cancellation all pinned                                                                     |
+| Response validation (count, dims, empty)        | 🟢 `FULLY_FUNCTIONAL` | `embed_openai.go:405`; `ErrEmbedCountMismatch` / `ErrEmbedDimsMismatch` / `ErrEmbedEmptyResponse`                                                              |
 | Provider factory `NewProvider`                  | 🟢 `FULLY_FUNCTIONAL` | `embed.go:48`; empty name defaults to hash; unknown name → `ErrUnknownProvider` (`embed_test.go:77`)                                                           |
 | Rune-boundary text truncation                   | 🟢 `FULLY_FUNCTIONAL` | `embed.go:79`; default budget 8000 chars (`embed.go:24`)                                                                                                       |
 
@@ -45,12 +45,12 @@
 
 | Feature                                          | Status                | Notes                                                                                              |
 | ------------------------------------------------ | --------------------- | -------------------------------------------------------------------------------------------------- |
-| Hybrid search (vector ranking + graph expansion) | 🟢 `FULLY_FUNCTIONAL` | `search.go:137`; `search_test.go:75` (relevant docs first, expansion surfaces hubs)                |
-| Two-tier document/hub ranking                    | 🟢 `FULLY_FUNCTIONAL` | `search.go:239`; policy via `SearcherOptions.DocumentKinds` (`search.go:65`)                       |
-| Reference node + `RefMatch` scoring              | 🟢 `FULLY_FUNCTIONAL` | `search.go:108`; reference never hits, every hit carries similarity to it (`search_test.go:93`)    |
-| `DetailKind` compact rendering                   | 🟢 `FULLY_FUNCTIONAL` | `search.go:375`; golden-pinned in `hardening_test.go:269`                                          |
-| Deterministic LLM-ready context rendering        | 🟢 `FULLY_FUNCTIONAL` | `search.go:350`; byte-identical across runs (`search_test.go:129`, golden `hardening_test.go:294`) |
-| `SimilarPairs` near-duplicate scan               | 🟢 `FULLY_FUNCTIONAL` | `search.go:183`; score-sorted, threshold-gated (`search_test.go:145`, `hardening_test.go:238`)     |
+| Hybrid search (vector ranking + graph expansion) | 🟢 `FULLY_FUNCTIONAL` | `search.go:155`; `search_test.go:75` (relevant docs first, expansion surfaces hubs)                |
+| Two-tier document/hub ranking                    | 🟢 `FULLY_FUNCTIONAL` | `search.go:257`; policy via `SearcherOptions.DocumentKinds` (`search.go:65`)                       |
+| Reference node + `RefMatch` scoring              | 🟢 `FULLY_FUNCTIONAL` | `search.go:111`; reference never hits, every hit carries similarity to it (`search_test.go:93`)    |
+| `DetailKind` compact rendering                   | 🟢 `FULLY_FUNCTIONAL` | `search.go:375`; golden-pinned in `hardening_test.go:270`                                          |
+| Deterministic LLM-ready context rendering        | 🟢 `FULLY_FUNCTIONAL` | `search.go:368`; byte-identical across runs (`search_test.go:129`, golden `hardening_test.go:270`) |
+| `SimilarPairs` near-duplicate scan               | 🟢 `FULLY_FUNCTIONAL` | `search.go:201`; score-sorted, threshold-gated (`search_test.go:145`, `hardening_test.go:194`)     |
 
 ## Persistence
 
@@ -62,7 +62,7 @@
 | `LoadGraph` / `LoadEmbeddings` snapshot reads       | 🟢 `FULLY_FUNCTIONAL` | `store.go:321`, `store.go:409`; round-trip incl. attrs pinned `store_test.go:41`                     |
 | `Stats` index statistics                            | 🟢 `FULLY_FUNCTIONAL` | `store.go:459`; counts + by-kind breakdown (`store_test.go:77`)                                      |
 | Health/shutdown duck types (samber/do)              | 🟢 `FULLY_FUNCTIONAL` | `store.go:122`, `store.go:131`; closed store fails health check (`store_health_test.go`)             |
-| Concurrent writer safety on the cache               | 🟢 `FULLY_FUNCTIONAL` | serialized by the single pooled connection; hammered by `hardening_test.go:141`                      |
+| Concurrent writer safety on the cache               | 🟢 `FULLY_FUNCTIONAL` | serialized by the single pooled connection; hammered by `hardening_test.go:142`                      |
 
 ## Vectors and configuration
 
@@ -71,7 +71,7 @@
 | Vector codec (little-endian float32 blob)   | 🟢 `FULLY_FUNCTIONAL` | `vector.go:64`, `vector.go:77`; round-trip + misalignment pinned `embed_test.go:13` |
 | Cosine similarity / L2 normalize (NaN-safe) | 🟢 `FULLY_FUNCTIONAL` | `vector.go:97`, `vector.go:39`; zero/dims-mismatch → 0, pinned `embed_test.go:31`   |
 | Content hashing (`HashText`, SHA-256)       | 🟢 `FULLY_FUNCTIONAL` | `vector.go:119`; `embed_test.go:46`                                                 |
-| Koanf-tagged `Config` / `EmbeddingConfig`   | 🟢 `FULLY_FUNCTIONAL` | `config.go:9`, `config.go:33`; consumed by `NewProvider`; gating is caller-side     |
+| Koanf-tagged `Config` / `EmbeddingConfig`   | 🟢 `FULLY_FUNCTIONAL` | `config.go:9`, `config.go:32`; consumed by `NewProvider`; gating is caller-side     |
 
 ## Developer experience
 
