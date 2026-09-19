@@ -16,7 +16,7 @@ API reference: [pkg.go.dev/github.com/larsartmann/go-graph-rag](https://pkg.go.d
 ## Installation
 
 ```bash
-go get github.com/larsartmann/go-graph-rag@v0.2.0
+go get github.com/larsartmann/go-graph-rag@v0.3.0
 ```
 
 ```go
