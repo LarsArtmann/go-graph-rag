@@ -6,6 +6,22 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- Nothing yet.
+
+### Fixed
+
+- Nothing yet.
+
+## [0.3.0] - 2026-09-19
+
+The hardening + throughput release: opt-in parallel embedding for
+network-bound cold builds, a Go 1.27.1 language floor, fail-fast cache
+reads, and structural immutability for `Searcher` inputs. Consumers need a
+Go 1.27.1+ toolchain to build against this version; no exported signature
+changed.
+
+### Added
+
 - `EmbeddingConfig.EmbedConcurrency` (koanf `embed_concurrency`, default 1):
   opt-in bounded worker pool that runs /embeddings batch requests in
   parallel for network-bound cold builds. Values at or below 1 take the
@@ -36,8 +52,7 @@ All notable changes to this project are documented in this file.
   the backslash escapes in the header pattern before the regex engine sees
   them, so the v0.2.0 tag-push run failed at extraction and the release was
   created manually. Extraction now uses a plain-substring match that needs no
-  escaping (`350b815`); the fixed workflow has not yet proven itself on a
-  real tag.
+  escaping (`350b815`); this is the first tag cut with the fixed workflow.
 - Cache READ errors are no longer swallowed: `Build` now fails fast with a
   wrapped error, symmetric with the fatal write path. A silently degraded
   cache caused paid re-embeds nobody could see; the alternative (a
