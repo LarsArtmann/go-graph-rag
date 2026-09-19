@@ -1,6 +1,7 @@
 package graphrag_test
 
 import (
+	"errors"
 	"math"
 	"strings"
 	"sync"
