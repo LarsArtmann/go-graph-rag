@@ -8,6 +8,11 @@ vector similarity with graph expansion (GraphRAG).
 
 API reference: [pkg.go.dev/github.com/larsartmann/go-graph-rag](https://pkg.go.dev/github.com/larsartmann/go-graph-rag)
 
+> pkg.go.dev currently hides the rendered godoc ("Documentation not displayed
+> due to license restrictions" — it does not recognize the PROPRIETARY
+> LICENSE file). The documentation of record lives in this repo; runnable,
+> output-verified examples are in [`example_test.go`](example_test.go).
+
 ## Installation
 
 ```bash
@@ -105,8 +110,12 @@ walkthrough of all three roles.
 
 ## Status
 
-v0.x: the API is stable enough to consume but may still change before v1
-(ANN/HNSW backend and incremental indexing are open design decisions).
+v0.x: the API is stable enough to consume but may still change before v1.
+The scale path is decided, not open:
+[`docs/planning/2026-09-16_13-25_seam-store-search-adr.md`](docs/planning/2026-09-16_13-25_seam-store-search-adr.md)
+fixes the `VectorIndex`/`GraphStore` seams and the adapter-module rules;
+ANN/HNSW and incremental indexing are implementation work, trigger-gated
+(ADR §9), not design questions.
 
 ## Security
 

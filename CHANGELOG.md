@@ -14,7 +14,12 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
-- Nothing yet.
+- Release automation matched no CHANGELOG section on any tag: `awk -v` eats
+  the backslash escapes in the header pattern before the regex engine sees
+  them, so the v0.2.0 tag-push run failed at extraction and the release was
+  created manually. Extraction now uses a plain-substring match that needs no
+  escaping (`350b815`); the fixed workflow has not yet proven itself on a
+  real tag.
 
 ## [0.2.0] - 2026-09-16
 

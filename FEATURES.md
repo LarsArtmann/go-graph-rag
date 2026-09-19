@@ -21,9 +21,9 @@
 
 | Feature                                        | Status                | Notes                                                                                                   |
 | ---------------------------------------------- | --------------------- | ------------------------------------------------------------------------------------------------------- |
-| `Build` index construction                     | 🟢 `FULLY_FUNCTIONAL` | `build.go:84`; documents + caller edges in, graph + vectors out; end-to-end `store_test.go:90`          |
+| `Build` index construction                     | 🟢 `FULLY_FUNCTIONAL` | `build.go:91`; documents + caller edges in, graph + vectors out; end-to-end `store_test.go:90`          |
 | `RelationSimilar` edge derivation              | 🟢 `FULLY_FUNCTIONAL` | `build.go:255`; topK nearest same-kind neighbors above threshold, deduped per unordered pair            |
-| Same-kind rule for similar edges               | 🟢 `FULLY_FUNCTIONAL` | `build.go:269`; pinned by `store_test.go:161` (cross-kind pairs never link)                             |
+| Same-kind rule for similar edges               | 🟢 `FULLY_FUNCTIONAL` | `build.go:276`; pinned by `store_test.go:161` (cross-kind pairs never link)                             |
 | Embedding cache integration during build       | 🟢 `FULLY_FUNCTIONAL` | `build.go:138`; second build fully served from cache (`store_test.go:148`: `CacheHits: 3, Embedded: 0`) |
 | Duplicate document-ID collapse (first wins)    | 🟢 `FULLY_FUNCTIONAL` | `build.go:114`; pinned incl. persistence by `hardening_test.go:91`                                      |
 | Deterministic ordering (nodes, edges, renders) | 🟢 `FULLY_FUNCTIONAL` | `graph.go:71`, `graph.go:202`; byte-stable context pinned by golden test `hardening_test.go:269`        |
@@ -77,10 +77,11 @@
 | Feature                                     | Status                | Notes                                                                                         |
 | ------------------------------------------- | --------------------- | --------------------------------------------------------------------------------------------- |
 | Runnable godoc examples                     | 🟢 `FULLY_FUNCTIONAL` | `example_test.go`; `// Output:` blocks enforced by `go test`; README snippet compile-verified |
-| Benchmark suite (Build/Search/SimilarPairs) | 🟢 `FULLY_FUNCTIONAL` | `bench_test.go`; reference numbers in the file doc comment                                    |
+| Benchmark suite (Build/Search/SimilarPairs/StoreRoundTrip) | 🟢 `FULLY_FUNCTIONAL` | `bench_test.go`; benchstat-protocol reference table in the file doc comment (`-count 10`, ±1–2%); StoreRoundTrip (1k/10k) proves persistence is not the rebuild bottleneck |
 | Race-detector clean suite                   | 🟢 `FULLY_FUNCTIONAL` | `go test ./... -race` clean 2026-09-15; documented in CONTRIBUTING                            |
 | Opt-in live-endpoint smoke test             | 🟢 `FULLY_FUNCTIONAL` | `embed_openai_live_test.go`; env-gated (`GRAPHRAG_LIVE_EMBED_URL`), skips offline             |
-| Pristine-build pre-push guard               | 🟢 `FULLY_FUNCTIONAL` | `.githooks/pre-push`; blocks pushes that only build under `GOEXPERIMENT=jsonv2`               |
+| Pristine-build pre-push guard               | 🟢 `FULLY_FUNCTIONAL` | `.githooks/pre-push`; blocks pushes that only build under `GOEXPERIMENT=jsonv2`; has caught the recurring json-v2 regression every time |
+| Release automation (`release.yml`)          | 🟡 `PARTIALLY_FUNCTIONAL` | `.github/workflows/release.yml`; fires on `v*` tags, extracts notes from the matching CHANGELOG section; failed on its first real run (v0.2.0, awk extraction bug, fixed `350b815`) and was bypassed by a manual release — unproven on a real tag since |
 
 ## Planned
 

@@ -15,8 +15,8 @@ dependency-free).
 
 Raw ideas:
 
-- ANN/HNSW vector backend behind the existing `Searcher` seam (candidates:
-  sqlite-vec, hannoy, in-process HNSW port)
+- ANN/HNSW vector backend behind the seam ADR's `VectorIndex` interface
+  (candidates: sqlite-vec, hannoy, in-process HNSW port)
 - Incremental indexing: upsert/delete of single documents instead of the
   `ReplaceGraph` full swap
 - Corpus-size triggers that flip the implementation automatically (~50k
@@ -76,4 +76,6 @@ Things we are deliberately NOT pursuing and why:
   every persisted artifact stays rebuildable from source data. Evaluated
   2026-09-15 (`docs/research/2026-09-15_dgraph-adoption.md`): verdict — do
   not adopt into the SDK; revisit as a consumer-owned backend at the ~50k
-  trigger.
+  trigger. Any backend enters only as an isolated adapter module per the
+  seam ADR (`docs/planning/2026-09-16_13-25_seam-store-search-adr.md`);
+  core `go.mod` never grows.
