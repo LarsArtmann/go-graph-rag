@@ -52,4 +52,12 @@ type EmbeddingConfig struct {
 
 	// MaxChars bounds each embedded text (0 selects the default).
 	MaxChars int `koanf:"max_chars"`
+
+	// EmbedConcurrency is the maximum number of /embeddings batch requests
+	// sent in parallel (0 or 1 selects the serial path). Values above 1
+	// help network-bound cold builds: batches are independent HTTP calls,
+	// so they overlap safely, and results keep input order regardless of
+	// completion order. EmbedConcurrency never changes vectors, only how
+	// fast they arrive.
+	EmbedConcurrency int `koanf:"embed_concurrency"`
 }

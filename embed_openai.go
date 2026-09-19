@@ -12,6 +12,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/samber/lo"
@@ -77,6 +78,7 @@ type OpenAICompatProvider struct {
 	model        string
 	maxChars     int
 	maxRetries   int
+	concurrency  int
 	retryBackoff time.Duration
 	httpClient   *http.Client
 }
@@ -103,12 +105,18 @@ func NewOpenAICompatProvider(cfg EmbeddingConfig) (*OpenAICompatProvider, error)
 
 	maxRetries := max(cfg.MaxRetries, 0)
 
+	concurrency := cfg.EmbedConcurrency
+	if concurrency < 1 {
+		concurrency = 1
+	}
+
 	return &OpenAICompatProvider{
 		baseURL:      strings.TrimSuffix(cfg.BaseURL, "/"),
 		apiKey:       cfg.APIKey,
 		model:        cfg.Model,
 		maxChars:     cfg.MaxChars,
 		maxRetries:   maxRetries,
+		concurrency:  concurrency,
 		retryBackoff: defaultEmbedRetryBackoff,
 		httpClient:   &http.Client{Timeout: timeout},
 	}, nil
@@ -151,6 +159,9 @@ type embeddingsUsage struct {
 
 // Embed truncates each text to the configured character budget and embeds
 // them in bounded batches, retrying transient failures with linear backoff.
+// With EmbedConcurrency above 1, up to that many batches run in parallel
+// (safe: the provider is documented as concurrency-safe); results keep input
+// order regardless of completion order, so concurrency never changes output.
 func (p *OpenAICompatProvider) Embed(ctx context.Context, texts []string) ([]Vector, error) {
 	if len(texts) == 0 {
 		return nil, nil
@@ -158,17 +169,109 @@ func (p *OpenAICompatProvider) Embed(ctx context.Context, texts []string) ([]Vec
 
 	truncated := lo.Map(texts, func(text string, _ int) string { return truncateRunes(text, p.maxChars) })
 
-	vectors := make([]Vector, 0, len(truncated))
+	if p.concurrency <= 1 {
+		return p.embedSerial(ctx, truncated)
+	}
 
-	for start := 0; start < len(truncated); start += embedBatchTexts {
-		end := min(start+embedBatchTexts, len(truncated))
+	return p.embedConcurrent(ctx, truncated)
+}
 
-		batch, err := p.embedBatch(ctx, truncated[start:end])
+// embedSerial is the one-batch-at-a-time path; it is what EmbedConcurrency
+// <= 1 runs, byte-identical to the pre-concurrency implementation.
+func (p *OpenAICompatProvider) embedSerial(ctx context.Context, texts []string) ([]Vector, error) {
+	vectors := make([]Vector, 0, len(texts))
+
+	for start := 0; start < len(texts); start += embedBatchTexts {
+		end := min(start+embedBatchTexts, len(texts))
+
+		batch, err := p.embedBatch(ctx, texts[start:end])
 		if err != nil {
 			return nil, err
 		}
 
 		vectors = append(vectors, batch...)
+	}
+
+	return vectors, nil
+}
+
+// embedConcurrent fans batches out to at most p.concurrency workers and
+// reassembles the answers in input order. The first error cancels the
+// remaining work; the error it reports is the first one to ARRIVE, which
+// under cancellation may be a sibling batch's context error rather than the
+// root cause — acceptable for a fail-fast path where every error aborts the
+// call anyway.
+func (p *OpenAICompatProvider) embedConcurrent(ctx context.Context, texts []string) ([]Vector, error) {
+	batchCount := (len(texts) + embedBatchTexts - 1) / embedBatchTexts
+
+	type batchResult struct {
+		offset  int
+		vectors []Vector
+		err     error
+	}
+
+	workers := min(p.concurrency, batchCount)
+	jobs := make(chan int)
+	results := make(chan batchResult, batchCount) // buffered: workers never block, even on early exit
+
+	workersCtx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	var wg sync.WaitGroup
+
+	wg.Add(workers)
+
+	for range workers {
+		go func() {
+			defer wg.Done()
+
+			for start := range jobs {
+				end := min(start+embedBatchTexts, len(texts))
+
+				batch, err := p.embedBatch(workersCtx, texts[start:end])
+				if err != nil {
+					results <- batchResult{offset: start, err: err}
+					cancel()
+
+					return
+				}
+
+				results <- batchResult{offset: start, vectors: batch}
+			}
+		}()
+	}
+
+	go func() {
+		defer close(jobs)
+
+		for start := 0; start < batchCount; start++ {
+			select {
+			case jobs <- start * embedBatchTexts:
+			case <-workersCtx.Done():
+				return
+			}
+		}
+	}()
+
+	slots := make([][]Vector, batchCount)
+
+	for range batchCount {
+		result := <-results
+		if result.err != nil {
+			cancel()
+			wg.Wait()
+
+			return nil, result.err
+		}
+
+		slots[result.offset/embedBatchTexts] = result.vectors
+	}
+
+	wg.Wait()
+
+	vectors := make([]Vector, 0, len(texts))
+	for _, slot := range slots {
+		vectors = append(vectors, slot...)
 	}
 
 	return vectors, nil
