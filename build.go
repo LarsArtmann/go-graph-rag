@@ -239,7 +239,12 @@ func lookupCache(cache Cache, provider Provider, hash string) (Vector, bool, err
 // content hash (deduplicated) and dimension-checked. hashes carries the
 // hash of every classified document (recorded during cache lookups) so no
 // text is hashed a second time here.
-func embedAll(ctx context.Context, provider Provider, misses []Document, hashes map[string]string) (map[string]Vector, error) {
+func embedAll(
+	ctx context.Context,
+	provider Provider,
+	misses []Document,
+	hashes map[string]string,
+) (map[string]Vector, error) {
 	if len(misses) == 0 {
 		return map[string]Vector{}, nil
 	}

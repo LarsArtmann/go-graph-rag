@@ -1,14 +1,37 @@
 #!/bin/sh
-# Pristine-build guard: the module must build WITHOUT GOEXPERIMENT=jsonv2.
-# Dev shells export it machine-wide, which silently masks json/v2 usage that
-# breaks pristine toolchains and CI. Install once per clone:
+# Pristine-tree guard, three gates. Install once per clone:
 #
 #   git config core.hooksPath .githooks
 #
-echo "pre-push: pristine build (env -u GOEXPERIMENT)..."
-env -u GOEXPERIMENT GOTOOLCHAIN=go1.26.7 go build ./... || {
+# 1. Pristine build: the module must build WITHOUT GOEXPERIMENT=jsonv2.
+#    Dev shells export it machine-wide, which silently masks json/v2 usage
+#    that breaks pristine toolchains and CI; this regression reached the
+#    tree three times (pre-v0.1.0, e67bd9b, e4a9145) via daemon commits.
+# 2. Tidy drift: `go mod tidy` must produce zero diff against go.mod/go.sum.
+# 3. dprint check: markdown/json/yaml formatting must be clean.
+#
+# Every gate blocks the push on failure.
+
+echo "pre-push [1/3]: pristine build (env -u GOEXPERIMENT)..."
+env -u GOEXPERIMENT GOTOOLCHAIN=go1.27.1 go build ./... || {
     echo "pre-push: FAILED - tree does not build without GOEXPERIMENT=jsonv2." >&2
     echo "Fix before pushing (usually: import encoding/json, not encoding/json/v2)." >&2
     exit 1
 }
-echo "pre-push: pristine build ok"
+
+echo "pre-push [2/3]: tidy drift (go mod tidy must diff to zero)..."
+env -u GOEXPERIMENT GOTOOLCHAIN=go1.27.1 go mod tidy
+if ! git diff --exit-code -- go.mod go.sum; then
+    echo "pre-push: FAILED - go.mod/go.sum drifted from 'go mod tidy'." >&2
+    echo "Commit the tidied files (or restore them), then push again." >&2
+    exit 1
+fi
+
+echo "pre-push [3/3]: dprint format check..."
+nix run nixpkgs#dprint -- check || {
+    echo "pre-push: FAILED - markdown/json/yaml formatting." >&2
+    echo "Run 'nix run nixpkgs#dprint -- fmt' and commit, then push again." >&2
+    exit 1
+}
+
+echo "pre-push: all three gates ok"
