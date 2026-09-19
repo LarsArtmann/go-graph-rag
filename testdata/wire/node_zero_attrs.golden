@@ -1,0 +1,6 @@
+{
+  "id": "hub:go",
+  "kind": "hub",
+  "label": "Go",
+  "attrs": {}
+}

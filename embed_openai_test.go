@@ -320,6 +320,7 @@ func newNumberedEmbedServer(t *testing.T, delay time.Duration, tracker *overlapT
 
 		tracker.enter()
 		defer tracker.exit()
+
 		time.Sleep(delay)
 
 		body, _ := json.Marshal(map[string]any{"data": data, "model": "test-model", "usage": map[string]int{}})
@@ -421,6 +422,7 @@ func TestOpenAICompatProvider_CancelDuringConcurrentEmbed(t *testing.T) {
 	}()
 
 	_, err := provider.Embed(ctx, numberedTexts(200))
+
 	cancel()
 
 	require.Error(t, err, "mid-flight cancellation must abort the concurrent embed")

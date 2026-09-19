@@ -1,0 +1,6 @@
+{
+  "source": "doc:42",
+  "target": "doc:7",
+  "relation": "similar_to",
+  "weight": 0.8125
+}

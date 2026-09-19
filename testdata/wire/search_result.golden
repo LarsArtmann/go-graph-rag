@@ -1,0 +1,38 @@
+{
+  "query": "go graph",
+  "provider": "hash",
+  "model": "v1",
+  "hits": [
+    {
+      "node": {
+        "id": "doc:42",
+        "kind": "document",
+        "label": "Wire contract fixture",
+        "attrs": {
+          "url": "https://example.com/fixture",
+          "source": "fixture",
+          "location": "Remote (EU)",
+          "remotePolicy": "remote",
+          "status": "open",
+          "score": 0.8125,
+          "postedAt": "2026-09-19T12:00:00Z"
+        }
+      },
+      "score": 0.8125,
+      "refMatch": 0.5,
+      "related": [
+        {
+          "node": {
+            "id": "hub:go",
+            "kind": "hub",
+            "label": "Go",
+            "attrs": {}
+          },
+          "relation": "mentions",
+          "weight": 1
+        }
+      ]
+    }
+  ],
+  "contextText": "deterministic render"
+}

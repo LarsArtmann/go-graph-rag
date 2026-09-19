@@ -18,7 +18,7 @@ import (
 // (1024-dim vectors) over synthetic corpora of unique texts with overlapping
 // vocabularies. Reference numbers, 2026-09-16, AMD Ryzen AI MAX+ 395
 // (x86_64, single goroutine does the work), Go 1.26.7,
-// `go test -bench . -count 10` (StoreRoundTrip: -count 3), summarized with
+// `go test -bench . -count 10`, summarized with
 // benchstat (golang.org/x/perf v0.0.0-20260908200009) — treat as orders of
 // magnitude, not absolutes; ± figures are the benchstat spread:
 //
@@ -31,10 +31,21 @@ import (
 //	                               + LoadEmbeddings on a real SQLite file)
 //	StoreRoundTrip/docs=10000  197.4 ms/op
 //
+// StoreRoundTrip re-measured 2026-09-19 at benchstat grade (same machine,
+// Go 1.27.1, `-benchtime 10x -count 10`; benchstat itself could not be
+// installed offline, so the summary below is computed from the same 10 raw
+// runs — mean and full range, no ± percentage):
+//
+//	StoreRoundTrip/docs=1000    32.3 ms/op   range 23.4-41.3  (n=10)
+//	StoreRoundTrip/docs=10000   257.5 ms/op  range 208-351    (n=10)
+//
+// The wide range is background load on a desktop machine, not a code
+// change; both means land in the same order of magnitude as 2026-09-16.
+//
 // The Build/SimilarPairs scaling is quadratic in embedded-node count (10x
 // docs -> ~90x time): at ~50k nodes a full rebuild extrapolates to ~15
 // minutes. StoreRoundTrip shows persistence is NOT the bottleneck (10k
-// nodes round-trip in ~0.2s against a ~37s rebuild) — the rebuild cost is
+// nodes round-trip in ~0.26s against a ~37s rebuild) — the rebuild cost is
 // pairwise cosine compute. That is the measured trigger behind ROADMAP's
 // "revisit around ~50k nodes" item (ANN/HNSW backend, incremental
 // indexing).
@@ -144,8 +155,9 @@ func BenchmarkSimilarPairs(b *testing.B) {
 	for _, size := range []int{100, 1000} {
 		b.Run(fmt.Sprintf("docs=%d", size), func(b *testing.B) {
 			docs, edges := benchCorpus(size)
+			provider := graphrag.NewHashProvider()
 
-			result, err := graphrag.Build(b.Context(), graphrag.NewHashProvider(), nil, docs, edges, graphrag.BuildOptions{})
+			result, err := graphrag.Build(b.Context(), provider, nil, docs, edges, graphrag.BuildOptions{})
 			if err != nil {
 				b.Fatal(err)
 			}

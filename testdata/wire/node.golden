@@ -1,0 +1,14 @@
+{
+  "id": "doc:42",
+  "kind": "document",
+  "label": "Wire contract fixture",
+  "attrs": {
+    "url": "https://example.com/fixture",
+    "source": "fixture",
+    "location": "Remote (EU)",
+    "remotePolicy": "remote",
+    "status": "open",
+    "score": 0.8125,
+    "postedAt": "2026-09-19T12:00:00Z"
+  }
+}
