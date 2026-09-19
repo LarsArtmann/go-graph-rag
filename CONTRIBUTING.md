@@ -17,8 +17,8 @@ permission from the author.
 
 Run the following commands to set up your development environment:
 
-    GOTOOLCHAIN=go1.26.7 go build ./... && GOTOOLCHAIN=go1.26.7 go vet ./...
-    GOTOOLCHAIN=go1.26.7 go test ./... -race
+    GOTOOLCHAIN=go1.27.1 go build ./... && GOTOOLCHAIN=go1.27.1 go vet ./...
+    GOTOOLCHAIN=go1.27.1 go test ./... -race
     golangci-lint run ./...
 
 The module must build without `GOEXPERIMENT=jsonv2`; see AGENTS.md for the

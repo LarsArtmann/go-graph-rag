@@ -220,12 +220,12 @@ func TestADRSketch_VectorIndexComposition(t *testing.T) {
 	index := &fakeVectorIndex{}
 
 	require.NoError(t, index.Replace(map[string]graphrag.Vector{
-		"near":  graphrag.NewHashProvider().MustEmbedForTest("query words"),
-		"close": graphrag.NewHashProvider().MustEmbedForTest("query words plus tail"),
-		"far":   graphrag.NewHashProvider().MustEmbedForTest("completely different topic entirely"),
+		"near":  graphrag.Vector{1, 0, 0, 0},
+		"close": graphrag.Vector{0.8, 0.6, 0, 0},
+		"far":   graphrag.Vector{0, 1, 0, 0},
 	}), "Replace is the full-rebuild entry point")
 
-	query := graphrag.NewHashProvider().MustEmbedForTest("query words")
+	query := graphrag.Vector{1, 0, 0, 0}
 
 	// The backend honors Filter; the core re-applies MinScore regardless.
 	filtered := map[string]bool{"near": true, "far": true}

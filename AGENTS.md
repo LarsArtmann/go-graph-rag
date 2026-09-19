@@ -1,7 +1,7 @@
 # AGENTS.md — go-graph-rag
 
 Standalone GraphRAG SDK extracted from the CV repo's `graphrag/` module
-(2026-09-15). Module `github.com/larsartmann/go-graph-rag`, Go floor 1.26.7.
+(2026-09-15). Module `github.com/larsartmann/go-graph-rag`, Go floor 1.27.1 (raised from 1.26.7 on 2026-09-19, owner-requested commit af3be2c).
 
 ## What lives here
 
@@ -58,7 +58,7 @@ Standalone GraphRAG SDK extracted from the CV repo's `graphrag/` module
 ## Commands
 
 ```bash
-GOTOOLCHAIN=go1.26.7 go build ./... && go vet ./... && go test ./...
+GOTOOLCHAIN=go1.27.1 go build ./... && go vet ./... && go test ./...
 golangci-lint run ./...
 go mod tidy && git diff --exit-code go.mod go.sum   # tidy drift gate
 nix run nixpkgs#dprint -- check                     # markdown/json/yaml fmt
@@ -81,7 +81,7 @@ numbers are re-measured.
 
 - The dev shell exports `GOEXPERIMENT=jsonv2` machine-wide; CI does not.
   Before pushing, pristine-check with
-  `env -u GOEXPERIMENT GOTOOLCHAIN=go1.26.7 go build ./...` — it is the only
+  `env -u GOEXPERIMENT GOTOOLCHAIN=go1.27.1 go build ./...` — it is the only
   guard against experiment-gated stdlib sneaking in.
 - golangci-lint is pinned to v2.13.2 in CI (parity with CV's pin). Bump both
   repos together; the config requires the v2 binary.
