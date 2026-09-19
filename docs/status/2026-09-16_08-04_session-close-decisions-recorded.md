@@ -58,26 +58,26 @@ all quality gates green.
 
 ## b) PARTIALLY DONE
 
-1. **Daemon sweep pending**: `TODO_LIST.md` and
-   `docs/status/2026-09-16_02-10_….md` show as modified at report time
-   (edits landed 02:15; daemon had not committed them by 08:04). Content is
-   correct and dprint-clean; only the commit is outstanding.
+1. ~~**Daemon sweep pending**: `TODO_LIST.md` and~~ done (resolved — daemon swept both paths (visible in master history))
+   ~~`docs/status/2026-09-16_02-10_….md` show as modified at report time~~
+   ~~(edits landed 02:15; daemon had not committed them by 08:04). Content is~~
+   ~~correct and dprint-clean; only the commit is outstanding.~~
 2. **The carried-forward f) list**: re-validated against current state, but
    none of its items were executed in the decision turn (by design — waiting
    for instructions).
-3. **Loose ends inherited from the audit phase** (unchanged, all listed in the
-   02-10 report b/c): DOMAIN_LANGUAGE line audit, buildflow/lychee format run
-   over the new cross-links, F12.1 render check.
+3. ~~**Loose ends inherited from the audit phase** (unchanged, all listed in the~~ done (all three done in the seam session — DOMAIN_LANGUAGE audit (F7.3), lychee run (F7.1), F12.1 render check (F7.2))
+   ~~02-10 report b/c): DOMAIN_LANGUAGE line audit, buildflow/lychee format run~~
+   ~~over the new cross-links, F12.1 render check.~~
 
 ## c) NOT STARTED
 
-1. **The seam design itself** — owner-approved (DESIGN NOW), deliverable now
-   pinned (ADR + Go interface sketch, three backend classes, `dgo`/metaengine
-   never in core `go.mod`). Zero design work done. Next session's main
-   candidate.
-2. **Owner-gated release work** — license posture (Q1) and v0.2.0 cut (Q2)
-   remain unanswered; the v0.2.0 checklist, CONTRIBUTING inbound-grant line,
-   and tag-protection rule all queue behind them.
+1. ~~**The seam design itself** — owner-approved (DESIGN NOW), deliverable now~~ done (done — seam ADR delivered 2026-09-16 (docs/planning/2026-09-16_13-25_seam-store-search-adr.md))
+   ~~pinned (ADR + Go interface sketch, three backend classes, `dgo`/metaengine~~
+   ~~never in core `go.mod`). Zero design work done. Next session's main~~
+   ~~candidate.~~
+2. ~~**Owner-gated release work** — license posture (Q1) and v0.2.0 cut (Q2)~~ done (Q2 answered and executed 2026-09-16 (v0.2.0 cut, 805aeba); Q1 and the CONTRIBUTING line remain open)
+   ~~remain unanswered; the v0.2.0 checklist, CONTRIBUTING inbound-grant line,~~
+   ~~and tag-protection rule all queue behind them.~~
 3. **All other TODO_LIST rows and ROADMAP arcs** — untouched (see f).
 
 ## d) TOTALLY FUCKED UP (honesty ledger — delta turn + session-wide score)

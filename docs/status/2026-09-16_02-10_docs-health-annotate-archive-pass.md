@@ -121,11 +121,11 @@ scores (10/10) are unaffected.
 
 ## c) NOT STARTED
 
-1. **The seam design itself** — owner decision #2 (DESIGN NOW) is encoded as
-   the TODO_LIST High row; zero design work done. Main candidate for the next
-   work session.
-2. **Owner decisions** — license posture (Q1) and v0.2.0 cut (Q2) still
-   await answers; package checkboxes unfilled.
+1. ~~**The seam design itself** — owner decision #2 (DESIGN NOW) is encoded as~~ done (done — seam ADR delivered 2026-09-16 (docs/planning/2026-09-16_13-25_seam-store-search-adr.md))
+   ~~the TODO_LIST High row; zero design work done. Main candidate for the next~~
+   ~~work session.~~
+2. ~~**Owner decisions** — license posture (Q1) and v0.2.0 cut (Q2) still~~ done (Q2 executed 2026-09-16 (v0.2.0 cut, 805aeba; owner package annotated); Q1 still open)
+   ~~await answers; package checkboxes unfilled.~~
 3. **All pre-existing TODO_LIST rows** untouched this session: tag protection,
    `Build` identical-text doc comment, benchstat re-run, `ExampleNewStore`,
    `SearcherOptions` example, store round-trip benchmark, CONTRIBUTING
@@ -205,41 +205,41 @@ session's harvest), items 18+ are spike/ROADMAP/hygiene fuel, not commitments.
 **P0 — owner-gated (everything else queues behind these)**
 
 1. License posture decision (owner package Q1) — BLOCKED.
-2. Approve the v0.2.0 cut (owner package Q2) — BLOCKED.
-3. Execute the v0.2.0 go-release checklist on approval (tag → proxy →
-   pkg.go.dev → CV bump).
+2. ~~Approve the v0.2.0 cut (owner package Q2) — BLOCKED.~~ done (executed — v0.2.0 cut 2026-09-16 (805aeba))
+3. ~~Execute the v0.2.0 go-release checklist on approval (tag → proxy →~~ done (executed — checklist run recorded in the owner package (release.yml extraction bug fixed 350b815; release manual))
+   ~~pkg.go.dev → CV bump).~~
 4. Apply the CONTRIBUTING inbound-grant line (after Q1).
 5. Push the CV repo (external; carries the `16fc16c7` extraction annotations).
 
 **P1 — the chosen engineering work**
 
-6. Design the pluggable store/search seam (owner: DESIGN NOW; TODO_LIST High
-   row): ADR under `docs/planning/`, three backend classes (embedded ANN libs
-   / metaengine engines / raw server DBs) with per-class vector semantics —
-   ANN vs brute-force, metric coupling, distance availability, filtered-ANN
-   behavior; `dgo`/metaengine never enter core `go.mod`.
-7. Add the tag-protection rule before v0.2.0 (`gh api …/tags/protection`).
-8. Document the identical-text → single-vector rule on `Build` (doc comment;
-   status 19-33 e.5).
+6. ~~Design the pluggable store/search seam (owner: DESIGN NOW; TODO_LIST High~~ done (done — seam ADR delivered (docs/planning/2026-09-16_13-25_seam-store-search-adr.md))
+   ~~row): ADR under `docs/planning/`, three backend classes (embedded ANN libs~~
+   ~~/ metaengine engines / raw server DBs) with per-class vector semantics —~~
+   ~~ANN vs brute-force, metric coupling, distance availability, filtered-ANN~~
+   ~~behavior; `dgo`/metaengine never enter core `go.mod`.~~
+7. ~~Add the tag-protection rule before v0.2.0 (`gh api …/tags/protection`).~~ done (done — protect-tags ruleset id 23541172 active)
+8. ~~Document the identical-text → single-vector rule on `Build` (doc comment;~~ done (done — build.go:99-104)
+   ~~status 19-33 e.5).~~
 
 **P1 — this session's loose ends**
 
-9. Run `buildflow format` (lychee) over the session's new cross-file links.
-10. Verify the F12.1 nested-tilde cell renders correctly on GitHub.
-11. Add a per-row completeness assertion to the annotate workflow
-    (skill-maintenance surface).
-12. Fix `annotate-rows.py`'s already-annotated false positive on tildes inside
-    code spans (skill-maintenance surface).
-13. Line-by-line re-audit of `docs/DOMAIN_LANGUAGE.md` (only living doc not
-    re-verified this pass).
+9. ~~Run `buildflow format` (lychee) over the session's new cross-file links.~~ done (done — lychee 6/6 OK (seam session F7.1))
+10. ~~Verify the F12.1 nested-tilde cell renders correctly on GitHub.~~ done (done — GitHub markdown API render check (seam session F7.2))
+11. ~~Add a per-row completeness assertion to the annotate workflow~~ done (done — check-rows.py + regression suite (seam session F6.2/F6.3))
+    ~~(skill-maintenance surface).~~
+12. ~~Fix `annotate-rows.py`'s already-annotated false positive on tildes inside~~ done (done — code-span-aware guard (seam session F6.1, SKILLS 0d1aca6))
+    ~~code spans (skill-maintenance surface).~~
+13. ~~Line-by-line re-audit of `docs/DOMAIN_LANGUAGE.md` (only living doc not~~ done (done — 20-row audit, all accurate (seam session F7.3/F7.4))
+    ~~re-verified this pass).~~
 14. CV-side cross-link decision for the metaengine report (owner taste;
     metaengine g2).
-15. Fix the go-cqrs-lite skill's `modules.md` "system EXPERIMENTAL" wording
-    (skill-creator; 10 min; metaengine f.4).
-16. Quantify the metaengine dep-tree delta — `go mod graph` before/after
-    (TODO_LIST Medium row; metaengine f.2).
-17. Add the "new research artifacts get an index row" rule to AGENTS.md
-    (one line, keeps `docs/research/README.md` alive).
+15. ~~Fix the go-cqrs-lite skill's `modules.md` "system EXPERIMENTAL" wording~~ done (done — fixed upstream (b13e17bba) + installed copy re-linked, verified (15-21 §a5))
+    ~~(skill-creator; 10 min; metaengine f.4).~~
+16. ~~Quantify the metaengine dep-tree delta — `go mod graph` before/after~~ done (done — ADR §6 (31→58→205 modules))
+    ~~(TODO_LIST Medium row; metaengine f.2).~~
+17. ~~Add the "new research artifacts get an index row" rule to AGENTS.md~~ done (done — AGENTS.md Gotchas research-index rule present)
+    ~~(one line, keeps `docs/research/README.md` alive).~~
 
 **P2 — Dgraph research follow-ups (gated on triggers; ROADMAP fuel)**
 

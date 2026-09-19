@@ -4,8 +4,8 @@
 | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Date    | 2026-09-16 15:21 CEST                                                                                                                                                  |
 | Session | Continued from `2026-09-16_14-14_seam-plan-execution-status.md`: executed the owner's three decisions (push as-is / commit skill repos / hold PRs)                     |
-| Verdict | **The SUPERB plan is now 100% executed (M1–M10) and shipped — BUT local HEAD is pristine-BROKEN by a parallel commit that must be adjudicated (see §g)**               |
-| Git     | origin/master = `660d48c`, CI GREEN (run `35100154277`). Local is ahead 1: `e67bd9b` (NOT mine) re-imports the json-v2/experiment regression — **unpushed on purpose** |
+| Verdict | **The SUPERB plan is now 100% executed (M1–M10) and shipped — ~~BUT local HEAD is pristine-BROKEN by a parallel commit that must be adjudicated (see §g)~~ adjudicated 2026-09-16: imports restored (`7404815`), v0.2.0 cut from the clean tree (`805aeba`); the class recurred AGAIN post-tag (`e4a9145`) and was re-fixed (`104b5ef`)**               |
+| Git     | origin/master = `660d48c`, CI GREEN (run `35100154277`). ~~Local is ahead 1: `e67bd9b` (NOT mine) re-imports the json-v2/experiment regression — **unpushed on purpose**~~ superseded: `e67bd9b` was never pushed; imports restored `7404815`; v0.2.0 shipped (`805aeba`); HEAD (`104b5ef`) pristine-clean and synced |
 | Honesty | 1 self-caught fabrication incident (§d1), 1 destructive edit (§d2), 1 external-repo mutation via hook (§d3) — all reported, none shipped                               |
 
 ## 1. What happened since the 14:14 report
