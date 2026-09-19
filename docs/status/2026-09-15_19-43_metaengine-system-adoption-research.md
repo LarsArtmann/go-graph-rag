@@ -21,7 +21,7 @@
 ## b) PARTIALLY DONE
 
 1. **Skill references**: loaded 2 of 5 `go-cqrs-lite` references (`modules.md`, `core.md`). `readmodels.md` (materialized-view caveat, tier guidance) and `advanced.md` (SSE comparison) were never read — their content was independently covered from primary sources (ADR-0135, vector/graph/README files), so the report's facts stand, but the "loaded references" todo overstated completeness.
-2. **Dependency-footprint quantification**: the #1 CONTRA (dep-policy break) is argued qualitatively ("~10 consumer-visible modules vs 3"; system "30+ with otel/prometheus/sentry"). A 15-min scratch-module experiment (`go mod graph` before/after) would turn it into numbers. Not run.
+2. ~~**Dependency-footprint quantification**: the #1 CONTRA (dep-policy break) is argued qualitatively ("~10 consumer-visible modules vs 3"; system "30+ with otel/prometheus/sentry"). A 15-min scratch-module experiment (`go mod graph` before/after) would turn it into numbers. Not run.~~ done (done — quantified 2026-09-16 (ADR §6; blockquote on CONTRA #1))
 3. **Claim provenance tiers**: most claims are file:line-cited; three are doc-level citations (pebble "~~7x faster MapGet" from module docs; test-file counts from agent glob with truncation caveat — labeled; dep counts approximate — labeled "~~"). Acceptable, not airtight.
 4. **Render verification**: after dprint realigned 54 table lines I spot-checked the file head only, not every table (integrity was instead confirmed via clean `git status` + diff stat).
 
@@ -30,7 +30,7 @@
 1. No TODO_LIST.md/ROADMAP.md encoding of the verdict or revisit triggers (§9 of the report duplicates ROADMAP's ~50k trigger as prose; the canonical list was not touched — deliberate: research docs are point-in-time, and harvesting is docs-health territory on instruction).
 2. No CV-side artifact: the report covers the CV/SUPERB angle but nothing was written or cross-linked into `CV/docs/` (CV keeps its own research; decision to mirror is owner-taste).
 3. No benchmark comparison hand-rolled search vs metaengine engines (would need a spike; out of research scope, not attempted).
-4. No report of the `go-cqrs-lite` skill's stale claim ("system … EXPERIMENTAL" bolded in `modules.md` while the module itself carries no such marking — only repo FEATURES.md does) back to the skill-maintenance path (`skill-creator`).
+4. ~~No report of the `go-cqrs-lite` skill's stale claim ("system … EXPERIMENTAL" bolded in `modules.md` while the module itself carries no such marking — only repo FEATURES.md does) back to the skill-maintenance path (`skill-creator`).~~ done (done — fixed upstream (b13e17bba) + propagated (status 15-21 §a5))
 5. Release-cadence check: tag count (14 metaengine releases) was used; root CHANGELOG.md dates were not read.
 
 ## d) TOTALLY FUCKED UP (honesty ledger)
@@ -56,10 +56,10 @@ Nothing catastrophic: no code touched, no builds broken, report committed and fo
 
 **P0 — close this session's loops:**
 
-1. Owner decision on the verdict's framing (see g1) — everything below keys off it.
-2. Quantify the dep-tree claim: scratch module, `go mod graph`/`go.sum` delta for metaengine-only vs system+metaengine vs status quo (30 min, hardens CONTRA #1 into numbers).
+1. ~~Owner decision on the verdict's framing (see g1) — everything below keys off it.~~ done (settled by owner actions — dep-quant ordered (run soon) and the seam ADR adopted the verdict)
+2. ~~Quantify the dep-tree claim: scratch module, `go mod graph`/`go.sum` delta for metaengine-only vs system+metaengine vs status quo (30 min, hardens CONTRA #1 into numbers).~~ done (done — measured 2026-09-16 (ADR §6: 31→58→205 modules); quantified blockquote now sits on CONTRA #1)
 3. ~~Encode the revisit triggers where they'll be seen: one TODO_LIST.md row pointing at the report §9 (NOT a copy — a pointer), or an explicit decision that dated research docs are the only record.~~ done (encoded 2026-09-15 — verdicts/triggers reachable via the docs/research/README.md index + ROADMAP non-goal cross-link)
-4. Report the `modules.md` "system EXPERIMENTAL" wording fix to the go-cqrs-lite skill (skill-creator; 10 min).
+4. ~~Report the `modules.md` "system EXPERIMENTAL" wording fix to the go-cqrs-lite skill (skill-creator; 10 min).~~ done (done — fixed upstream (b13e17bba); installed copy re-linked and verified (status 15-21 §a5))
 5. CV-side cross-link decision (g2): one-line pointer in CV's SUPERB plan or docs/research to this report, or nothing.
 
 **P1 — report hardening (optional, evidence-grade upgrades):**
@@ -90,9 +90,9 @@ Nothing catastrophic: no code touched, no builds broken, report committed and fo
 
 ## g) QUESTIONS (cannot answer myself)
 
-1. **Whose adoption did you mean?** I assumed the question was "should the go-graph-rag SDK adopt these modules" (with CV's app-layer adoption covered as context, since SUPERB already plans it). If you actually meant a different adopter (e.g. CV's graphrag feature directly on metaengine, or go-cqrs-lite consuming go-graph-rag), the verdict frame changes — say so and I'll re-cut the report.
+1. ~~**Whose adoption did you mean?** I assumed the question was "should the go-graph-rag SDK adopt these modules" (with CV's app-layer adoption covered as context, since SUPERB already plans it). If you actually meant a different adopter (e.g. CV's graphrag feature directly on metaengine, or go-cqrs-lite consuming go-graph-rag), the verdict frame changes — say so and I'll re-cut the report.~~ done (confirmed by owner actions — the seam ADR (2026-09-16) adopted the assumed SDK perspective and the verdict)
 2. **Encode or leave dated?** Should the verdict/revisit-triggers be harvested into TODO_LIST.md/ROADMAP.md (pointer rows), or do you want dated research docs to remain the only record until a trigger actually fires?
-3. **Is the 30-minute dep-tree quantification (f2) worth running now** to convert the report's #1 contra into hard numbers, or is the qualitative dependency-policy break decisive enough for the decision as it stands?
+3. ~~**Is the 30-minute dep-tree quantification (f2) worth running now** to convert the report's #1 contra into hard numbers, or is the qualitative dependency-policy break decisive enough for the decision as it stands?~~ done (answered — owner ordered run soon (2026-09-16); executed same day (ADR §6))
 
 ---
 

@@ -88,7 +88,7 @@ Nothing catastrophic: no data loss, no build broken by me, all gates green befor
 15. ~~Annotate CV status report `2026-09-15_17-09` item c7 ("SDK master is RED") as resolved, citing `40fa417` + the push. Medium / S / Documentation (CV repo).~~ done at `16fc16c7`
 16. ~~Annotate the CV TODO_LIST pin-equality row's graphrag part (carried there since extraction day). Low / S / Documentation (CV repo).~~ done at `16fc16c7`
 17. License-posture decision (public + PROPRIETARY + PR flow). Owner / S / Decision.
-18. Release cadence: v0.1.1 for the json-v1 restore + docs, or ride [Unreleased]? Owner / S / Decision.
+18. ~~Release cadence: v0.1.1 for the json-v1 restore + docs, or ride [Unreleased]? Owner / S / Decision.~~ done (decided v0.2.0 per the owner-package recommendation; cut 2026-09-16 (805aeba, CHANGELOG 0.2.0))
 19. ~~File/fix the QMD `get`/`multi_get` serialization bug (returns `&{ptr}` objects). Medium / M / Tooling (crush config repo).~~ done (filed tobi/qmd#959 + charmbracelet/crush#3846; upstream fix pending (TODO_LIST))
 20. ~~Optional: live-endpoint smoke test for the openai-compat provider behind an env flag (wire contract is httptest-verified only). Low / M / Quality.~~ done (embed_openai_live_test.go env-gated, offline skip verified (status 19-33 §a.14))
 
@@ -96,7 +96,7 @@ Nothing catastrophic: no data loss, no build broken by me, all gates green befor
 
 1. **Push now?** The P0 fix is committed locally; remote CI stays red and the dependabot PR blocked until `git push` runs. I do not push without explicit instruction — say the word and master goes green.
 2. **License posture:** the repo is public with a PROPRIETARY license while CONTRIBUTING invites issues/PRs. Is "public source, closed rights" the intended stance, or should a real OSS license land before wider consumption (affects the CONTRIBUTING wording I wrote and CV's proxy consumption story)?
-3. **v0.1.1 or [Unreleased]?** The json-v1 restore + doc set is master-only. Cut v0.1.1 so consumers tracking tags get the fixed tree, or hold until the next code change batches into it?
+3. ~~**v0.1.1 or [Unreleased]?** The json-v1 restore + doc set is master-only. Cut v0.1.1 so consumers tracking tags get the fixed tree, or hold until the next code change batches into it?~~ done (answered — v0.2.0 cut 2026-09-16 (805aeba))
 
 ---
 

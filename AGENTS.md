@@ -27,6 +27,11 @@ Standalone GraphRAG SDK extracted from the CV repo's `graphrag/` module
   `embed_openai_live_test.go` (env-gated, skips offline).
 - `.githooks/pre-push` — pristine-build guard; install once per clone with
   `git config core.hooksPath .githooks`.
+- `.github/workflows/release.yml` — GitHub Release automation on `v*` tags
+  (notes extracted from the matching CHANGELOG section; empty extraction fails
+  the run). Its first real run (v0.2.0) failed on an awk extraction bug (fixed
+  `350b815`, release created manually); unproven on a real tag since — watch it
+  on the next cut.
 
 ## Non-negotiables
 
@@ -66,6 +71,12 @@ CI (`.github/workflows/go-test.yml`) runs exactly these on every push
 opt-in live smoke test (`GRAPHRAG_LIVE_EMBED_URL`/`_KEY`/`_MODEL` env vars,
 see `embed_openai_live_test.go`).
 
+Benchmark reference numbers follow a benchstat protocol:
+`go test -bench . -count 10` summarized with benchstat (pinned
+`golang.org/x/perf v0.0.0-20260908200009`); the current table, machine, and
+date live in the `bench_test.go` doc comment — re-record there whenever
+numbers are re-measured.
+
 ## Gotchas
 
 - The dev shell exports `GOEXPERIMENT=jsonv2` machine-wide; CI does not.
@@ -74,6 +85,17 @@ see `embed_openai_live_test.go`).
   guard against experiment-gated stdlib sneaking in.
 - golangci-lint is pinned to v2.13.2 in CI (parity with CV's pin). Bump both
   repos together; the config requires the v2 binary.
+- The json-v2 regression is RECURRING, not historical: it has slipped in
+  three times (pre-v0.1.0, `e67bd9b`, `e4a9145`), always via daemon or
+  parallel-session commits made under the machine-wide `GOEXPERIMENT=jsonv2`
+  shell, and each time only the pristine build caught it. Run the pristine
+  check before EVERY push and re-verify any daemon commits that land on top
+  of yours.
+- pkg.go.dev renders NO godoc for any version of this module
+  ("Documentation not displayed due to license restrictions" — it does not
+  recognize the PROPRIETARY LICENSE file), so the README's pkg.go.dev link
+  lands on the restriction banner until the Q1 license decision lands.
+  Verified live 2026-09-19 against v0.2.0.
 - Markdown is dprint-formatted (`dprint.json`: table alignment, `_em_`
   style); Go is tab-indented gofmt (`.editorconfig`).
 - New research artifacts get a row in `docs/research/README.md` (artifact,
@@ -106,7 +128,17 @@ see `embed_openai_live_test.go`).
   Go interface sketch (seam signatures) — binding before any code lands.
 - ROADMAP removes settled ideas entirely (decision trail lives in CHANGELOG +
   code docs); no struck-through zombies.
-- Next work session: the seam design itself (ADR + interface sketch, f.6).
+- Seam design DELIVERED 2026-09-16: ADR + compiling Go interface sketch at
+  `docs/planning/2026-09-16_13-25_seam-store-search-adr.md`; implementation
+  is trigger-gated (ADR §9), not scheduled.
+- Release: v0.2.0 cut (tag `805aeba`). The tag-push `release.yml` failed on
+  an awk extraction bug (fixed `350b815`); the release was created manually.
+  pkg.go.dev then proved to render NO godoc for any version (license
+  restriction) — the public-face payoff of releases stays blocked on the Q1
+  license decision. CV-side bump to v0.2.0 pending (owner package Phase 8).
+- Daemon commits are pushed as-is, never rewritten. Upstream patches
+  (tobi/qmd#959, charmbracelet/crush#3846) stay HELD past the 2026-09-22
+  window — the patches live in the issue texts; no reminder pings.
 - metaengine dep-tree quantification: run soon (owner 2026-09-16), not
   trigger-gated.
 - CGO stance for the seam ADR: core stays CGO-free; CGO is acceptable inside
@@ -114,7 +146,8 @@ see `embed_openai_live_test.go`).
 
 ## Upstream sync
 
-The CV repo consumes this module from the proxy (`v0.x`). The CV-side
+The CV repo consumes this module from the proxy (`v0.x`; latest `v0.2.0`,
+CV-side bump pending — owner package Phase 8). The CV-side
 mounting points: `internal/graphvocab` (kind/relation constants),
 `internal/features/graphrag/service` (SearcherOptions wiring, tracing/counting
 decoration), `internal/config` (`GraphRAGConfig` alias).
