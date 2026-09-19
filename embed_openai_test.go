@@ -4,9 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
+	"math"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
+	"strings"
 	"sync/atomic"
 	"testing"
 	"time"
@@ -270,4 +274,154 @@ func TestOpenAICompatProvider_BatchesOver64Texts(t *testing.T) {
 	require.Len(t, vectors, 65, "every text keeps its vector across batch boundaries")
 
 	assert.Equal(t, []int{64, 1}, sizes.Load().([]int), "batches are capped at 64 texts per request")
+}
+
+// overlapTracker records the maximum number of in-flight requests the
+// endpoint observed, proving (or refuting) actual batch overlap.
+type overlapTracker struct {
+	inflight atomic.Int64
+	maxSeen  atomic.Int64
+}
+
+func (o *overlapTracker) enter() {
+	current := o.inflight.Add(1)
+
+	for {
+		seen := o.maxSeen.Load()
+		if current <= seen || o.maxSeen.CompareAndSwap(seen, current) {
+			return
+		}
+	}
+}
+
+func (o *overlapTracker) exit() { o.inflight.Add(-1) }
+
+// newNumberedEmbedServer answers every input "tN" with the 2-dim embedding
+// [N, 1]: after the provider's L2 normalization the first component is
+// N/sqrt(N^2+1), so the assembled vector order is provable end to end.
+// Requests sleep for delay and their overlap is tracked.
+func newNumberedEmbedServer(t *testing.T, delay time.Duration, tracker *overlapTracker) *embedServer {
+	t.Helper()
+
+	return newEmbedServer(t, func(req graphragEmbeddingsRequest, _ int64) (int, string) {
+		data := make([]map[string]any, 0, len(req.Input))
+
+		for i, text := range req.Input {
+			number, convErr := strconv.Atoi(strings.TrimPrefix(text, "t"))
+			if convErr != nil {
+				number = 1
+			}
+
+			data = append(data, map[string]any{
+				"embedding": []float64{float64(number), 1},
+				"index":     i,
+			})
+		}
+
+		tracker.enter()
+		defer tracker.exit()
+		time.Sleep(delay)
+
+		body, _ := json.Marshal(map[string]any{"data": data, "model": "test-model", "usage": map[string]int{}})
+
+		return http.StatusOK, string(body)
+	})
+}
+
+func newTestProviderWithConcurrency(t *testing.T, url string, concurrency int) *graphrag.OpenAICompatProvider {
+	t.Helper()
+
+	provider, err := graphrag.NewOpenAICompatProvider(graphrag.EmbeddingConfig{
+		Provider:         graphrag.ProviderOpenAICompat,
+		BaseURL:          url,
+		APIKey:           "test-key",
+		Model:            "test-model",
+		Timeout:          5 * time.Second,
+		MaxRetries:       0,
+		MaxChars:         100,
+		EmbedConcurrency: concurrency,
+	})
+	require.NoError(t, err)
+
+	return provider
+}
+
+// numberedTexts builds "t1".."tn" — inputs whose encoded first components
+// are all distinct.
+func numberedTexts(n int) []string {
+	texts := make([]string, 0, n)
+	for i := range n {
+		texts = append(texts, fmt.Sprintf("t%d", i+1))
+	}
+
+	return texts
+}
+
+func TestOpenAICompatProvider_ConcurrentBatchesOverlapAndKeepOrder(t *testing.T) {
+	t.Parallel()
+
+	tracker := &overlapTracker{}
+	embed := newNumberedEmbedServer(t, 15*time.Millisecond, tracker)
+
+	provider := newTestProviderWithConcurrency(t, embed.server.URL, 4)
+
+	texts := numberedTexts(200) // 4 batches of 64
+
+	vectors, err := provider.Embed(t.Context(), texts)
+	require.NoError(t, err)
+	require.Len(t, vectors, 200)
+
+	for i, vector := range vectors {
+		number := float64(i + 1)
+		expected := number / math.Sqrt(number*number+1)
+
+		assert.InDelta(t, expected, vector[0], 1e-4,
+			"vector %d must be input %d's answer: completion order must never reorder results", i, i)
+	}
+
+	assert.GreaterOrEqual(t, tracker.maxSeen.Load(), int64(2), "batches must actually overlap at concurrency 4")
+	assert.Equal(t, int64(4), embed.requests.Load(), "one request per batch")
+}
+
+func TestOpenAICompatProvider_DefaultConcurrencyIsSerial(t *testing.T) {
+	t.Parallel()
+
+	tracker := &overlapTracker{}
+	embed := newNumberedEmbedServer(t, 5*time.Millisecond, tracker)
+
+	provider := newTestProvider(t, embed.server.URL, 0) // EmbedConcurrency unset -> serial
+
+	vectors, err := provider.Embed(t.Context(), numberedTexts(130)) // 3 batches
+	require.NoError(t, err)
+	require.Len(t, vectors, 130)
+
+	for i, vector := range vectors {
+		number := float64(i + 1)
+		expected := number / math.Sqrt(number*number+1)
+
+		assert.InDelta(t, expected, vector[0], 1e-4, "serial path must also preserve input order")
+	}
+
+	assert.Equal(t, int64(1), tracker.maxSeen.Load(), "default (unset) concurrency must take the serial path")
+}
+
+func TestOpenAICompatProvider_CancelDuringConcurrentEmbed(t *testing.T) {
+	t.Parallel()
+
+	tracker := &overlapTracker{}
+	embed := newNumberedEmbedServer(t, 100*time.Millisecond, tracker)
+
+	provider := newTestProviderWithConcurrency(t, embed.server.URL, 4)
+
+	ctx, cancel := context.WithCancel(t.Context())
+
+	go func() {
+		time.Sleep(20 * time.Millisecond)
+		cancel()
+	}()
+
+	_, err := provider.Embed(ctx, numberedTexts(200))
+	cancel()
+
+	require.Error(t, err, "mid-flight cancellation must abort the concurrent embed")
 }

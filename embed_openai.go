@@ -105,10 +105,7 @@ func NewOpenAICompatProvider(cfg EmbeddingConfig) (*OpenAICompatProvider, error)
 
 	maxRetries := max(cfg.MaxRetries, 0)
 
-	concurrency := cfg.EmbedConcurrency
-	if concurrency < 1 {
-		concurrency = 1
-	}
+	concurrency := max(cfg.EmbedConcurrency, 1)
 
 	return &OpenAICompatProvider{
 		baseURL:      strings.TrimSuffix(cfg.BaseURL, "/"),
@@ -230,13 +227,14 @@ func (p *OpenAICompatProvider) embedConcurrent(ctx context.Context, texts []stri
 
 				batch, err := p.embedBatch(workersCtx, texts[start:end])
 				if err != nil {
-					results <- batchResult{offset: start, err: err}
+					results <- batchResult{offset: start, vectors: nil, err: err}
+
 					cancel()
 
 					return
 				}
 
-				results <- batchResult{offset: start, vectors: batch}
+				results <- batchResult{offset: start, vectors: batch, err: nil}
 			}
 		}()
 	}
@@ -244,7 +242,7 @@ func (p *OpenAICompatProvider) embedConcurrent(ctx context.Context, texts []stri
 	go func() {
 		defer close(jobs)
 
-		for start := 0; start < batchCount; start++ {
+		for start := range batchCount {
 			select {
 			case jobs <- start * embedBatchTexts:
 			case <-workersCtx.Done():
@@ -253,7 +251,7 @@ func (p *OpenAICompatProvider) embedConcurrent(ctx context.Context, texts []stri
 		}
 	}()
 
-	slots := make([][]Vector, batchCount)
+	slots := make([][]Vector, batchCount) //nolint:makezero // positional, index-assigned per batch offset
 
 	for range batchCount {
 		result := <-results
