@@ -62,7 +62,9 @@ Standalone GraphRAG SDK extracted from the CV repo's `graphrag/` module
 
 ```bash
 GOTOOLCHAIN=go1.27.1 go build ./... && go vet ./... && go test ./...
-golangci-lint run ./...
+GOTOOLCHAIN=go1.27.1 golangci-lint run ./...   # without the prefix the
+                                                 # dev-shell GOTOOLCHAIN=local
+                                                 # cannot load go >= 1.27.1
 go mod tidy && git diff --exit-code go.mod go.sum   # tidy drift gate
 nix run nixpkgs#dprint -- check                     # markdown/json/yaml fmt
 ```
@@ -136,13 +138,6 @@ numbers are re-measured.
 - Seam design DELIVERED 2026-09-16: ADR + compiling Go interface sketch at
   `docs/planning/2026-09-16_13-25_seam-store-search-adr.md`; implementation
   is trigger-gated (ADR §9), not scheduled.
-- Release: v0.3.0 cut 2026-09-19 (hardening + throughput: EmbedConcurrency,
-  Go 1.27.1 floor, fail-fast cache reads, Searcher defensive copies;
-  release.yml green on the tag, notes extracted correctly, proxy indexed,
-  clean-dir `go get` verified). v0.2.0 (tag `805aeba`) needed a manual
-  release after the awk bug. pkg.go.dev still renders NO godoc (license
-  restriction) — public face blocked on the Q1 license decision. CV-side
-  bump to v0.3.0 pending (owner package Phase 8; can skip v0.2.0).
 - Daemon commits are pushed as-is, never rewritten. Upstream patches
   (tobi/qmd#959, charmbracelet/crush#3846) stay HELD past the 2026-09-22
   window — the patches live in the issue texts; no reminder pings.
@@ -150,6 +145,16 @@ numbers are re-measured.
   trigger-gated.
 - CGO stance for the seam ADR: core stays CGO-free; CGO is acceptable inside
   optional adapter modules only.
+
+## Owner decisions (2026-09-19)
+
+- Release: v0.3.0 cut 2026-09-19 (hardening + throughput: EmbedConcurrency,
+  Go 1.27.1 floor, fail-fast cache reads, Searcher defensive copies;
+  release.yml green on the tag, notes extracted correctly, proxy indexed,
+  clean-dir `go get` verified). v0.2.0 (tag `805aeba`) needed a manual
+  release after the awk bug. pkg.go.dev still renders NO godoc (license
+  restriction) — public face blocked on the Q1 license decision. CV-side
+  bump to v0.3.0 pending (owner package Phase 8; can skip v0.2.0).
 
 ## Upstream sync
 
