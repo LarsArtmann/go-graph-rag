@@ -52,5 +52,6 @@ re-run 15/15 OK 0 redirects).
   Medium watch row owns the follow-up).
 - CV-repo extraction-story annotations — committed in the CV repo
   (`16fc16c7`, daemon-committed; awaiting the CV repo's next push).
-- CV consumer bump to graph-rag v0.2.0 — pending in the owner package
-  Phase 8 (external repo, separate session).
+- CV consumer bump to graph-rag v0.3.0 — pending in the owner package
+  Phase 8 (external repo, separate session); CV may skip v0.2.0 and bump
+  straight to v0.3.0 (needs the Go 1.27.1 toolchain).

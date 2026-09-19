@@ -30,9 +30,8 @@ Standalone GraphRAG SDK extracted from the CV repo's `graphrag/` module
   `git config core.hooksPath .githooks`.
 - `.github/workflows/release.yml` — GitHub Release automation on `v*` tags
   (notes extracted from the matching CHANGELOG section; empty extraction fails
-  the run). Its first real run (v0.2.0) failed on an awk extraction bug (fixed
-  `350b815`, release created manually); unproven on a real tag since — watch it
-  on the next cut.
+  the run). Proven end-to-end on the v0.3.0 tag (2026-09-19, green run,
+  correct notes) after the v0.2.0 awk-extraction failure (fixed `350b815`).
 
 ## Non-negotiables
 
@@ -137,11 +136,13 @@ numbers are re-measured.
 - Seam design DELIVERED 2026-09-16: ADR + compiling Go interface sketch at
   `docs/planning/2026-09-16_13-25_seam-store-search-adr.md`; implementation
   is trigger-gated (ADR §9), not scheduled.
-- Release: v0.2.0 cut (tag `805aeba`). The tag-push `release.yml` failed on
-  an awk extraction bug (fixed `350b815`); the release was created manually.
-  pkg.go.dev then proved to render NO godoc for any version (license
-  restriction) — the public-face payoff of releases stays blocked on the Q1
-  license decision. CV-side bump to v0.2.0 pending (owner package Phase 8).
+- Release: v0.3.0 cut 2026-09-19 (hardening + throughput: EmbedConcurrency,
+  Go 1.27.1 floor, fail-fast cache reads, Searcher defensive copies;
+  release.yml green on the tag, notes extracted correctly, proxy indexed,
+  clean-dir `go get` verified). v0.2.0 (tag `805aeba`) needed a manual
+  release after the awk bug. pkg.go.dev still renders NO godoc (license
+  restriction) — public face blocked on the Q1 license decision. CV-side
+  bump to v0.3.0 pending (owner package Phase 8; can skip v0.2.0).
 - Daemon commits are pushed as-is, never rewritten. Upstream patches
   (tobi/qmd#959, charmbracelet/crush#3846) stay HELD past the 2026-09-22
   window — the patches live in the issue texts; no reminder pings.
@@ -152,7 +153,7 @@ numbers are re-measured.
 
 ## Upstream sync
 
-The CV repo consumes this module from the proxy (`v0.x`; latest `v0.2.0`,
+The CV repo consumes this module from the proxy (`v0.x`; latest `v0.3.0`,
 CV-side bump pending — owner package Phase 8). The CV-side
 mounting points: `internal/graphvocab` (kind/relation constants),
 `internal/features/graphrag/service` (SearcherOptions wiring, tracing/counting
