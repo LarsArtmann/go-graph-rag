@@ -1,12 +1,12 @@
 # Status Report — M10 executed & shipped; NEW regression alert on local HEAD
 
-|         |                                                                                                                                                                        |
-| ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Date    | 2026-09-16 15:21 CEST                                                                                                                                                  |
-| Session | Continued from `2026-09-16_14-14_seam-plan-execution-status.md`: executed the owner's three decisions (push as-is / commit skill repos / hold PRs)                     |
-| Verdict | **The SUPERB plan is now 100% executed (M1–M10) and shipped — ~~BUT local HEAD is pristine-BROKEN by a parallel commit that must be adjudicated (see §g)~~ adjudicated 2026-09-16: imports restored (`7404815`), v0.2.0 cut from the clean tree (`805aeba`); the class recurred AGAIN post-tag (`e4a9145`) and was re-fixed (`104b5ef`)**               |
-| Git     | origin/master = `660d48c`, CI GREEN (run `35100154277`). ~~Local is ahead 1: `e67bd9b` (NOT mine) re-imports the json-v2/experiment regression — **unpushed on purpose**~~ superseded: `e67bd9b` was never pushed; imports restored `7404815`; v0.2.0 shipped (`805aeba`); HEAD (`104b5ef`) pristine-clean and synced |
-| Honesty | 1 self-caught fabrication incident (§d1), 1 destructive edit (§d2), 1 external-repo mutation via hook (§d3) — all reported, none shipped                               |
+|         |                                                                                                                                                                                                                                                                                                                                           |
+| ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date    | 2026-09-16 15:21 CEST                                                                                                                                                                                                                                                                                                                     |
+| Session | Continued from `2026-09-16_14-14_seam-plan-execution-status.md`: executed the owner's three decisions (push as-is / commit skill repos / hold PRs)                                                                                                                                                                                        |
+| Verdict | **The SUPERB plan is now 100% executed (M1–M10) and shipped — ~~BUT local HEAD is pristine-BROKEN by a parallel commit that must be adjudicated (see §g)~~ adjudicated 2026-09-16: imports restored (`7404815`), v0.2.0 cut from the clean tree (`805aeba`); the class recurred AGAIN post-tag (`e4a9145`) and was re-fixed (`104b5ef`)** |
+| Git     | origin/master = `660d48c`, CI GREEN (run `35100154277`). ~~Local is ahead 1: `e67bd9b` (NOT mine) re-imports the json-v2/experiment regression — **unpushed on purpose**~~ superseded: `e67bd9b` was never pushed; imports restored `7404815`; v0.2.0 shipped (`805aeba`); HEAD (`104b5ef`) pristine-clean and synced                     |
+| Honesty | 1 self-caught fabrication incident (§d1), 1 destructive edit (§d2), 1 external-repo mutation via hook (§d3) — all reported, none shipped                                                                                                                                                                                                  |
 
 ## 1. What happened since the 14:14 report
 
@@ -49,9 +49,9 @@ nothing (not my work), and put the decision in §g.
 
 ## b) PARTIALLY DONE
 
-1. **SKILLS (ahead 3) and go-cqrs-lite (ahead 20) are committed but NOT pushed.** The owner
-   said "commit both", said nothing about pushing, and the standing external-repo guard says
-   watch-don't-push. Holding — explicit ruling requested (§g3).
+1. ~~**SKILLS (ahead 3) and go-cqrs-lite (ahead 20) are committed but NOT pushed.** The owner~~ done (half-resolved 2026-09-19 — SKILLS now synced with origin; go-cqrs-lite still unpushed (ahead 32, parallel workstream active); ruling still pending)
+   ~~said "commit both", said nothing about pushing, and the standing external-repo guard says~~
+   ~~watch-don't-push. Holding — explicit ruling requested (§g3).~~
 2. **Plan-deviation write-backs** (F3.2 → `ExampleOpenStore`; F6.4 rerouted upstream) still not
    written into the archived plan copy (carried from the previous f-list).
 3. **docs-health `SKILL.md` still doesn't mention `check-rows.py`** (the tool exists and is
@@ -125,11 +125,11 @@ compaction/eviction; backup/export; Dgraph sweep; metaengine adapter module; cor
 
 **Blocking / adjudication (new, top):**
 
-1. **Rule on `e67bd9b`** (§g1): revert the json-v2/experiment/goheader regression and restore
-   the non-negotiables, or bless the direction change. Until ruled: no pushes; origin stays
-   green at `660d48c`.
-2. If reverting: revert `e67bd9b`, re-run the FULL pristine suite + CI to green, and re-audit
-   `.golangci.yaml` for any other CV-sync drift (the +7 lines touched build-tags AND linters).
+1. ~~**Rule on `e67bd9b`** (§g1): revert the json-v2/experiment/goheader regression and restore~~ done (adjudicated — restored, not blessed: imports back to encoding/json (7404815); v0.2.0 cut from the clean tree (805aeba); the class recurred post-tag (e4a9145, re-fixed 104b5ef))
+   ~~the non-negotiables, or bless the direction change. Until ruled: no pushes; origin stays~~
+   ~~green at `660d48c`.~~
+2. ~~If reverting: revert `e67bd9b`, re-run the FULL pristine suite + CI to green, and re-audit~~ done (done — 7404815 restored the imports; the v0.2.0 phases re-ran the full pristine suite; .golangci.yaml verified free of goexperiment/goheader (2026-09-19))
+   ~~`.golangci.yaml` for any other CV-sync drift (the +7 lines touched build-tags AND linters).~~
 3. If blessing: rewrite AGENTS.md non-negotiables #2/#5 first, update the pre-push guard and
    CI (both currently enforce the opposite), and cut it as a DECISION record — not silently.
 4. Identify the parallel work stream(s) (go-cqrs-lite vector files; this repo's embed/store
@@ -144,8 +144,8 @@ compaction/eviction; backup/export; Dgraph sweep; metaengine adapter module; cor
 **Owner gates (unchanged):**
 
 8. Q1 license posture → then CONTRIBUTING inbound-grant line.
-9. Q2 v0.2.0 cut → tag → `release.yml` fires → verify CHANGELOG extraction end-to-end.
-10. After v0.2.0: verify the new examples render on pkg.go.dev.
+9. ~~Q2 v0.2.0 cut → tag → `release.yml` fires → verify CHANGELOG extraction end-to-end.~~ done (done — v0.2.0 cut 2026-09-16 (805aeba); release.yml fired and failed on the awk extraction bug (fixed 350b815); release created manually)
+10. ~~After v0.2.0: verify the new examples render on pkg.go.dev.~~ done (done-with-finding — pkg.go.dev renders NO godoc for any version (license restriction); recorded in the owner package + README (2026-09-19))
 11. Live smoke test once `GRAPHRAG_LIVE_EMBED_*` creds exist.
 12. CV repo push (carries `16fc16c7`).
 13. CV-side cross-link decision for the metaengine report.
@@ -154,27 +154,27 @@ compaction/eviction; backup/export; Dgraph sweep; metaengine adapter module; cor
 
 **Repo work (small, concrete):**
 
-15. Add `check-rows.py` to the docs-health `SKILL.md` body (tool exists, skill silent).
-16. Write the two plan deviations (F3.2 rename, F6.4 reroute) into the archived plan copy.
-17. benchstat-grade the round-trip bench (`-count 10`; currently count=3, ±∞ spread).
-18. Document the 10k fixture-build cost (~37s per count) in `bench_test.go`.
-19. Add `BenchmarkSimilarPairs/docs=100` for size symmetry.
-20. Extend `.githooks/pre-push` with tidy-drift + dprint check (guard against exactly the
-    class of regression `e67bd9b` represents).
-21. Record the benchstat invocation + pinned `golang.org/x/perf` version in AGENTS.md Commands.
-22. Confirm dependabot's grouped Actions updates cover `release.yml`'s pinned checkout.
-23. After the first tag: `gh workflow view release` to confirm registration.
-24. Settle whether dprint checks `.github/workflows/*.yml` (release.yml formatting is
-    unguarded if not).
-25. Compile the ADR sketch as a permanent compile-only test so it cannot rot against core.
+15. ~~Add `check-rows.py` to the docs-health `SKILL.md` body (tool exists, skill silent).~~ done (routed to TODO_LIST Low row (document check-rows.py in the docs-health SKILL.md body))
+16. ~~Write the two plan deviations (F3.2 rename, F6.4 reroute) into the archived plan copy.~~ done (done — deviations written into the plan header at archive time (this pass, 2026-09-19))
+17. ~~benchstat-grade the round-trip bench (`-count 10`; currently count=3, ±∞ spread).~~ done (routed to TODO_LIST Low row (benchmark hygiene batch: benchstat the round-trip bench with -count 10))
+18. ~~Document the 10k fixture-build cost (~37s per count) in `bench_test.go`.~~ done (routed to TODO_LIST Low row (benchmark hygiene batch: document the ~37s 10k fixture cost in bench_test.go))
+19. ~~Add `BenchmarkSimilarPairs/docs=100` for size symmetry.~~ done (routed to TODO_LIST Low row (benchmark hygiene batch: BenchmarkSimilarPairs/docs=100))
+20. ~~Extend `.githooks/pre-push` with tidy-drift + dprint check (guard against exactly the~~ done (routed to TODO_LIST Medium row (extend .githooks/pre-push with tidy-drift + dprint))
+    ~~class of regression `e67bd9b` represents).~~
+21. ~~Record the benchstat invocation + pinned `golang.org/x/perf` version in AGENTS.md Commands.~~ done (done — AGENTS.md Commands records the benchstat protocol + pinned x/perf version (this pass, 2026-09-19))
+22. ~~Confirm dependabot's grouped Actions updates cover `release.yml`'s pinned checkout.~~ done (verified 2026-09-19 — dependabot github-actions group patterns [*] covers the release.yml pinned checkout)
+23. ~~After the first tag: `gh workflow view release` to confirm registration.~~ done (done — the workflow registered and FIRED on the v0.2.0 tag (failed extraction, fixed 350b815, manual release))
+24. ~~Settle whether dprint checks `.github/workflows/*.yml` (release.yml formatting is~~ done (verified 2026-09-19 — dprint.json includes the yaml plugin (pretty_yaml); .github/workflows are covered)
+    ~~unguarded if not).~~
+25. ~~Compile the ADR sketch as a permanent compile-only test so it cannot rot against core.~~ done (routed to TODO_LIST Medium row (guard the seam ADR against core drift: compile-only test for the §5 sketch))
 26. When adapter work starts: write the `VectorIndex` filter-semantics doc contract first.
-27. Cross-link the seam ADR from ROADMAP's non-goals row.
-28. Add FEATURES.md DONE rows for the round-trip benchmark + release automation (owner taste).
-29. Add an ADR pointer to the owner-decision package under Q2.
+27. ~~Cross-link the seam ADR from ROADMAP's non-goals row.~~ done (done — ROADMAP non-goals external-DB row now cites the seam ADR (this pass, 2026-09-19))
+28. ~~Add FEATURES.md DONE rows for the round-trip benchmark + release automation (owner taste).~~ done (done — FEATURES.md gained a PARTIALLY_FUNCTIONAL release-automation row; the benchmark row now covers StoreRoundTrip (this pass, 2026-09-19))
+29. ~~Add an ADR pointer to the owner-decision package under Q2.~~ **Won't implement — superseded — the owner package Phase 7 note already records the release-automation outcome inline.**
 30. gitleaks/codespell on-demand pass over the new docs.
-31. Fake `GraphStore` test fixture to keep the seam honest pre-adapter.
-32. Verify the `660d48c`/`f79c58a` CHANGELOG "Fixed" claims still hold once `e67bd9b` is
-    adjudicated (the json-v1 restoration entry is currently contradicted on local HEAD).
+31. ~~Fake `GraphStore` test fixture to keep the seam honest pre-adapter.~~ done (routed to TODO_LIST Medium row (guard the seam ADR against core drift: fake GraphStore fixture))
+32. ~~Verify the `660d48c`/`f79c58a` CHANGELOG "Fixed" claims still hold once `e67bd9b` is~~ done (verified 2026-09-19 — json-v1 imports at HEAD; [0.2.0] Fixed documents the second recurrence; the third (e4a9145) was re-fixed pre-push (104b5ef))
+    ~~adjudicated (the json-v1 restoration entry is currently contradicted on local HEAD).~~
 
 **Roadmap / trigger-gated (unchanged):**
 
@@ -222,4 +222,4 @@ compaction/eviction; backup/export; Dgraph sweep; metaengine adapter module; cor
 
 ---
 
-_Nothing was pushed past `660d48c`; origin is green; local carries the unadjudicated `e67bd9b`._
+_~~Nothing was pushed past `660d48c`; origin is green; local carries the unadjudicated `e67bd9b`.~~ Superseded 2026-09-16: `e67bd9b` was adjudicated (imports restored, `7404815`) and the tree shipped — v0.2.0 cut (`805aeba`); later the same day a fresh recurrence (`e4a9145`) was re-fixed pre-push (`104b5ef`)._

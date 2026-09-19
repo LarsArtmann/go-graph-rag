@@ -1,12 +1,12 @@
 # Status Report — SUPERB seam-ADR plan execution (M1–M9 done, M10 paused at the push gate)
 
-|         |                                                                                                                                             |
-| ------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| Date    | 2026-09-16 14:14 CEST                                                                                                                       |
-| Session | Executed `docs/planning/2026-09-16_12-15_SUPERB-seam-adr-execution-plan.md` (10 medium / 46 fine tasks) after the owner's "GET SHIT DONE"   |
+|         |                                                                                                                                                                                                                                                                                                                           |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date    | 2026-09-16 14:14 CEST                                                                                                                                                                                                                                                                                                     |
+| Session | Executed `docs/planning/2026-09-16_12-15_SUPERB-seam-adr-execution-plan.md` (10 medium / 46 fine tasks) after the owner's "GET SHIT DONE"                                                                                                                                                                                 |
 | Verdict | M1–M9 executed with every fine-task verify gate green. ~~M10 stopped at its designed stopping point: F10.2 done, F10.1/F10.3 await the owner~~ — F10.1/F10.3 executed the same day (15-21 §a1/§a2: pristine suite ALL GREEN, pushed, CI green); M1–M10 all shipped, and v0.2.0 was cut from the finished tree (`805aeba`) |
-| Git     | Working tree CLEAN; ~~master = 10 heuristic auto-daemon commits AHEAD of origin/master (nothing pushed); CI green on origin HEAD `bd14092`~~ pushed as-is per owner ruling (`f79c58a`, later `660d48c`), CI green on both (runs `35099876210`/`35100154277`); v0.2.0 shipped from the finished tree |
-| Honesty | 3 self-inflicted bugs found and fixed by the session's own gates (§d); 2 scope expansions beyond the plan (§b); 1 claim corrected (§g/note) |
+| Git     | Working tree CLEAN; ~~master = 10 heuristic auto-daemon commits AHEAD of origin/master (nothing pushed); CI green on origin HEAD `bd14092`~~ pushed as-is per owner ruling (`f79c58a`, later `660d48c`), CI green on both (runs `35099876210`/`35100154277`); v0.2.0 shipped from the finished tree                       |
+| Honesty | 3 self-inflicted bugs found and fixed by the session's own gates (§d); 2 scope expansions beyond the plan (§b); 1 claim corrected (§g/note)                                                                                                                                                                               |
 
 ## 1. What this session delivered in one paragraph
 
