@@ -38,6 +38,12 @@ import (
 // pairwise cosine compute. That is the measured trigger behind ROADMAP's
 // "revisit around ~50k nodes" item (ANN/HNSW backend, incremental
 // indexing).
+//
+// Fixture cost warning: every benchmark rebuilds its corpus fresh, and the
+// 10k corpus costs ~37s of pairwise-cosine compute PER BUILD. With
+// `-count 10` that is ~6 minutes of fixture setup before numbers stabilize
+// — the run is working, not hung. Prefer `-benchtime 10x -count 10` for
+// reproducible iteration counts on the slow benchmarks.
 
 // benchCorpus generates n deterministic documents over a fixed vocabulary:
 // overlapping token sets exercise similar-edge derivation without any
@@ -135,19 +141,23 @@ func BenchmarkSearch(b *testing.B) {
 }
 
 func BenchmarkSimilarPairs(b *testing.B) {
-	docs, edges := benchCorpus(1000)
+	for _, size := range []int{100, 1000} {
+		b.Run(fmt.Sprintf("docs=%d", size), func(b *testing.B) {
+			docs, edges := benchCorpus(size)
 
-	result, err := graphrag.Build(b.Context(), graphrag.NewHashProvider(), nil, docs, edges, graphrag.BuildOptions{})
-	if err != nil {
-		b.Fatal(err)
-	}
+			result, err := graphrag.Build(b.Context(), graphrag.NewHashProvider(), nil, docs, edges, graphrag.BuildOptions{})
+			if err != nil {
+				b.Fatal(err)
+			}
 
-	searcher := graphrag.NewSearcher(result.Nodes, result.Edges, result.Vectors)
+			searcher := graphrag.NewSearcher(result.Nodes, result.Edges, result.Vectors)
 
-	for b.Loop() {
-		if pairs := searcher.SimilarPairs(0.5); len(pairs) == 0 {
-			b.Fatal("expected similar pairs")
-		}
+			for b.Loop() {
+				if pairs := searcher.SimilarPairs(0.5); len(pairs) == 0 {
+					b.Fatal("expected similar pairs")
+				}
+			}
+		})
 	}
 }
 
