@@ -29,6 +29,14 @@ Raw ideas:
   composed with ANN, preserving today's linear-scan behavior
 - ADR for the ANN winner: choice, migration path, and `RelationSimilar`
   derivation at ANN scale
+- Parallel pairwise scan with a deterministic merge (shard by row index;
+  the existing comparators are total orders, so output stays
+  byte-identical) — expected ~cores× on the measured quadratic paths
+  (review: `docs/architecture-understanding/2026-09-19_13-30_architecture-review.html`)
+- Dot-of-normalized internal fast path for pairwise cosine (every stored
+  vector is normalized at ingest; a pure dot skips ~2/3 of the per-pair
+  arithmetic) — owner-gated: shifts user-visible scores in the last
+  decimals and requires re-pinning golden tests
 
 ### 2. Provider ecosystem
 

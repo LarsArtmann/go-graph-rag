@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Report Title</title>
+    <title>go-graph-rag — Architecture Review 2026-09-19</title>
     <style>
       /* =========================================================================
          BAUHAUS LIGHT — Editorial template
@@ -848,15 +848,14 @@
     </style>
   </head>
   <body>
-    <!-- Full-bleed top bar (optional — remove for quieter reports) -->
+    <!-- Full-bleed top bar -->
     <div class="top-bar">
-      <span>REPORT TYPE</span>
-      <span>YYYY-MM-DD</span>
-      <span>AUTHOR / TEAM</span>
+      <span>ARCHITECTURE REVIEW</span>
+      <span>2026-09-19</span>
+      <span>go-graph-rag v0.2.0</span>
     </div>
 
     <div class="layout">
-      <!-- Sidebar TOC (hidden below 1024px; use inline .toc if you prefer) -->
       <aside class="sidebar" data-nav>
         <nav>
           <div class="label">Contents</div>
@@ -864,211 +863,580 @@
           <a href="#scorecard">Scorecard</a>
           <a href="#strengths">Strengths</a>
           <a href="#findings">Findings</a>
-          <a href="#proposal">Proposal</a>
+          <a href="#speed">The speed levers</a>
+          <a href="#roadmap">Action roadmap</a>
           <a href="#appendix">Appendix</a>
         </nav>
       </aside>
 
-      <!-- Main content -->
       <main class="main">
-        <!-- Hero -->
         <header class="hero">
-          <!-- Optional Bauhaus signature: geometric shape cluster. Remove for quieter hero. -->
           <div class="hero-shapes">
             <div class="bar"></div>
             <div class="circle"></div>
             <div class="square"></div>
             <div class="tri"></div>
           </div>
-          <div class="eyebrow">REPORT TYPE &middot; YYYY-MM-DD</div>
-          <h1>Report Title</h1>
+          <div class="eyebrow">ARCHITECTURE REVIEW &middot; 2026-09-19</div>
+          <h1>go-graph-rag: superb is a decision list, not a rewrite</h1>
           <p class="subtitle">
-            One or two sentences that set the frame: who this is for, what was
-            reviewed, and what the reader will take away.
+            A full-source review of the 9-file, ~2,200-line SDK across seven
+            structural dimensions. Verdict: the architecture is sound and
+            unusually honest for its size. What separates it from superb is a
+            short, ordered list of constant-factor speed levers and two
+            hardening decisions &mdash; not restructuring.
           </p>
           <div class="meta">
-            <span class="tag amber">Scope: example</span>
-            <span class="tag">Version: 1.0.0</span>
-            <span class="tag teal">Status: draft</span>
+            <span class="tag amber">Scope: core SDK v0.2.0 &middot; every source file read</span>
+            <span class="tag">Module: github.com/larsartmann/go-graph-rag</span>
+            <span class="tag teal">Verdict: GOOD (3.9/5) &middot; no restructuring needed</span>
           </div>
         </header>
 
-        <!-- Scorecard -->
         <section id="scorecard" class="scorecard">
           <div class="score-card score-good">
-            <div class="score">8</div>
-            <div class="label">Items passing</div>
+            <div class="score">5</div>
+            <div class="label">Cohesion &middot; every file is one concern</div>
+          </div>
+          <div class="score-card score-good">
+            <div class="score">5</div>
+            <div class="label">Dependency direction &middot; domain imports nothing</div>
+          </div>
+          <div class="score-card score-good">
+            <div class="score">4</div>
+            <div class="label">Coupling &middot; seams where they matter</div>
+          </div>
+          <div class="score-card score-good">
+            <div class="score">4</div>
+            <div class="label">Composability &middot; pure Build, immutable Searcher</div>
+          </div>
+          <div class="score-card score-good">
+            <div class="score">4</div>
+            <div class="label">Service orientation &middot; extraction-ready</div>
           </div>
           <div class="score-card score-warn">
             <div class="score">3</div>
-            <div class="label">Warnings</div>
+            <div class="label">Modularity &middot; flat package (deliberate)</div>
           </div>
           <div class="score-card score-bad">
-            <div class="score">1</div>
-            <div class="label">Blockers</div>
+            <div class="score">2</div>
+            <div class="label">Scalability &middot; quadratic by design, exit planned</div>
           </div>
           <div class="score-card">
-            <div class="score">12</div>
-            <div class="label">Total reviewed</div>
+            <div class="score">3.9</div>
+            <div class="label">Average &middot; Good: fix the bottom, keep the shape</div>
           </div>
         </section>
 
-        <!-- Summary -->
         <section id="summary">
           <h2><span class="num">00</span>Summary</h2>
           <p>
-            Replace this with the bottom-line verdict. A good summary tells the
-            reader whether the subject is ready, what the biggest risk is, and
-            what one action would unlock the most value.
+            The SDK is a single Go package with nine files that each own exactly
+            one concern: model (<code>graph.go</code>), vector math
+            (<code>vector.go</code>), indexing (<code>build.go</code>),
+            retrieval (<code>search.go</code>), provider seam + two
+            implementations (<code>embed*.go</code>), persistence
+            (<code>store.go</code>), configuration (<code>config.go</code>).
+            Dependency direction is clean: the domain files import nothing but
+            stdlib slices/sort/time; all infrastructure (net/http,
+            database/sql) lives in exactly two files. The two extension points
+            that consumers actually need &mdash; <code>Provider</code> and
+            <code>Cache</code> &mdash; are interfaces, and the two scaling
+            seams the future needs are already designed in the binding ADR
+            (<code>docs/planning/2026-09-16_13-25_seam-store-search-adr.md</code>).
+          </p>
+          <p>
+            The only weak dimension is scalability, and it is weak <em>by
+            recorded decision</em>: the pairwise paths are quadratic (measured
+            369.5 ms per 1,000-doc build, ~15 min extrapolated at 50k nodes,
+            <code>bench_test.go</code>), the owner has confirmed the corpus
+            stays far below that trigger until ~2027-09, and the ADR names the
+            exit (VectorIndex/GraphStore seams + adapter modules). Scaling work
+            now would be YAGNI. What is NOT YAGNI: three constant-factor speed
+            levers that make every corpus size faster without touching the API
+            contract, and two hardening fixes where the code is softer than its
+            own documentation claims.
           </p>
           <div class="callout callout-amber">
             <strong>The bottom line</strong>
-            State the verdict plainly. If the report is blocking, say so. If
-            it's mostly positive, lead with that.
+            Do not restructure. Land the three speed levers (concurrent embed
+            batches, parallel pairwise scan, normalized-dot fast path), harden
+            the two seams that are softer than their docs (cache-error policy,
+            Searcher aliasing), and promote the ADR&rsquo;s interface sketch
+            into a compile-only test so the designed future cannot rot. That
+            list is the whole distance to superb.
           </div>
         </section>
 
-        <!-- Strengths -->
         <section id="strengths">
-          <h2><span class="num">&#9670;</span>What's already excellent</h2>
-          <p>
-            Before the criticism: acknowledge what works. This builds trust and
-            keeps the report from reading like a pure complaint list.
-          </p>
-
+          <h2><span class="num">&#9670;</span>What is already excellent</h2>
           <div class="strengths">
             <div class="strength">
               <div class="check">+</div>
               <div class="text">
-                <strong>Specific strength one</strong>
-                <span>Explain why it matters and what it enables.</span>
+                <strong>Seams exist exactly where consumers need them</strong>
+                <span
+                  ><code>Provider</code> (embed.go:32) and <code>Cache</code>
+                  (store.go:60) are small interfaces with two real
+                  implementations; <code>Build</code> is a pure function and
+                  the <code>Searcher</code> is documented immutable &mdash;
+                  tests inject fakes without mocks.</span
+                >
               </div>
             </div>
             <div class="strength">
               <div class="check">+</div>
               <div class="text">
-                <strong>Specific strength two</strong>
+                <strong>Determinism is a feature, not an accident</strong>
                 <span
-                  >Reference files, metrics, or patterns where possible.</span
+                  >Every sort has a total key (score then ID; weight then
+                  target), renders are byte-stable, and golden tests pin it
+                  (hardening_test.go:269, :294). This is what makes the
+                  parallelization in this report provable.</span
+                >
+              </div>
+            </div>
+            <div class="strength">
+              <div class="check">+</div>
+              <div class="text">
+                <strong>Dependency austerity is measured, not vibes</strong>
+                <span
+                  >31 modules in a consumer graph (ADR &sect;6); the
+                  metaengine alternative would have made it 205. The flat
+                  root-package layout is a recorded owner decision with the
+                  tradeoff written down (AGENTS.md, 2026-09-15).</span
+                >
+              </div>
+            </div>
+            <div class="strength">
+              <div class="check">+</div>
+              <div class="text">
+                <strong>The rebuildable-index promise is enforced by
+                structure</strong>
+                <span
+                  >One SQLite file, one writer, embeddings namespaced by
+                  content hash &times; provider &times; model
+                  (store.go:22-30); losing the store costs a rebuild, and the
+                  cache makes that cheap. Health/shutdown duck types make the
+                  store a honest citizen in DI containers
+                  (store.go:122-141).</span
+                >
+              </div>
+            </div>
+            <div class="strength">
+              <div class="check">+</div>
+              <div class="text">
+                <strong>The future is already designed</strong>
+                <span
+                  >The seam ADR fixes VectorIndex/GraphStore, the three
+                  backend classes, CGO-in-adapters-only, and the
+                  trigger-gated adapter plan. This review endorses it as-is;
+                  nothing here competes with it.</span
                 >
               </div>
             </div>
           </div>
         </section>
 
-        <!-- Findings -->
         <section id="findings">
           <h2><span class="num">01</span>Findings</h2>
-          <p>These are the issues that need attention, ordered by impact.</p>
+          <p>Ordered by impact. Every finding cites code read this pass.</p>
 
-          <!-- Issue 1 -->
-          <div class="issue issue-critical" id="issue-1">
-            <span class="severity severity-critical"
-              >Blocking &middot; High impact</span
-            >
-            <h3>Critical issue title</h3>
-            <div class="where">
-              path/to/file.go:42-58 &middot; short context
-            </div>
+          <div class="issue issue-important" id="f-cache-errors">
+            <span class="severity severity-important">Important &middot; silent degradation</span>
+            <h3>Cache read errors are swallowed; write errors are fatal &mdash; an undocumented asymmetry</h3>
+            <div class="where">build.go:206-217 (lookupCache) vs build.go:190-194 (PutEmbeddings)</div>
             <p>
-              Describe the problem, cite the code or behavior, and explain why
-              it matters to the reader's goals.
+              <code>lookupCache</code> collapses error and miss into the same
+              <code>return nil, false</code>. A corrupt or locked store turns
+              every build into a full re-embed (real money on a hosted
+              endpoint) with <em>zero signal to the caller</em> &mdash; while
+              the corresponding write path fails the whole build. The two
+              halves of the same cache enforce opposite policies, and neither
+              is documented.
             </p>
-            <pre><code>// Example of the problematic pattern
-func BadExample() {}</code></pre>
-            <div class="callout callout-teal">
-              <strong>Fix: recommended action</strong>
-              State the concrete fix, including file names, function names, or
-              configuration changes.
-            </div>
-          </div>
-
-          <!-- Issue 2 -->
-          <div class="issue issue-important" id="issue-2">
-            <span class="severity severity-important"
-              >Important &middot; Medium impact</span
-            >
-            <h3>Important issue title</h3>
-            <div class="where">path/to/another.go:12-19</div>
-            <p>
-              Explain the risk. Important issues are not blockers but would make
-              a careful reviewer hesitate before shipping.
-            </p>
-          </div>
-
-          <!-- Issue 3 -->
-          <div class="issue issue-nice" id="issue-3">
-            <span class="severity severity-nice"
-              >Nice to have &middot; Low impact</span
-            >
-            <h3>Nice-to-have improvement</h3>
-            <div class="where">docs/ or config</div>
-            <p>
-              Minor polish, documentation gaps, or future-proofing suggestions
-              go here.
-            </p>
-          </div>
-        </section>
-
-        <!-- Proposal -->
-        <section id="proposal">
-          <h2><span class="num">02</span>What the solution could look like</h2>
-          <p>
-            If the findings were fixed, what would the new state be? Show the
-            target API, structure, or workflow.
-          </p>
-          <pre><code>// Target state after the recommended changes
-type BetterAPI struct {
-    Field string
+            <pre><code>// build.go:211-214 — read errors vanish:
+cached, ok, err := cache.CachedEmbedding(provider.Name(), provider.Model(), hash)
+if err != nil || !ok {
+    return nil, false // error == miss, silently
 }</code></pre>
-          <div class="callout callout-teal">
-            <strong>This is the target</strong>
-            Summarize why this state is better and what it unlocks.
+            <div class="callout callout-teal">
+              <strong>Fix: pick one policy and make it visible</strong>
+              Either propagate a wrapped cache-read error (fail fast, matches
+              the write path), or count degraded lookups on BuildResult
+              (e.g. <code>CacheErrors int</code>) and document the
+              degrade-to-reembed semantics. Owner-taste decision; either is
+              ~15 lines.
+            </div>
+          </div>
+
+          <div class="issue issue-important" id="f-aliasing">
+            <span class="severity severity-important">Important &middot; contract softer than docs</span>
+            <h3>Searcher immutability is by convention: caller maps/slices are retained, not copied</h3>
+            <div class="where">search.go:85-93, search.go:108-115</div>
+            <p>
+              The docs promise &ldquo;immutable and safe for concurrent
+              use&rdquo;, but <code>NewSearcherWithOptions</code> stores the
+              caller&rsquo;s <code>vectors</code> map and
+              <code>DocumentKinds</code> slice by reference. A caller mutating
+              either after construction (or two goroutines constructing while
+              one mutates its input) is a data race the type system will not
+              catch. For a public SDK whose headline property is safe
+              concurrency, the defense should be structural.
+            </p>
+            <div class="callout callout-teal">
+              <strong>Fix: clone on construction, or document the aliasing</strong>
+              Cheapest correct: copy the map and clone the slice in the
+              constructor (~6 lines, one allocation per searcher). Alternative:
+              document &ldquo;inputs must not be mutated afterward&rdquo; on
+              both constructors. Cloning is the better contract for a v0
+              library that promises immutability.
+            </div>
+          </div>
+
+          <div class="issue issue-important" id="f-serial-embeds">
+            <span class="severity severity-important">Important &middot; speed (network-bound)</span>
+            <h3>Embedding batches are strictly sequential &mdash; cold builds pay RTT &times; batch-count serially</h3>
+            <div class="where">embed_openai.go:163-172 (Embed loop)</div>
+            <p>
+              One 50k-document cold build is ~782 HTTP requests issued one
+              after another. Every batch waits for the previous round trip.
+              For any hosted provider this is the dominant end-to-end build
+              cost &mdash; not cosine math. The retry/backoff machinery is
+              already per-batch, so batches are trivially independent.
+            </p>
+            <div class="callout callout-teal">
+              <strong>Fix: bounded concurrency, opt-in, stdlib-only</strong>
+              Add <code>EmbeddingConfig.EmbedConcurrency</code> (default 1 =
+              today&rsquo;s behavior), fan batches over a small worker pool
+              (channels + WaitGroup, ~40 lines, no new dependency &mdash; the
+              dep budget is non-negotiable). Preserves input order by
+              index-slotting results. 429 pressure is already handled by the
+              retry path; document that concurrency multiplies in-flight
+              requests.
+            </div>
+          </div>
+
+          <div class="issue issue-nice" id="f-serial-scan">
+            <span class="severity severity-nice">Nice to have &middot; speed (CPU-bound)</span>
+            <h3>The quadratic paths are single-goroutine &mdash; a deterministic parallel scan is nearly free</h3>
+            <div class="where">build.go:273-297 (similarEdges), search.go:194-205 (SimilarPairs)</div>
+            <p>
+              Both hot loops partition cleanly by row index <code>i</code>.
+              The existing comparators are total orders
+              (<code>appendRanked</code>: weight then target, build.go:328-334;
+              SimilarPairs: score then A.ID then B.ID, search.go:207-217), so a
+              shard-by-<code>i</code> worker pool with a deterministic merge
+              produces <strong>byte-identical output</strong> &mdash; the
+              golden tests already prove the property that makes this safe.
+              Expected: near-linear in cores on the measured 370 ms/1k path
+              (bench machine: Ryzen AI MAX+ 395).
+            </p>
+            <p>
+              Routed to ROADMAP Theme 1 rather than TODO: the owner&rsquo;s
+              2026-09-15 corpus decision (NO until ~2027-09) makes this fuel,
+              not fire.
+            </p>
+          </div>
+
+          <div class="issue issue-nice" id="f-cosine">
+            <span class="severity severity-nice">Nice to have &middot; speed (owner-gated)</span>
+            <h3>Cosine recomputes both norms for every pair though every stored vector is already normalized</h3>
+            <div class="where">vector.go:97-115 vs embed_hash.go:72, embed_openai.go:333</div>
+            <p>
+              Every vector entering the corpus is L2-normalized at
+              construction (hash provider and OpenAI path both call
+              <code>Normalize()</code>), yet the pairwise hot loops pay the
+              full three-accumulator float64 cosine &mdash; ~3&times; the
+              arithmetic of a pure dot product. An internal
+              dot-of-normalized fast path is the single biggest CPU constant
+              factor available. The catch: scores shift in the last decimals,
+              which is user-visible (thresholds, <code>%.2f</code> renders,
+              golden pins) &mdash; an API-visible micro-change on a shipped
+              v0.2.0. Owner decision; pair it with a documented
+              &ldquo;vectors are normalized on ingest&rdquo; invariant.
+            </p>
+          </div>
+
+          <div class="issue issue-nice" id="f-double-hash">
+            <span class="severity severity-nice">Nice to have &middot; micro</span>
+            <h3>Every cache-miss document is SHA-256 hashed twice per build</h3>
+            <div class="where">build.go:163 and build.go:197 (resolveVectors)</div>
+            <p>
+              <code>HashText(doc.Text)</code> runs once while classifying
+              misses and again when assigning fresh vectors. One extra
+              full-text hash pass per cold document. Trivial fix: record
+              hash-by-doc-ID during the first pass and reuse it. Pure
+              cleanup; no behavior change.
+            </p>
+          </div>
+
+          <div class="issue issue-nice" id="f-flat">
+            <span class="severity severity-nice">Note &middot; recorded policy, not a defect</span>
+            <h3>Flat single-package layout &mdash; deliberate, and cheap to reverse</h3>
+            <div class="where">repo root &middot; owner decision 2026-09-15 (AGENTS.md)</div>
+            <p>
+              The buildflow linter&rsquo;s 8 root-package findings are
+              accepted policy for a v0 SDK. The reason this is safe: the file
+              seams already map 1:1 to future packages (graph, vector, embed,
+              store, search, build), and the ADR fixes the eventual module
+              layout (core + adapter modules). Modularization later is a
+              mechanical <code>go.mod</code> split, not a rewrite. Do not
+              restructure now.
+            </p>
           </div>
         </section>
 
-        <!-- Appendix -->
-        <section id="appendix">
-          <h2><span class="num">03</span>Appendix</h2>
+        <section id="speed">
+          <h2><span class="num">02</span>The speed levers, ranked</h2>
           <p>
-            Methodology, links to related files, or a priority matrix can live
-            here.
+            Current measured truth (bench_test.go, benchstat protocol,
+            &plusmn;1&ndash;2%): Build/1k = 369.5 ms, Search/1k = 948.6 &micro;s,
+            SimilarPairs/1k = 391.1 ms, StoreRoundTrip/10k = 197.4 ms.
+            Persistence is not the bottleneck; pairwise cosine compute is.
           </p>
           <table class="compare">
             <thead>
               <tr>
-                <th>Issue</th>
-                <th>Severity</th>
-                <th>Effort</th>
-                <th>Status</th>
+                <th>Lever</th>
+                <th>Expected win</th>
+                <th>Scope</th>
+                <th>Breaking?</th>
+                <th>Gate</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>Issue one</td>
-                <td class="no">Critical</td>
-                <td>Low</td>
-                <td class="no">Open</td>
+                <td>Concurrent embed batches (EmbedConcurrency, default 1)</td>
+                <td class="yes">~N&times; on network-bound cold builds</td>
+                <td>embed_openai.go only</td>
+                <td class="yes">No &mdash; new opt-in config field</td>
+                <td class="yes">None &mdash; do first</td>
               </tr>
               <tr>
-                <td>Issue two</td>
-                <td class="no">Important</td>
-                <td>Medium</td>
-                <td class="yes">In progress</td>
+                <td>Parallel pairwise scan (deterministic merge)</td>
+                <td class="yes">~cores&times; on Build + SimilarPairs</td>
+                <td>build.go + search.go</td>
+                <td class="yes">No &mdash; byte-identical output</td>
+                <td>ROADMAP Theme 1 (corpus decision)</td>
+              </tr>
+              <tr>
+                <td>Dot-of-normalized fast path</td>
+                <td class="yes">~3&times; arithmetic on all pairwise paths</td>
+                <td>vector.go + call sites</td>
+                <td class="no">Micro-shifts visible scores</td>
+                <td class="no">Owner decision (re-pin goldens)</td>
+              </tr>
+              <tr>
+                <td>Single-hash resolveVectors cleanup</td>
+                <td>Small (one SHA-256 pass saved per doc)</td>
+                <td>build.go</td>
+                <td class="yes">No</td>
+                <td class="yes">None &mdash; ride along</td>
+              </tr>
+              <tr>
+                <td>ANN / HNSW backend</td>
+                <td>Changes the complexity class at ~50k nodes</td>
+                <td>Seam ADR &sect;4.1/&sect;9</td>
+                <td class="yes">No (adapter modules)</td>
+                <td class="no">Trigger-gated ~2027-09</td>
               </tr>
             </tbody>
           </table>
+          <div class="callout callout-amber">
+            <strong>What NOT to do now</strong>
+            Do not pull an ANN library into core, do not add
+            golang.org/x/sync for errgroup (hand-roll the ~40-line pool; the
+            3-dependency budget is a marketed constraint), and do not
+            restructure into sub-packages &mdash; all three would spend real
+            risk on problems the corpus will not have for a year.
+          </div>
         </section>
 
-        <!-- Footer -->
+        <section id="roadmap">
+          <h2><span class="num">03</span>Action roadmap</h2>
+          <p>
+            The 1% that delivers 51%: the compile-only ADR sketch test
+            (makes the designed future load-bearing today). The 4% that
+            delivers 64%: the two hardening fixes. The 20% that delivers
+            80%: the speed levers in gate order.
+          </p>
+          <table class="compare">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Action</th>
+                <th>Impact</th>
+                <th>Effort</th>
+                <th>Priority / gate</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>R1</td>
+                <td>Compile-only test for the ADR &sect;5 interface sketch + fake GraphStore fixture</td>
+                <td class="yes">Keeps the binding design honest against core drift</td>
+                <td>S</td>
+                <td class="yes">P1 &mdash; already a TODO row</td>
+              </tr>
+              <tr>
+                <td>R2</td>
+                <td>Cache-error policy decision (propagate vs count-and-degrade) + single-hash cleanup</td>
+                <td class="yes">Ends silent cost degradation</td>
+                <td>S</td>
+                <td>P1 &mdash; owner-taste, then 15 min</td>
+              </tr>
+              <tr>
+                <td>R3</td>
+                <td>Searcher aliasing: clone vectors map + DocumentKinds on construction</td>
+                <td class="yes">Makes the immutability promise structural</td>
+                <td>S</td>
+                <td class="yes">P1</td>
+              </tr>
+              <tr>
+                <td>R4</td>
+                <td><code>EmbeddingConfig.EmbedConcurrency</code> (default 1) + stdlib worker pool</td>
+                <td class="yes">~N&times; network-bound cold builds</td>
+                <td>M</td>
+                <td class="yes">P1 &mdash; non-breaking, no deps</td>
+              </tr>
+              <tr>
+                <td>R5</td>
+                <td>Parallel pairwise scan with deterministic merge</td>
+                <td class="yes">~cores&times; on Build + SimilarPairs</td>
+                <td>M</td>
+                <td>P2 &mdash; ROADMAP Theme 1 fuel</td>
+              </tr>
+              <tr>
+                <td>R6</td>
+                <td>Dot-of-normalized internal fast path</td>
+                <td class="yes">~3&times; pairwise arithmetic</td>
+                <td>S/M</td>
+                <td class="no">P2 &mdash; owner-gated (score drift)</td>
+              </tr>
+              <tr>
+                <td>R7</td>
+                <td>Land ADR &sect;5 interfaces + promote linear scan to reference VectorIndex</td>
+                <td>First seam implementation step</td>
+                <td>M/L</td>
+                <td class="no">Trigger-gated (ADR &sect;9)</td>
+              </tr>
+              <tr>
+                <td>R8</td>
+                <td>ANN adapter spike, wire golden tests, metrics seams</td>
+                <td>Scale + v1 track</td>
+                <td>L</td>
+                <td class="no">P3 &mdash; ROADMAP themes 1/3/4</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="callout callout-teal">
+            <strong>This is the target state</strong>
+            Same package shape, same dependency budget, same API &mdash; plus
+            provably faster builds on network providers, pairwise paths that
+            use every core when the trigger eventually fires, hardening where
+            the code was softer than its docs, and a designed seam that can
+            no longer rot. Nothing on this list requires a rewrite; every
+            item is additive or a strictly local fix.
+          </div>
+        </section>
+
+        <section id="appendix">
+          <h2><span class="num">04</span>Appendix &mdash; scores with evidence</h2>
+          <table class="compare">
+            <thead>
+              <tr>
+                <th>Dimension</th>
+                <th>Score</th>
+                <th>Evidence</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Coupling</td>
+                <td class="yes">4/5</td>
+                <td>
+                  Provider/Cache interfaces; no mutable package state; two
+                  exceptions: silent cache-error coupling (build.go:206) and
+                  retained caller references in Searcher (search.go:108-115).
+                </td>
+              </tr>
+              <tr>
+                <td>Cohesion</td>
+                <td class="yes">5/5</td>
+                <td>
+                  Nine files, nine single-sentence purposes; no utils/common;
+                  the one-paragraph test passes everywhere.
+                </td>
+              </tr>
+              <tr>
+                <td>Modularity</td>
+                <td>3/5</td>
+                <td>
+                  Flat root package (accepted policy) &mdash; but file seams
+                  map 1:1 to future packages and the ADR fixes the module
+                  layout, so boundaries are conventional, not entangled.
+                </td>
+              </tr>
+              <tr>
+                <td>Composability</td>
+                <td class="yes">4/5</td>
+                <td>
+                  Options structs, pure Build, immutable Searcher, seam
+                  interfaces; RenderContext could be a free function (v1
+                  consideration); SimilarPairs lacks kind/filter knobs.
+                </td>
+              </tr>
+              <tr>
+                <td>Scalability</td>
+                <td class="no">2/5</td>
+                <td>
+                  Measured quadratic Build/SimilarPairs, linear-scan search,
+                  full-rebuild persistence &mdash; all recorded decisions with
+                  a designed exit (seam ADR) and a far trigger (~2027-09).
+                </td>
+              </tr>
+              <tr>
+                <td>Service orientation</td>
+                <td class="yes">4/5</td>
+                <td>
+                  Four bounded concerns (embed / index / retrieve / persist),
+                  each owning its data; extraction-ready by the ADR&rsquo;s
+                  adapter-module plan.
+                </td>
+              </tr>
+              <tr>
+                <td>Dependency direction</td>
+                <td class="yes">5/5</td>
+                <td>
+                  graph.go/vector.go import only slices/sort/time; net/http
+                  and database/sql exist in exactly two files; third-party
+                  code isolated at the edges; 3-dep budget enforced by CI.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            Method: every source file read in full this pass (2,194 LOC);
+            measured numbers from bench_test.go&rsquo;s recorded benchstat
+            table; governance constraints from AGENTS.md, the seam ADR, and
+            recorded owner decisions (2026-09-15/16). Average 3.9/5 = Good:
+            address the lowest-scoring dimension&rsquo;s cheap levers; no
+            restructuring.
+          </p>
+        </section>
+
         <footer class="footer">
           <p>
-            Generated YYYY-MM-DD &middot; Reviewed against version X.Y.Z
-            &middot; All claims verified against source code where noted
+            Generated 2026-09-19 &middot; Reviewed against v0.2.0 (master
+            <code>104b5ef</code>) &middot; Every claim verified against source
+            read this session; measured numbers from the recorded benchstat
+            table in bench_test.go
           </p>
         </footer>
       </main>
     </div>
+
 
     <!-- Progressive-enhancement scrollspy. Nav still works without JS via anchor links. -->
     <script>
