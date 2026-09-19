@@ -163,7 +163,12 @@ func resolveVectors(
 		hash := HashText(doc.Text)
 		hashes[doc.ID] = hash
 
-		if cached, ok := lookupCache(cache, provider, hash); ok {
+		cached, ok, err := lookupCache(cache, provider, hash)
+		if err != nil {
+			return nil, nil, 0, 0, err
+		}
+
+		if ok {
 			vectors[doc.ID] = cached
 			cacheHits++
 
@@ -176,7 +181,7 @@ func resolveVectors(
 		}
 	}
 
-	fresh, err := embedAll(ctx, provider, misses)
+	fresh, err := embedAll(ctx, provider, misses, hashes)
 	if err != nil {
 		return nil, nil, 0, 0, err
 	}
@@ -194,7 +199,7 @@ func resolveVectors(
 	}
 
 	for _, doc := range misses {
-		if vector, ok := fresh[HashText(doc.Text)]; ok {
+		if vector, ok := fresh[hashes[doc.ID]]; ok {
 			vectors[doc.ID] = vector
 		}
 	}
@@ -203,22 +208,38 @@ func resolveVectors(
 }
 
 // lookupCache guards the nil-cache case (pure in-memory builds).
-func lookupCache(cache Cache, provider Provider, hash string) (Vector, bool) {
+//
+// Cache-read errors FAIL the build (policy, 2026-09-19): reads are
+// symmetric with the write path, where PutEmbeddings errors are already
+// fatal, and a swallowed read error would silently push the missed text
+// through a paid re-embed while the vector sat in the cache untouched.
+// The alternative — a CacheErrors counter with degraded-mode continuation
+// — was considered and rejected for v0.x: nothing polls such a counter
+// today, so degradation would be invisible exactly where it costs money.
+// Revisit only with real telemetry demand.
+func lookupCache(cache Cache, provider Provider, hash string) (Vector, bool, error) {
 	if cache == nil {
-		return nil, false
+		return nil, false, nil
 	}
 
 	cached, ok, err := cache.CachedEmbedding(provider.Name(), provider.Model(), hash)
-	if err != nil || !ok {
-		return nil, false
+	if err != nil {
+		return nil, false, fmt.Errorf("graphrag: read embedding cache (%s/%s, hash %s): %w",
+			provider.Name(), provider.Model(), hash, err)
 	}
 
-	return cached, true
+	if !ok {
+		return nil, false, nil
+	}
+
+	return cached, true, nil
 }
 
 // embedAll embeds the missed documents in one provider pass, keyed by
-// content hash (deduplicated) and dimension-checked.
-func embedAll(ctx context.Context, provider Provider, misses []Document) (map[string]Vector, error) {
+// content hash (deduplicated) and dimension-checked. hashes carries the
+// hash of every classified document (recorded during cache lookups) so no
+// text is hashed a second time here.
+func embedAll(ctx context.Context, provider Provider, misses []Document, hashes map[string]string) (map[string]Vector, error) {
 	if len(misses) == 0 {
 		return map[string]Vector{}, nil
 	}
@@ -246,7 +267,7 @@ func embedAll(ctx context.Context, provider Provider, misses []Document) (map[st
 			return nil, &ErrDimsInconsistent{First: dims, Second: vector.Dims()}
 		}
 
-		fresh[HashText(doc.Text)] = vector
+		fresh[hashes[doc.ID]] = vector
 	}
 
 	return fresh, nil

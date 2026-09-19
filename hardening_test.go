@@ -300,3 +300,84 @@ func TestRenderContextGolden(t *testing.T) {
 
 	assert.Equal(t, want, got, "context block must be byte-deterministic")
 }
+
+// brokenCache fails every read, simulating a corrupted index file.
+type brokenCache struct{}
+
+func (brokenCache) CachedEmbedding(_, _, _ string) (graphrag.Vector, bool, error) {
+	return nil, false, errors.New("disk corrupted")
+}
+
+func (brokenCache) PutEmbeddings(_, _ string, _ []graphrag.EmbeddingEntry) error {
+	return nil
+}
+
+// TestBuildFailsOnCacheReadError pins the fail-fast cache-read policy: a
+// read error must fail the build (symmetric with the fatal write path)
+// instead of silently re-embedding the text behind a degraded cache.
+func TestBuildFailsOnCacheReadError(t *testing.T) {
+	t.Parallel()
+
+	_, err := graphrag.Build(t.Context(), graphrag.NewHashProvider(), brokenCache{},
+		[]graphrag.Document{{ID: "doc:1", Kind: "doc", Label: "One", Text: "hello world"}},
+		nil, graphrag.BuildOptions{})
+
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "read embedding cache", "cache READ errors fail the build, they are not swallowed")
+}
+
+// TestSearcherClonesCallerInputs pins the Searcher's immutability promise:
+// mutating the caller's vectors map (structure AND contents) or the
+// DocumentKinds slice after construction must not change any behavior.
+func TestSearcherClonesCallerInputs(t *testing.T) {
+	t.Parallel()
+
+	provider := graphrag.NewHashProvider()
+
+	type fixture struct {
+		id   string
+		kind graphrag.NodeKind
+		text string
+	}
+
+	fixtures := []fixture{
+		{id: "doc:a", kind: "doc", text: "alpha beta"},
+		{id: "doc:b", kind: "doc", text: "alpha gamma"},
+		{id: "hub:h", kind: "hub", text: "alpha"},
+	}
+
+	vectors := make(map[string]graphrag.Vector, len(fixtures))
+	nodes := make([]graphrag.Node, 0, len(fixtures))
+
+	for _, f := range fixtures {
+		embedded, err := provider.Embed(t.Context(), []string{f.text})
+		require.NoError(t, err)
+		require.Len(t, embedded, 1)
+
+		vectors[f.id] = embedded[0]
+		nodes = append(nodes, graphrag.Node{ID: f.id, Kind: f.kind, Label: f.text})
+	}
+
+	opts := graphrag.SearcherOptions{DocumentKinds: []graphrag.NodeKind{"doc"}}
+	searcher := graphrag.NewSearcherWithOptions(nodes, nil, vectors, opts)
+
+	baseline, err := searcher.Search(t.Context(), provider, "alpha", graphrag.SearchOptions{TopK: 3})
+	require.NoError(t, err)
+	require.Len(t, baseline.Hits, 3)
+
+	pairsBaseline := searcher.SimilarPairs(0.0)
+
+	// Mutate everything the caller still holds: map structure, vector
+	// contents, and the policy slice.
+	vectors["doc:a"][0] = 999
+	delete(vectors, "doc:b")
+	vectors["ghost"] = graphrag.Vector{1, 1, 1, 1}
+	opts.DocumentKinds[0] = "hijacked"
+
+	after, err := searcher.Search(t.Context(), provider, "alpha", graphrag.SearchOptions{TopK: 3})
+	require.NoError(t, err)
+
+	assert.Equal(t, baseline.Hits, after.Hits, "caller mutations must not change search behavior")
+	assert.Equal(t, pairsBaseline, searcher.SimilarPairs(0.0), "SimilarPairs is immune to caller map/vector mutation")
+	assert.Equal(t, 3, searcher.VectorCount(), "ghost vector and caller deletion stay invisible to the Searcher")
+}

@@ -104,15 +104,20 @@ func NewSearcher(nodes []Node, edges []Edge, vectors map[string]Vector) *Searche
 // NewSearcherWithOptions warm-starts a Searcher whose kind roles come from
 // opts. Nodes without vectors (e.g. hub labels) still participate through
 // graph expansion. If opts.ReferenceKind is set, the last embedded node of
-// that kind becomes the RefMatch reference.
+// that kind becomes the RefMatch reference. The vectors map (including each
+// vector's contents) and opts.DocumentKinds are cloned: the Searcher is
+// immutable, so mutating the caller's copies afterwards cannot change its
+// behavior.
 func NewSearcherWithOptions(nodes []Node, edges []Edge, vectors map[string]Vector, opts SearcherOptions) *Searcher {
 	searcher := &Searcher{
 		graph:     NewGraph(nodes, edges),
-		vectors:   vectors,
+		vectors:   cloneVectors(vectors),
 		policy:    opts,
 		refVector: nil,
 		hasRef:    false,
 	}
+
+	searcher.policy.DocumentKinds = slices.Clone(opts.DocumentKinds)
 
 	if opts.ReferenceKind == "" {
 		return searcher
@@ -123,13 +128,26 @@ func NewSearcherWithOptions(nodes []Node, edges []Edge, vectors map[string]Vecto
 			continue
 		}
 
-		if vector, ok := vectors[node.ID]; ok {
+		if vector, ok := searcher.vectors[node.ID]; ok {
 			searcher.refVector = vector
 			searcher.hasRef = true
 		}
 	}
 
 	return searcher
+}
+
+// cloneVectors deep-copies a vectors map so the Searcher owns its memory:
+// the immutability promise covers both the map structure and vector
+// contents, not just the map handle.
+func cloneVectors(vectors map[string]Vector) map[string]Vector {
+	cloned := make(map[string]Vector, len(vectors))
+
+	for id, vector := range vectors {
+		cloned[id] = slices.Clone(vector)
+	}
+
+	return cloned
 }
 
 // Search embeds the query, ranks embedded nodes by cosine similarity, and
