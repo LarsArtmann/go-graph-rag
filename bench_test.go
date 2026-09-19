@@ -1,8 +1,14 @@
 package graphrag_test
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
+	"net/http/httptest"
 	"path/filepath"
+	"strconv"
+	"strings"
 	"testing"
 
 	graphrag "github.com/larsartmann/go-graph-rag"
@@ -186,6 +192,84 @@ func BenchmarkStoreRoundTrip(b *testing.B) {
 
 				if len(snapshot.Nodes) != size || len(vectors) != size {
 					b.Fatalf("expected %d nodes and vectors, got %d/%d", size, len(snapshot.Nodes), len(vectors))
+				}
+			}
+		})
+	}
+}
+
+// BenchmarkEmbedConcurrency measures the EmbedConcurrency worker pool's
+// overhead against an in-process httptest endpoint (localhost, no network
+// RTT), so the numbers isolate pool + HTTP cost, not provider latency.
+// Measured 2026-09-19, AMD Ryzen AI MAX+ 395, go1.27.1,
+// `-bench EmbedConcurrency -benchtime 100x -count 10` (benchstat-style
+// mean, spread over the 10 runs), 256 texts = 4 batches of 64:
+//
+//	EmbedConcurrency/concurrency=1   0.74ms/op  0.63-0.93ms   (serial baseline)
+//	EmbedConcurrency/concurrency=4   0.73ms/op  0.62-0.91ms   (par: pool is free)
+//	EmbedConcurrency/concurrency=8   0.86ms/op  0.68-1.02ms   (8 workers > 4 batches)
+//
+// Honest reading: against an IN-PROCESS endpoint there is nothing to gain
+// — localhost RTT is microseconds, so overlap buys nothing and the pool
+// costs nothing at 4. The lever pays off on real network endpoints, where
+// every overlapped batch saves a full round-trip of milliseconds; the
+// overlap itself (batches actually running in parallel) is proven by
+// TestOpenAICompatProvider_ConcurrentBatchesOverlapAndKeepOrder.
+func BenchmarkEmbedConcurrency(b *testing.B) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		payload, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+
+			return
+		}
+
+		var req struct {
+			Input []string `json:"input"`
+		}
+
+		if err := json.Unmarshal(payload, &req); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+
+			return
+		}
+
+		data := make([]map[string]any, len(req.Input))
+		for i, text := range req.Input {
+			number, convErr := strconv.Atoi(strings.TrimPrefix(text, "t"))
+			if convErr != nil || number == 0 {
+				number = 1
+			}
+
+			data[i] = map[string]any{"embedding": []float64{float64(number), 1}, "index": i}
+		}
+
+		_ = json.NewEncoder(w).Encode(map[string]any{"data": data, "model": "bench", "usage": map[string]int{}})
+	}))
+	b.Cleanup(server.Close)
+
+	const textCount = 256 // 4 batches of 64
+
+	inputs := make([]string, 0, textCount)
+	for i := range textCount {
+		inputs = append(inputs, fmt.Sprintf("t%d", i+1))
+	}
+
+	for _, concurrency := range []int{1, 4, 8} {
+		b.Run(fmt.Sprintf("concurrency=%d", concurrency), func(b *testing.B) {
+			provider, err := graphrag.NewOpenAICompatProvider(graphrag.EmbeddingConfig{
+				Provider:         graphrag.ProviderOpenAICompat,
+				BaseURL:          server.URL,
+				Model:            "bench-model",
+				EmbedConcurrency: concurrency,
+			})
+			if err != nil {
+				b.Fatal(err)
+			}
+
+			for b.Loop() {
+				if _, err := provider.Embed(b.Context(), inputs); err != nil {
+					b.Fatal(err)
 				}
 			}
 		})
