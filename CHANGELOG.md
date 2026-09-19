@@ -6,11 +6,29 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
-- Nothing yet.
+- `EmbeddingConfig.EmbedConcurrency` (koanf `embed_concurrency`, default 1):
+  opt-in bounded worker pool that runs /embeddings batch requests in
+  parallel for network-bound cold builds. Values at or below 1 take the
+  identical serial path; results keep input order regardless of completion
+  order; mid-flight cancellation aborts the whole call. Overlap, order
+  preservation, cancellation, and race-freedom are pinned by tests, and the
+  pool overhead is benched against an in-process endpoint.
+- ADR seam guard: the §5 interface sketch (`VectorIndex`, `GraphStore`,
+  `DeclaredMetric`, `VectorMatch`, `VectorQuery`) is copied verbatim into a
+  compile-only test file with `var _` assertions proving the real `*Store`
+  still satisfies the persistence seam, plus fake implementations and a
+  composition smoke test. Core drift against the binding design now breaks
+  the build instead of rotting silently.
+- `.githooks/pre-push` now runs three gates (pristine build without
+  `GOEXPERIMENT=jsonv2`, `go mod tidy` drift, dprint format check); every
+  blocking path proven by planted-failure dry-run pushes.
 
 ### Changed
 
-- Nothing yet.
+- Go language floor raised from 1.26.7 to 1.27.1 (owner-requested,
+  `af3be2c`); CI toolchain pins, the pre-push hook, and local commands
+  aligned. golangci-lint config now type-checks the experiment-enabled
+  surface (`goexperiment.*` build tags) and enables goheader, matching CV.
 
 ### Fixed
 
@@ -20,6 +38,17 @@ All notable changes to this project are documented in this file.
   created manually. Extraction now uses a plain-substring match that needs no
   escaping (`350b815`); the fixed workflow has not yet proven itself on a
   real tag.
+- Cache READ errors are no longer swallowed: `Build` now fails fast with a
+  wrapped error, symmetric with the fatal write path. A silently degraded
+  cache caused paid re-embeds nobody could see; the alternative (a
+  `CacheErrors` counter with degraded-mode continuation) was considered and
+  rejected until real telemetry demand exists.
+- `Searcher` now deep-clones caller inputs: the vectors map (including each
+  vector's contents) and `SearcherOptions.DocumentKinds`. The immutability
+  promise is structural — mutating caller copies after construction can no
+  longer change search behavior.
+- `resolveVectors` hashed every missed text twice (classification + result
+  assignment); the hash recorded during cache lookup is now reused.
 
 ## [0.2.0] - 2026-09-16
 
