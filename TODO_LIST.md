@@ -55,3 +55,13 @@ re-run 15/15 OK 0 redirects).
 - CV consumer bump to graph-rag v0.3.0 — pending in the owner package
   Phase 8 (external repo, separate session); CV may skip v0.2.0 and bump
   straight to v0.3.0 (needs the Go 1.27.1 toolchain).
+- go-cqrs-lite feedback items #3 (fail-closed `EventAdapter.Save`) + #5
+  (`# Experimental` doc stamps) — FIXED and released upstream in
+  `go-cqrs-lite system/v4.9.0` (2026-09-21): `Save` now returns
+  `ErrRacySaveRefused` unless `WithRacySave()` opts in (single-threaded
+  backends), `system.New` rejects non-atomic engines for the source-of-truth
+  role (`ErrEventSaveNotAtomic`), and the 17 experimental surfaces are
+  stamped in doc.go. Re-test invite if the adoption research is ever
+  revisited; original evaluation:
+  `docs/status/2026-09-15_19-43_metaengine-system-adoption-research.md`
+  (annotated 2026-09-22 from the go-cqrs-lite side).
