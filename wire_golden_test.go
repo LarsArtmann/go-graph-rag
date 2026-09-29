@@ -13,7 +13,8 @@ package graphrag_test
 // Never re-pin silently.
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"flag"
 	"os"
 	"path/filepath"
@@ -85,7 +86,7 @@ func TestWireGolden(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
-			blob, err := json.MarshalIndent(testCase.value, "", "  ")
+			blob, err := json.Marshal(testCase.value, jsontext.WithIndentPrefix(""), jsontext.WithIndent("  "))
 			require.NoError(t, err)
 
 			blob = append(blob, '\n')
