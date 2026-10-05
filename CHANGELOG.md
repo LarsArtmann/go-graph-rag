@@ -10,7 +10,7 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
-- Nothing yet.
+- **Wire golden fixtures re-pinned for the Go 1.27 toolchain's `encoding/json/v2`**: numeric `omitempty` fields (e.g. `NodeAttrs.Score`) now serialize their zero value (`"score": 0`), so the three `testdata/wire/*.golden` fixtures gain the explicit zero. Wire output is textually different but semantically identical — both engines decode back to the same zero (see the `NodeAttrs.Score` doc comment). No code change.
 
 ## [0.3.0] - 2026-09-19
 

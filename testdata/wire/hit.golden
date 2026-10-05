@@ -21,7 +21,9 @@
         "id": "hub:go",
         "kind": "hub",
         "label": "Go",
-        "attrs": {}
+        "attrs": {
+          "score": 0
+        }
       },
       "relation": "mentions",
       "weight": 1

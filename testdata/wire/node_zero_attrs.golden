@@ -2,5 +2,7 @@
   "id": "hub:go",
   "kind": "hub",
   "label": "Go",
-  "attrs": {}
+  "attrs": {
+    "score": 0
+  }
 }
