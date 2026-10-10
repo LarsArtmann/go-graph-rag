@@ -268,9 +268,7 @@ func (p *OpenAICompatProvider) embedConcurrent(ctx context.Context, texts []stri
 	wg.Wait()
 
 	vectors := make([]Vector, 0, len(texts))
-	for _, slot := range slots {
-		vectors = append(vectors, slot...)
-	}
+	vectors = lo.Flatten(slots)
 
 	return vectors, nil
 }
