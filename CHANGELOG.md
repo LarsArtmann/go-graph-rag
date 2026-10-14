@@ -10,6 +10,18 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- Nothing yet.
+
+## [0.3.2] - 2026-10-15
+
+### Fixed
+
+- **Duplicate-ID documents with distinct texts no longer lose their cached vectors.** The fresh-vector map was keyed through the ID-to-hash map, so same-ID documents with different texts (e.g. a skill hub reached from a JD extraction and from the CV with different label casing) overwrote each other's vectors: the provider embedded both, the cache persisted only one, `BuildResult.Embedded` undercounted, and every subsequent rebuild re-embedded the overwritten texts forever. The per-miss hashes now travel positionally beside the missed documents, so every distinct text is embedded once, cached once, and served from the cache on every later build. Regression pinned by `TestBuildDuplicateIDDistinctTextCachesAll`.
+
+## [0.3.1] - 2026-09-30
+
+### Fixed
+
 - **Wire golden fixtures re-pinned for the Go 1.27 toolchain's `encoding/json/v2`**: numeric `omitempty` fields (e.g. `NodeAttrs.Score`) now serialize their zero value (`"score": 0`), so the three `testdata/wire/*.golden` fixtures gain the explicit zero. Wire output is textually different but semantically identical — both engines decode back to the same zero (see the `NodeAttrs.Score` doc comment). No code change.
 
 ## [0.3.0] - 2026-09-19
