@@ -154,6 +154,7 @@ func resolveVectors(
 
 	misses := make([]Document, 0)
 	missHashes := make(map[string]string)
+	missHashList := make([]string, 0)
 
 	for _, doc := range docs {
 		if doc.Text == "" {
@@ -178,10 +179,11 @@ func resolveVectors(
 		if _, seen := missHashes[hash]; !seen {
 			misses = append(misses, doc)
 			missHashes[hash] = doc.ID
+			missHashList = append(missHashList, hash)
 		}
 	}
 
-	fresh, err := embedAll(ctx, provider, misses, hashes)
+	fresh, err := embedAll(ctx, provider, misses, missHashList)
 	if err != nil {
 		return nil, nil, 0, 0, err
 	}
@@ -198,8 +200,8 @@ func resolveVectors(
 		}
 	}
 
-	for _, doc := range misses {
-		if vector, ok := fresh[hashes[doc.ID]]; ok {
+	for i, doc := range misses {
+		if vector, ok := fresh[missHashList[i]]; ok {
 			vectors[doc.ID] = vector
 		}
 	}
@@ -236,14 +238,17 @@ func lookupCache(cache Cache, provider Provider, hash string) (Vector, bool, err
 }
 
 // embedAll embeds the missed documents in one provider pass, keyed by
-// content hash (deduplicated) and dimension-checked. hashes carries the
-// hash of every classified document (recorded during cache lookups) so no
-// text is hashed a second time here.
+// content hash (deduplicated) and dimension-checked. missHashes carries the
+// hash of each missed document, positionally aligned with misses: the
+// ID-keyed hash map cannot be used here because duplicate-ID documents
+// with distinct texts share the ID key and would silently overwrite each
+// other's vectors (the cache then loses every overwritten text and each
+// rebuild re-embeds it forever).
 func embedAll(
 	ctx context.Context,
 	provider Provider,
 	misses []Document,
-	hashes map[string]string,
+	missHashes []string,
 ) (map[string]Vector, error) {
 	if len(misses) == 0 {
 		return map[string]Vector{}, nil
@@ -263,7 +268,7 @@ func embedAll(
 	dims := 0
 	fresh := make(map[string]Vector, len(embedded))
 
-	for i, doc := range misses {
+	for i := range misses {
 		vector := embedded[i]
 
 		if dims == 0 {
@@ -272,7 +277,7 @@ func embedAll(
 			return nil, &ErrDimsInconsistent{First: dims, Second: vector.Dims()}
 		}
 
-		fresh[hashes[doc.ID]] = vector
+		fresh[missHashes[i]] = vector
 	}
 
 	return fresh, nil

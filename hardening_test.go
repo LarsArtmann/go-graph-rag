@@ -136,6 +136,35 @@ func TestBuildNodeIDCollisionPolicy(t *testing.T) {
 	require.Len(t, snapshot.Nodes, 2)
 }
 
+// TestBuildDuplicateIDDistinctTextCachesAll pins the dup-ID + distinct-text
+// regression (fixed 2026-10-15): the fresh-vector map was keyed through the
+// ID-to-hash map, so same-ID documents with different texts overwrote each
+// other's vectors — the provider embedded both, the cache persisted only
+// one, and every rebuild re-embedded the loser forever.
+func TestBuildDuplicateIDDistinctTextCachesAll(t *testing.T) {
+	t.Parallel()
+
+	docs := []graphrag.Document{
+		{ID: "job:1", Kind: kindJob, Label: "Engineer", Text: "go kubernetes platform engineer", Attrs: graphrag.NodeAttrs{}},
+		{ID: "skill:go", Kind: kindSkill, Label: "Go", Text: "Go", Attrs: graphrag.NodeAttrs{}},
+		{ID: "skill:go", Kind: kindSkill, Label: "go", Text: "go", Attrs: graphrag.NodeAttrs{}},
+	}
+
+	store, err := graphrag.OpenStore(":memory:")
+	require.NoError(t, err)
+
+	defer func() { _ = store.Close() }()
+
+	cold, err := graphrag.Build(t.Context(), graphrag.NewHashProvider(), store, docs, nil, graphrag.BuildOptions{})
+	require.NoError(t, err)
+	require.Equal(t, 3, cold.Embedded, "all three distinct texts embed on the cold build")
+
+	warm, err := graphrag.Build(t.Context(), graphrag.NewHashProvider(), store, docs, nil, graphrag.BuildOptions{})
+	require.NoError(t, err)
+	require.Zero(t, warm.Embedded, "the warm rebuild must be fully cache-served")
+	require.Equal(t, 3, warm.CacheHits, "every document's own hash must be cached")
+}
+
 // TestPutEmbeddingsConcurrentRace hammers the embedding cache from parallel
 // writers; the store serializes via its single connection, so every write
 // must land and reads must never race.
