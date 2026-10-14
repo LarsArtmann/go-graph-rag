@@ -145,7 +145,13 @@ func TestBuildDuplicateIDDistinctTextCachesAll(t *testing.T) {
 	t.Parallel()
 
 	docs := []graphrag.Document{
-		{ID: "job:1", Kind: kindJob, Label: "Engineer", Text: "go kubernetes platform engineer", Attrs: graphrag.NodeAttrs{}},
+		{
+			ID:    "job:1",
+			Kind:  kindJob,
+			Label: "Engineer",
+			Text:  "go kubernetes platform engineer",
+			Attrs: graphrag.NodeAttrs{},
+		},
 		{ID: "skill:go", Kind: kindSkill, Label: "Go", Text: "Go", Attrs: graphrag.NodeAttrs{}},
 		{ID: "skill:go", Kind: kindSkill, Label: "go", Text: "go", Attrs: graphrag.NodeAttrs{}},
 	}
