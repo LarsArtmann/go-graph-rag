@@ -1,5 +1,15 @@
 # Status: BDD sub-module implementation (2026-10-15 04:21)
 
+> RESOLVED 2026-10-15 ~05:00 (follow-up session): the "package-classification
+> anomaly" was no toolchain bug — the spec files were named `*_spec.go`, and
+> only the `_test.go` FILENAME suffix makes a file a test file (the
+> `package bdd_test` clause does not). After `git mv` to `*_spec_test.go`, one
+> real bug surfaced (a spec building with FailingProvider) and was fixed; the
+> suite is 43/43 green, order-independent, `-race` clean, lint 0 issues. Kit
+> delivered: CI + pre-push gates extended and proven by planted failures, ADR
+> at `docs/planning/2026-10-15_05-02_bdd-submodule-adr.md`, docs updated.
+> Open items moved to TODO_LIST (tag owner-gated, securitymd, core erraudit).
+
 Task: provide an independent/composable `go.mod` sub-module for BDD-style
 testing in go-graph-rag, informed by studying how CV, knowledge-graph, and
 legal-graph-ai-system consume the SDK.

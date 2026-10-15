@@ -1,12 +1,12 @@
 # ADR — The BDD test-kit sub-module (`bdd/`)
 
-|          |                                                                                                                                                                                              |
-| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Date     | 2026-10-15                                                                                                                                                                                   |
-| Status   | Accepted and implemented (kit code + 43-spec suite in tree; first `bdd/v*` tag pending owner decision)                                                                                       |
-| Question | How do consumers test go-graph-rag in BDD style (Ginkgo/Gomega) over the REAL SDK machinery, without the core module's `go.mod` ever growing test-only dependencies?                          |
+|          |                                                                                                                                                                                                                                     |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date     | 2026-10-15                                                                                                                                                                                                                          |
+| Status   | Accepted and implemented (kit code + 43-spec suite in tree; first `bdd/v*` tag pending owner decision)                                                                                                                              |
+| Question | How do consumers test go-graph-rag in BDD style (Ginkgo/Gomega) over the REAL SDK machinery, without the core module's `go.mod` ever growing test-only dependencies?                                                                |
 | Decision | A separate, composable Go module `github.com/larsartmann/go-graph-rag/bdd` owning ginkgo+gomega, exposing builders, a demo corpus, a real-machinery `Harness`, Gomega matchers, and a `FailingProvider`. Core stays byte-identical. |
-| Method   | Three consumers studied file-by-file (CV, knowledge-graph, legal-graph-ai-system, all pinning v0.3.2); kit scope fixed by the fixtures every consumer hand-rolls; dogfooded by the module's own black-box spec suite. |
+| Method   | Three consumers studied file-by-file (CV, knowledge-graph, legal-graph-ai-system, all pinning v0.3.2); kit scope fixed by the fixtures every consumer hand-rolls; dogfooded by the module's own black-box spec suite.               |
 
 ## 1. Context
 
