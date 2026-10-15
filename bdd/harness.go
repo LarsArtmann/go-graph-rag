@@ -5,9 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
-	"testing"
 
-	"github.com/larsartmann/go-graph-rag"
+	graphrag "github.com/larsartmann/go-graph-rag"
 )
 
 // errNoStore backs Reload when the harness was built without WithStore.
@@ -16,13 +15,23 @@ var errNoStore = errors.New("bdd harness: WithStore not configured")
 // errNotBuilt backs Search and SimilarPairs when Build has not succeeded yet.
 var errNotBuilt = errors.New("bdd harness: Build must succeed first")
 
+// TB is the minimal test facade the harness needs: fatal setup errors, a
+// per-test temp directory, and cleanup registration. Both testing.TB values
+// (plain Test functions) and ginkgo.GinkgoT() satisfy it, so plain and BDD
+// specs share one harness.
+type TB interface {
+	Fatalf(format string, args ...any)
+	TempDir() string
+	Cleanup(cleanup func())
+}
+
 // Harness wires the real SDK machinery a spec needs: provider, an optional
 // SQLite store acting as Build cache and graph persistence, Build, and a
 // Searcher over the built index. Construct it with NewHarness; the zero
 // Harness is not usable.
 type Harness struct {
 	// TB receives fatal setup errors and owns cleanup of opened stores.
-	TB testing.TB
+	TB TB
 
 	// Provider embeds documents and queries: the deterministic offline
 	// hash provider unless WithProvider says otherwise.
@@ -97,7 +106,7 @@ func WithStore() Option {
 // deterministic offline hash provider, no cache, no store, neutral search
 // policy. Call Build to produce the index; Setup failures are fatal to tb.
 func NewHarness(
-	tb testing.TB,
+	tb TB,
 	documents []graphrag.Document,
 	edges []graphrag.Edge,
 	options ...Option,
@@ -112,8 +121,8 @@ func NewHarness(
 		documents:    documents,
 		edges:        edges,
 		dsn:          "",
-		buildOptions: graphrag.BuildOptions{},
-		searchPolicy: graphrag.SearcherOptions{},
+		buildOptions: graphrag.BuildOptions{},    //nolint:exhaustruct_v5 // zero options select the SDK defaults
+		searchPolicy: graphrag.SearcherOptions{}, //nolint:exhaustruct_v5 // the neutral policy IS the zero value
 	}
 
 	for _, option := range options {
@@ -133,7 +142,11 @@ func (h *Harness) Build(ctx context.Context) (*graphrag.BuildResult, error) {
 	}
 
 	if h.Store != nil {
-		if replaceErr := h.Store.ReplaceGraph(result.Nodes, result.EmbeddingHash, result.Edges); replaceErr != nil {
+		if replaceErr := h.Store.ReplaceGraph( //nolint:contextcheck // core Store.ReplaceGraph takes no context parameter
+			result.Nodes,
+			result.EmbeddingHash,
+			result.Edges,
+		); replaceErr != nil {
 			return result, fmt.Errorf("bdd harness: persist graph: %w", replaceErr)
 		}
 	}

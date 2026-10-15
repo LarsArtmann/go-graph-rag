@@ -3,10 +3,9 @@ package bdd_test
 import (
 	"context"
 
+	graphrag "github.com/larsartmann/go-graph-rag"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-
-	graphrag "github.com/larsartmann/go-graph-rag"
 )
 
 var _ = Describe("Embedding providers", func() {

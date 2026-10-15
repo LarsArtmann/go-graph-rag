@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/larsartmann/go-graph-rag"
+	graphrag "github.com/larsartmann/go-graph-rag"
 )
 
 // errNoFailureConfigured backs FailingProvider.Embed when the zero value is

@@ -6,7 +6,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/larsartmann/go-graph-rag"
+	graphrag "github.com/larsartmann/go-graph-rag"
 	"github.com/onsi/gomega/types"
 )
 
@@ -16,7 +16,9 @@ var errWrongActual = errors.New("bdd: matcher got an unexpected actual type")
 
 // HaveTopHit matches a *graphrag.SearchResult whose best hit is the node
 // nodeID: the primary "did retrieval rank the right thing first" assertion.
-func HaveTopHit(nodeID string) types.GomegaMatcher { //nolint:ireturn // matcher factories return the Gomega interface by design
+func HaveTopHit( //nolint:ireturn // matcher factories return the Gomega interface by design
+	nodeID string,
+) types.GomegaMatcher {
 	return topHitMatcher{nodeID: nodeID}
 }
 
@@ -45,7 +47,9 @@ func (m topHitMatcher) NegatedFailureMessage(actual any) string {
 
 // ContainHit matches a *graphrag.SearchResult with at least one hit for
 // nodeID, at any rank.
-func ContainHit(nodeID string) types.GomegaMatcher { //nolint:ireturn // matcher factories return the Gomega interface by design
+func ContainHit( //nolint:ireturn // matcher factories return the Gomega interface by design
+	nodeID string,
+) types.GomegaMatcher {
 	return containHitMatcher{nodeID: nodeID}
 }
 
@@ -72,7 +76,9 @@ func (m containHitMatcher) NegatedFailureMessage(actual any) string {
 
 // HaveHitIDs matches a *graphrag.SearchResult whose hits are exactly the
 // nodeIDs, in order: the pinned retrieval-inventory assertion.
-func HaveHitIDs(nodeIDs ...string) types.GomegaMatcher { //nolint:ireturn // matcher factories return the Gomega interface by design
+func HaveHitIDs( //nolint:ireturn // matcher factories return the Gomega interface by design
+	nodeIDs ...string,
+) types.GomegaMatcher {
 	return hitIDsMatcher{nodeIDs: nodeIDs}
 }
 
@@ -99,7 +105,9 @@ func (m hitIDsMatcher) NegatedFailureMessage(actual any) string {
 
 // HaveNoHitsOfKind matches a *graphrag.SearchResult with zero hits of the
 // given kind: the hub-exclusion assertion for SearcherOptions policies.
-func HaveNoHitsOfKind(kind graphrag.NodeKind) types.GomegaMatcher { //nolint:ireturn // matcher factories return the Gomega interface by design
+func HaveNoHitsOfKind( //nolint:ireturn // matcher factories return the Gomega interface by design
+	kind graphrag.NodeKind,
+) types.GomegaMatcher {
 	return noHitsOfKindMatcher{kind: kind}
 }
 
@@ -134,7 +142,10 @@ func (m noHitsOfKindMatcher) NegatedFailureMessage(actual any) string {
 // Searcher.SimilarPairs or Harness.SimilarPairs) that contains the pair
 // aID/bID in either direction. Pair SimilarEdgeScore with a numerical
 // assertion when the score itself matters.
-func HaveSimilarEdge(aID string, bID string) types.GomegaMatcher { //nolint:ireturn // matcher factories return the Gomega interface by design
+func HaveSimilarEdge( //nolint:ireturn // matcher factories return the Gomega interface by design
+	aID string,
+	bID string,
+) types.GomegaMatcher {
 	return similarEdgeMatcher{aID: aID, bID: bID}
 }
 

@@ -3,11 +3,10 @@ package bdd_test
 import (
 	"context"
 
-	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
-
 	graphrag "github.com/larsartmann/go-graph-rag"
 	graphragbdd "github.com/larsartmann/go-graph-rag/bdd"
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("Persisting through the store", func() {
@@ -27,6 +26,7 @@ var _ = Describe("Persisting through the store", func() {
 		)
 
 		var buildErr error
+
 		result, buildErr = harness.Build(ctx)
 		Expect(buildErr).NotTo(HaveOccurred())
 	})

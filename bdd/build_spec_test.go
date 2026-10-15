@@ -5,11 +5,10 @@ import (
 	"errors"
 	"slices"
 
-	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
-
 	graphrag "github.com/larsartmann/go-graph-rag"
 	graphragbdd "github.com/larsartmann/go-graph-rag/bdd"
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
 )
 
 var errProviderBoom = errors.New("spec: provider exploded")
@@ -41,6 +40,7 @@ var _ = Describe("Building an index", func() {
 
 	JustBeforeEach(func() {
 		var buildErr error
+
 		result, buildErr = harness.Build(ctx)
 		Expect(buildErr).NotTo(HaveOccurred())
 	})

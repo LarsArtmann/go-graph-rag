@@ -3,11 +3,10 @@ package bdd_test
 import (
 	"context"
 
-	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
-
 	graphrag "github.com/larsartmann/go-graph-rag"
 	graphragbdd "github.com/larsartmann/go-graph-rag/bdd"
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("Searching the built index", func() {
@@ -38,6 +37,7 @@ var _ = Describe("Searching the built index", func() {
 		Expect(result.Hits).NotTo(BeEmpty())
 
 		relatedIDs := make([]string, 0)
+
 		for _, hit := range result.Hits {
 			for _, related := range hit.Related {
 				relatedIDs = append(relatedIDs, related.Node.ID)
@@ -84,18 +84,10 @@ var _ = Describe("Searching the built index", func() {
 	})
 
 	It("propagates query embedding failures", func() {
-		docs, edges := graphragbdd.DemoCorpus()
-		failing := graphragbdd.NewHarness(
-			GinkgoT(), docs, edges,
-			graphragbdd.WithProvider(graphragbdd.FailingProvider{Err: errProviderBoom}),
-			graphragbdd.WithSearcherOptions(graphragbdd.DemoSearcherOptions()),
-		)
+		harness.Provider = graphragbdd.FailingProvider{Err: errProviderBoom}
 
-		_, buildErr := failing.Build(ctx)
-		Expect(buildErr).NotTo(HaveOccurred())
-
-		_, searchErr := failing.Search(ctx, "any query")
-		Expect(searchErr).To(MatchError(errProviderBoom))
+		_, err := harness.Search(ctx, "any query")
+		Expect(err).To(MatchError(errProviderBoom))
 	})
 })
 

@@ -1,6 +1,6 @@
 package bdd
 
-import "github.com/larsartmann/go-graph-rag"
+import graphrag "github.com/larsartmann/go-graph-rag"
 
 // The demo vocabulary is the kit's own neutral, domain-agnostic kind and
 // relation set for DemoCorpus; consumers define their real vocabulary

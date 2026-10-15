@@ -1,12 +1,11 @@
 package bdd_test
 
 import (
+	graphrag "github.com/larsartmann/go-graph-rag"
+	graphragbdd "github.com/larsartmann/go-graph-rag/bdd"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/types"
-
-	graphrag "github.com/larsartmann/go-graph-rag"
-	graphragbdd "github.com/larsartmann/go-graph-rag/bdd"
 )
 
 func searchResultWithHits(ids ...string) *graphrag.SearchResult {

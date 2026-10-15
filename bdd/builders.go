@@ -1,6 +1,6 @@
 package bdd
 
-import "github.com/larsartmann/go-graph-rag"
+import graphrag "github.com/larsartmann/go-graph-rag"
 
 // DocOption tunes the Document built by Doc.
 type DocOption func(*graphrag.Document)
@@ -29,7 +29,7 @@ func Doc(id string, text string, options ...DocOption) graphrag.Document {
 		Kind:  KindArticle,
 		Label: id,
 		Text:  text,
-		Attrs: graphrag.NodeAttrs{},
+		Attrs: graphrag.NodeAttrs{}, //nolint:exhaustruct_v5 // demo docs carry no attrs; callers add their own
 	}
 
 	for _, option := range options {
