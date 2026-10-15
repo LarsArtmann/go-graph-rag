@@ -114,23 +114,20 @@ numbers are re-measured.
   `git config core.hooksPath .githooks`), and the dprint/tidy gates ALSO
   catch non-experiment drift. All three blocking paths were proven by
   planted-failure dry-run pushes (2026-09-19).
-- golangci-lint is pinned to v2.13.2 in CI (parity with CV's pin). Bump both
-  repos together; the config requires the v2 binary.
-- The json-v2 history: it slipped in three times (pre-v0.1.0, `e67bd9b`,
-  `e4a9145`), always via daemon or parallel-session commits made under the
-  machine-wide `GOEXPERIMENT=jsonv2` shell, and back then only the pristine
-  build caught it. CORRECTION (2026-10-15): on go1.27.1 json/v2 imports
-  compile WITHOUT the flag (graduated), so the pristine gate now guards
-  general drift, not json/v2; the v1-only rule is policy (see
-  non-negotiable #2). Still run the pristine check before EVERY push and
-  re-verify any daemon commits that land on top of yours.
-- pkg.go.dev renders NO godoc for any version of this module
-  ("Documentation not displayed due to license restrictions" — it does not
-  recognize the PROPRIETARY LICENSE file), so the README's pkg.go.dev link
-  lands on the restriction banner until the Q1 license decision lands.
-  Verified live 2026-09-19 against v0.2.0.
-- Markdown is dprint-formatted (`dprint.json`: table alignment, `_em_`
-  style); Go is tab-indented gofmt (`.editorconfig`).
+- golangci-lint is pinned to v2.13.2 in CI (CV parity). Bump both repos
+  together; the config requires the v2 binary.
+- The json-v2 regression slipped in three times (pre-v0.1.0, `e67bd9b`,
+  `e4a9145`) via daemon/parallel commits under the machine-wide
+  `GOEXPERIMENT=jsonv2` shell; only the pristine build caught it.
+  CORRECTION (2026-10-15): on go1.27.1 json/v2 compiles WITHOUT the flag
+  (graduated), so the pristine gate guards general drift, not json/v2; the
+  v1-only rule is policy (non-negotiable #2). Pristine-check before EVERY
+  push; re-verify daemon commits that land on yours.
+- pkg.go.dev renders NO godoc for any version (license restriction — it does
+  not recognize the PROPRIETARY LICENSE file), so the README's pkg.go.dev
+  link lands on the restriction banner until the Q1 license decision lands.
+  Verified live 2026-09-19 (v0.2.0).
+- Markdown is dprint-formatted (`dprint.json`); Go is gofmt (`.editorconfig`).
 - New research artifacts get a row in `docs/research/README.md` (artifact,
   date, question, verdict, reopen-triggers). The index stays research-only:
   planning docs (ADRs, SUPERB plans, owner packages) never get rows.
@@ -139,22 +136,20 @@ numbers are re-measured.
   `package bdd_test` is a REGULAR source file and breaks the package with
   "found packages bdd (…) and bdd_test (…)". This cost a full debugging
   session 2026-10-15; spec files MUST end in `_spec_test.go` (or `_test.go`).
-- Ginkgo forbids `go test -count=N` for N>1 ("Only -count=1 is allowed"); to
-  re-run with fresh random seeds use repeated `go test -count=1` invocations
-  or `ginkgo -repeat=N`. The bdd suite is order-independent (verified across
-  seeds 2026-10-15).
+- Ginkgo forbids `go test -count=N` (N>1); re-seed via repeated `-count=1`
+  runs or `ginkgo -repeat=N`. The bdd suite is order-independent (verified
+  across seeds 2026-10-15).
 - `buildflow`'s findings gate exits non-zero on accepted noise; do NOT treat
-  the gate exit as a session regression. Current mix (buildflow binary newer
-  than the 2026-09-15 era, re-baselined 2026-10-15): go-structure-linter
-  errors `agent-config` (AGENTS.md older than 14d — self-resolves on AGENTS
-  updates) and `race-condition-test` (FIXED 2026-10-15: CI now runs
-  `-race`); `securitymd` 2 errors (SECURITY.md contact/practices — owner
-  decision, TODO_LIST); `erraudit` root error `embed_openai.go:334`
-  (`errors.As` → `AsType` modernization, TODO_LIST; core freeze kept it out
-  of the kit delivery). The flat single-package layout stays deliberate —
-  do NOT restructure into `pkg/` or `internal/`. No `.buildflow.yml` skip
-  entry exists on purpose: skipping the whole step would mute the linter's
+  the gate exit as a session regression. Mix (re-baselined 2026-10-15,
+  binary 518739c, behind BuildFlow HEAD): go-structure-linter `agent-config`
+  error while AGENTS.md exceeds 220 lines; `securitymd` 2 owner-gated
+  errors (TODO_LIST); `erraudit` root error until the AsType migration
+  lands. Flat single-package layout is deliberate (no `pkg/`/`internal/`).
+  No `.buildflow.yml` skip entry on purpose: it would mute the linter's
   other rules too.
+- CI is proven on ubuntu-26.04 (2026-10-15, green dispatch run: build/vet/
+  test -race/lint/bdd/format/tidy all pass); `go-test.yml` pins the runner
+  explicitly ahead of the 2026-10-19 ubuntu-latest label migration.
 - Git Town runs on this machine and can snapshot dirty working-tree files as
   dangling "Git Town WIP" commits, then leave the files reverted (happened
   2026-10-15: TODO_LIST/ROADMAP/status-report writes vanished mid-session and
