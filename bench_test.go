@@ -80,7 +80,7 @@ func benchCorpus(n int) ([]graphrag.Document, []graphrag.Edge) {
 			vocab[(i*11+5)%len(vocab)],
 		)
 		docs = append(docs, graphrag.Document{
-			ID:    fmt.Sprintf("doc:%06d", i),
+			ID:    graphrag.NodeID(fmt.Sprintf("doc:%06d", i)),
 			Kind:  "article",
 			Label: fmt.Sprintf("Doc %d", i),
 			Text:  text,
@@ -94,8 +94,8 @@ func benchCorpus(n int) ([]graphrag.Document, []graphrag.Edge) {
 		}
 
 		edges = append(edges, graphrag.Edge{
-			Source:   fmt.Sprintf("doc:%06d", i),
-			Target:   fmt.Sprintf("doc:%06d", i+1),
+			Source:   graphrag.NodeID(fmt.Sprintf("doc:%06d", i)),
+			Target:   graphrag.NodeID(fmt.Sprintf("doc:%06d", i+1)),
 			Relation: "related",
 			Weight:   1,
 		})

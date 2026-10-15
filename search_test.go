@@ -87,7 +87,7 @@ func TestSearchRanksRelevantJobsFirst(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, result.Hits)
 
-	assert.Equal(t, "job:k8s", result.Hits[0].Node.ID, "the k8s job must outrank the pastry chef")
+	assert.Equal(t, graphrag.NodeID("job:k8s"), result.Hits[0].Node.ID, "the k8s job must outrank the pastry chef")
 	assert.NotContains(t, topHitIDs(result), "job:pastry", "zero-overlap jobs must not appear above the floor")
 
 	assert.Greater(
@@ -120,7 +120,7 @@ func topHitIDs(result *graphrag.SearchResult) []string {
 	ids := make([]string, 0, len(result.Hits))
 
 	for _, hit := range result.Hits {
-		ids = append(ids, hit.Node.ID)
+		ids = append(ids, string(hit.Node.ID))
 	}
 
 	return ids
@@ -160,7 +160,7 @@ func TestSimilarPairsFindsNearDuplicates(t *testing.T) {
 			assert.GreaterOrEqual(t, pairs[i-1].Score, pair.Score, "pairs must be sorted by descending score")
 		}
 
-		assert.NotContains(t, []string{pair.A.ID, pair.B.ID}, "job:pastry", "unrelated jobs never reach the threshold")
+		assert.NotContains(t, []graphrag.NodeID{pair.A.ID, pair.B.ID}, graphrag.NodeID("job:pastry"), "unrelated jobs never reach the threshold")
 
 		pairIDs := pair.A.ID + "|" + pair.B.ID
 		if pairIDs == "job:k8s|job:sre" {

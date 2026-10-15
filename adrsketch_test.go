@@ -39,7 +39,7 @@ const MetricCosine DeclaredMetric = "cosine"
 // VectorMatch is one ranked candidate returned by a VectorIndex.
 type VectorMatch struct {
 	// NodeID is the node the backend matched.
-	NodeID string
+	NodeID graphrag.NodeID
 	// Scored reports whether the backend returned a per-hit similarity.
 	// Class C backends may return ids without distances (DQL similar_to);
 	// for those the core re-scores over the loaded snapshot vectors.
@@ -79,7 +79,7 @@ type VectorIndex interface {
 	// Replace atomically swaps the full index contents. This is the
 	// full-rebuild model: the same discipline as Store.ReplaceGraph. A
 	// backend that cannot honor full-replace must fail here, not degrade.
-	Replace(vectors map[string]graphrag.Vector) error
+	Replace(vectors map[graphrag.NodeID]graphrag.Vector) error
 
 	// Search returns up to q.TopK candidates, best first. Results MAY
 	// exceed MinScore filtering duties (the core re-applies it) but MUST
@@ -96,7 +96,7 @@ type VectorIndex interface {
 type GraphStore interface {
 	// ReplaceGraph atomically swaps the persisted graph (delete-then-insert
 	// inside one transaction today).
-	ReplaceGraph(nodes []graphrag.Node, embeddingHashes map[string]string, edges []graphrag.Edge) error
+	ReplaceGraph(nodes []graphrag.Node, embeddingHashes map[graphrag.NodeID]string, edges []graphrag.Edge) error
 
 	// LoadGraph reads the full snapshot: nodes, edges, and the
 	// node-to-embedding-hash join keys.
@@ -129,15 +129,15 @@ var (
 // honored by the backend, MinScore re-applied by the core, best-first
 // ordering).
 type fakeVectorIndex struct {
-	vectors map[string]graphrag.Vector
+	vectors map[graphrag.NodeID]graphrag.Vector
 }
 
 func (f *fakeVectorIndex) Metric() DeclaredMetric {
 	return MetricCosine
 }
 
-func (f *fakeVectorIndex) Replace(vectors map[string]graphrag.Vector) error {
-	f.vectors = make(map[string]graphrag.Vector, len(vectors))
+func (f *fakeVectorIndex) Replace(vectors map[graphrag.NodeID]graphrag.Vector) error {
+	f.vectors = make(map[graphrag.NodeID]graphrag.Vector, len(vectors))
 	maps.Copy(f.vectors, vectors)
 
 	return nil
@@ -175,7 +175,7 @@ func (f *fakeVectorIndex) Close() error { return nil }
 // future adapter author can copy a working GraphStore implementation.
 type fakeGraphStore struct {
 	replacedNodes  []graphrag.Node
-	replacedHashes map[string]string
+	replacedHashes map[graphrag.NodeID]string
 	replacedEdges  []graphrag.Edge
 	snapshot       *graphrag.LoadGraphSnapshot
 	embeddings     map[string]graphrag.Vector
@@ -184,7 +184,7 @@ type fakeGraphStore struct {
 
 func (f *fakeGraphStore) ReplaceGraph(
 	nodes []graphrag.Node,
-	embeddingHashes map[string]string,
+	embeddingHashes map[graphrag.NodeID]string,
 	edges []graphrag.Edge,
 ) error {
 	f.replacedNodes = nodes
@@ -218,7 +218,7 @@ func TestADRSketch_VectorIndexComposition(t *testing.T) {
 
 	index := &fakeVectorIndex{}
 
-	require.NoError(t, index.Replace(map[string]graphrag.Vector{
+	require.NoError(t, index.Replace(map[graphrag.NodeID]graphrag.Vector{
 		"near":  {1, 0, 0, 0},
 		"close": {0.8, 0.6, 0, 0},
 		"far":   {0, 1, 0, 0},
@@ -227,7 +227,7 @@ func TestADRSketch_VectorIndexComposition(t *testing.T) {
 	query := graphrag.Vector{1, 0, 0, 0}
 
 	// The backend honors Filter; the core re-applies MinScore regardless.
-	filtered := map[string]bool{"near": true, "far": true}
+	filtered := map[graphrag.NodeID]bool{"near": true, "far": true}
 
 	matches, err := index.Search(t.Context(), VectorQuery{
 		Vector:   query,
@@ -247,6 +247,6 @@ func TestADRSketch_VectorIndexComposition(t *testing.T) {
 	}
 
 	require.Len(t, coreVisible, 1, "core re-applies MinScore after the backend returns")
-	assert.Equal(t, "near", coreVisible[0].NodeID, "the nearest match survives the core-side floor")
+	assert.Equal(t, graphrag.NodeID("near"), coreVisible[0].NodeID, "the nearest match survives the core-side floor")
 	assert.True(t, coreVisible[0].Scored, "scored backends carry per-hit similarity")
 }

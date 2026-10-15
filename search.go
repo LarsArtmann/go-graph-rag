@@ -96,7 +96,7 @@ type Searcher struct {
 // no reference node, every embedded node ranked as a document. Nodes
 // without vectors still participate through graph expansion. Use
 // NewSearcherWithOptions to assign kind-specific search roles.
-func NewSearcher(nodes []Node, edges []Edge, vectors map[string]Vector) *Searcher {
+func NewSearcher(nodes []Node, edges []Edge, vectors map[NodeID]Vector) *Searcher {
 	//nolint:exhaustruct_v5 // the neutral policy IS the zero value
 	return NewSearcherWithOptions(nodes, edges, vectors, SearcherOptions{})
 }
@@ -357,7 +357,7 @@ func (s *Searcher) nodeOrPlaceholder(id NodeID) Node {
 	}
 
 	//nolint:exhaustruct_v5 // placeholder for a vector whose node vanished; no attrs exist
-	return Node{ID: id, Kind: KindUnknown, Label: id, Attrs: NodeAttrs{}}
+	return Node{ID: id, Kind: KindUnknown, Label: string(id), Attrs: NodeAttrs{}}
 }
 
 // RenderContext produces the deterministic LLM-ready text block for a

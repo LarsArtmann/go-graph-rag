@@ -46,7 +46,7 @@ func TestGraphDeterministicOrdering(t *testing.T) {
 }
 
 func nodeIDs(nodes []graphrag.Node) []string {
-	return lo.Map(nodes, func(node graphrag.Node, _ int) string { return node.ID })
+	return lo.Map(nodes, func(node graphrag.Node, _ int) string { return string(node.ID) })
 }
 
 func TestGraphEdgeCloneSafety(t *testing.T) {

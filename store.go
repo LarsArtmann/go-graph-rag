@@ -336,7 +336,7 @@ func (s *Store) LoadGraph() (*LoadGraphSnapshot, error) {
 }
 
 // loadNodes reads all nodes plus their embedding hashes.
-func (s *Store) loadNodes(ctx context.Context) ([]Node, map[string]string, error) {
+func (s *Store) loadNodes(ctx context.Context) ([]Node, map[NodeID]string, error) {
 	rows, err := s.db.QueryContext(ctx,
 		`SELECT id, kind, label, attrs, embedding_hash FROM graphrag_nodes ORDER BY id`,
 	)

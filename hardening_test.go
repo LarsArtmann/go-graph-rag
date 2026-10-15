@@ -232,7 +232,7 @@ func TestSearcherEdgeCases(t *testing.T) {
 	t.Run("empty corpus returns no hits", func(t *testing.T) {
 		t.Parallel()
 
-		searcher := graphrag.NewSearcher(nil, nil, map[string]graphrag.Vector{})
+		searcher := graphrag.NewSearcher(nil, nil, map[graphrag.NodeID]graphrag.Vector{})
 		require.Equal(t, 0, searcher.NodeCount())
 		require.Equal(t, 0, searcher.VectorCount())
 
@@ -268,7 +268,7 @@ func TestSearcherEdgeCases(t *testing.T) {
 		got, err := searcher.Search(t.Context(), graphrag.NewHashProvider(), "go kubernetes", graphrag.SearchOptions{})
 		require.NoError(t, err)
 		require.Len(t, got.Hits, 1)
-		assert.Equal(t, "job:only", got.Hits[0].Node.ID)
+		assert.Equal(t, graphrag.NodeID("job:only"), got.Hits[0].Node.ID)
 	})
 
 	t.Run("threshold boundary is inclusive", func(t *testing.T) {
@@ -371,7 +371,7 @@ func TestSearcherClonesCallerInputs(t *testing.T) {
 	provider := graphrag.NewHashProvider()
 
 	type fixture struct {
-		id   string
+		id   graphrag.NodeID
 		kind graphrag.NodeKind
 		text string
 	}
@@ -382,7 +382,7 @@ func TestSearcherClonesCallerInputs(t *testing.T) {
 		{id: "hub:h", kind: "hub", text: "alpha"},
 	}
 
-	vectors := make(map[string]graphrag.Vector, len(fixtures))
+	vectors := make(map[graphrag.NodeID]graphrag.Vector, len(fixtures))
 	nodes := make([]graphrag.Node, 0, len(fixtures))
 
 	for _, f := range fixtures {

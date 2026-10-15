@@ -61,7 +61,7 @@ func TestStoreGraphPersistenceRoundTrip(t *testing.T) {
 		{Source: "job:1", Target: "skill:go", Relation: relRequires, Weight: 1},
 	}
 
-	hashes := map[string]string{"job:1": graphrag.HashText("job one text")}
+	hashes := map[graphrag.NodeID]string{"job:1": graphrag.HashText("job one text")}
 
 	require.NoError(t, store.ReplaceGraph(posted, hashes, edges))
 
@@ -209,7 +209,7 @@ func TestBuildSimilarEdgesLinkSameKindOnly(t *testing.T) {
 }
 
 // kindOf resolves a node's kind from a build result.
-func kindOf(result *graphrag.BuildResult, id string) graphrag.NodeKind {
+func kindOf(result *graphrag.BuildResult, id graphrag.NodeID) graphrag.NodeKind {
 	for _, node := range result.Nodes {
 		if node.ID == id {
 			return node.Kind
