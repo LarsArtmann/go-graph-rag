@@ -37,7 +37,10 @@ func (e *ErrDimsInconsistent) Error() string {
 // graph can still traverse through them (vector-less hubs stay reachable
 // via graph expansion only).
 type Document struct {
-	ID    string
+	// ID is the node ID the document becomes at index time: documents and
+	// nodes share one identifier namespace, and caller edges reference the
+	// same IDs.
+	ID    NodeID
 	Kind  NodeKind
 	Label string
 	Text  string
@@ -63,10 +66,10 @@ type BuildResult struct {
 	Edges []Edge
 
 	// Vectors maps node ID to its embedding, for in-memory search warm-up.
-	Vectors map[string]Vector
+	Vectors map[NodeID]Vector
 
 	// EmbeddingHash maps node ID to its content hash, for cache joins.
-	EmbeddingHash map[string]string
+	EmbeddingHash map[NodeID]string
 
 	// Provider and Model identify the vector space of Vectors.
 	Provider string
@@ -114,7 +117,7 @@ func Build(
 	// Duplicate document IDs (e.g. the same hub reached from two different
 	// documents) collapse onto their FIRST occurrence so insertion order
 	// stays deterministic and persistence never hits a unique constraint.
-	seen := make(map[string]struct{}, len(docs))
+	seen := make(map[NodeID]struct{}, len(docs))
 	nodes := make([]Node, 0, len(docs))
 
 	for _, doc := range docs {
@@ -147,13 +150,13 @@ func resolveVectors(
 	provider Provider,
 	cache Cache,
 	docs []Document,
-) (map[string]Vector, map[string]string, int, int, error) {
-	vectors := make(map[string]Vector, len(docs))
-	hashes := make(map[string]string, len(docs))
+) (map[NodeID]Vector, map[NodeID]string, int, int, error) {
+	vectors := make(map[NodeID]Vector, len(docs))
+	hashes := make(map[NodeID]string, len(docs))
 	cacheHits := 0
 
 	misses := make([]Document, 0)
-	missHashes := make(map[string]string)
+	missHashes := make(map[string]NodeID)
 	missHashList := make([]string, 0)
 
 	for _, doc := range docs {
@@ -290,7 +293,7 @@ func embedAll(
 // are embedded too, but "similar" means near-duplicate documents or sibling
 // hubs of one kind — never a document that merely mentions a hub (that is
 // what caller-supplied edges express).
-func similarEdges(nodes []Node, vectors map[string]Vector, topK int, threshold float64) []Edge {
+func similarEdges(nodes []Node, vectors map[NodeID]Vector, topK int, threshold float64) []Edge {
 	embedded := make([]Node, 0, len(vectors))
 
 	for _, node := range nodes {
@@ -299,7 +302,7 @@ func similarEdges(nodes []Node, vectors map[string]Vector, topK int, threshold f
 		}
 	}
 
-	neighbors := make(map[string][]Edge)
+	neighbors := make(map[NodeID][]Edge)
 
 	for i := range embedded {
 		for j := i + 1; j < len(embedded); j++ {
@@ -368,12 +371,12 @@ func appendRanked(current []Edge, candidate Edge, topK int) []Edge {
 }
 
 // pairKey orders an unordered pair so each similar-edge is stored once.
-func pairKey(a, b string) string {
+func pairKey(a, b NodeID) string {
 	if a < b {
-		return a + "\x00" + b
+		return string(a) + "\x00" + string(b)
 	}
 
-	return b + "\x00" + a
+	return string(b) + "\x00" + string(a)
 }
 
 // sortEdgesClone returns a deterministically sorted copy of edges.

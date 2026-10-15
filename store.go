@@ -252,13 +252,13 @@ func (s *Store) PutEmbeddings(provider, model string, entries []EmbeddingEntry) 
 type LoadGraphSnapshot struct {
 	Nodes         []Node
 	Edges         []Edge
-	EmbeddingHash map[string]string
+	EmbeddingHash map[NodeID]string
 }
 
 // ReplaceGraph atomically swaps the persisted graph. Rebuilds are full
 // replaces: the graph is derived data, and delete-then-insert inside one
 // transaction keeps the stored view consistent.
-func (s *Store) ReplaceGraph(nodes []Node, embeddingHashes map[string]string, edges []Edge) error {
+func (s *Store) ReplaceGraph(nodes []Node, embeddingHashes map[NodeID]string, edges []Edge) error {
 	ctx, tx, finish, err := s.statement("graph tx")
 	if err != nil {
 		return err
@@ -347,7 +347,7 @@ func (s *Store) loadNodes(ctx context.Context) ([]Node, map[string]string, error
 	defer func() { _ = rows.Close() }()
 
 	nodes := make([]Node, 0)
-	hashes := make(map[string]string)
+	hashes := make(map[NodeID]string)
 
 	for rows.Next() {
 		var (

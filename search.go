@@ -86,7 +86,7 @@ type SearcherOptions struct {
 // is immutable and safe for concurrent use.
 type Searcher struct {
 	graph     *Graph
-	vectors   map[string]Vector
+	vectors   map[NodeID]Vector
 	policy    SearcherOptions
 	refVector Vector
 	hasRef    bool
@@ -108,7 +108,7 @@ func NewSearcher(nodes []Node, edges []Edge, vectors map[string]Vector) *Searche
 // vector's contents) and opts.DocumentKinds are cloned: the Searcher is
 // immutable, so mutating the caller's copies afterwards cannot change its
 // behavior.
-func NewSearcherWithOptions(nodes []Node, edges []Edge, vectors map[string]Vector, opts SearcherOptions) *Searcher {
+func NewSearcherWithOptions(nodes []Node, edges []Edge, vectors map[NodeID]Vector, opts SearcherOptions) *Searcher {
 	searcher := &Searcher{
 		graph:     NewGraph(nodes, edges),
 		vectors:   cloneVectors(vectors),
@@ -140,8 +140,8 @@ func NewSearcherWithOptions(nodes []Node, edges []Edge, vectors map[string]Vecto
 // cloneVectors deep-copies a vectors map so the Searcher owns its memory:
 // the immutability promise covers both the map structure and vector
 // contents, not just the map handle.
-func cloneVectors(vectors map[string]Vector) map[string]Vector {
-	cloned := make(map[string]Vector, len(vectors))
+func cloneVectors(vectors map[NodeID]Vector) map[NodeID]Vector {
+	cloned := make(map[NodeID]Vector, len(vectors))
 
 	for id, vector := range vectors {
 		cloned[id] = slices.Clone(vector)
@@ -199,13 +199,13 @@ func (s *Searcher) Search(
 // (documents and hub nodes alike); callers wanting one kind filter the
 // result.
 func (s *Searcher) SimilarPairs(minScore float64) []SimilarPair {
-	ids := make([]string, 0, len(s.vectors))
+	ids := make([]NodeID, 0, len(s.vectors))
 
 	for id := range s.vectors {
 		ids = append(ids, id)
 	}
 
-	sort.Strings(ids)
+	slices.Sort(ids)
 
 	pairs := make([]SimilarPair, 0)
 
@@ -316,7 +316,7 @@ func (s *Searcher) refScore(vector Vector) float64 {
 
 // expand collects a node's outgoing and incoming edges as related nodes,
 // ranked by weight then node ID, capped at max.
-func (s *Searcher) expand(id string, limit int) []RelatedNode {
+func (s *Searcher) expand(id NodeID, limit int) []RelatedNode {
 	edges := append(s.graph.OutEdges(id), s.graph.InEdges(id)...)
 
 	related := make([]RelatedNode, 0, len(edges))
@@ -351,7 +351,7 @@ func (s *Searcher) expand(id string, limit int) []RelatedNode {
 }
 
 // nodeOrPlaceholder keeps SimilarPair total even if a vector lost its node.
-func (s *Searcher) nodeOrPlaceholder(id string) Node {
+func (s *Searcher) nodeOrPlaceholder(id NodeID) Node {
 	if node, ok := s.graph.Node(id); ok {
 		return node
 	}
