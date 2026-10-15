@@ -52,9 +52,17 @@ type NodeAttrs struct {
 	PostedAt *time.Time `json:"postedAt,omitempty"`
 }
 
+// NodeID identifies one node in the knowledge graph. It is a defined type,
+// so node IDs cannot mix with plain strings or other identifier namespaces
+// by accident, while untyped string literals still assign directly
+// (Node{ID: "job:1"}). The wire shape is unchanged: node IDs encode as
+// plain JSON strings. Document IDs share this namespace (see Document.ID):
+// a document's ID becomes its node's ID at index time.
+type NodeID string
+
 // Node is one entity in the knowledge graph.
 type Node struct {
-	ID    string    `json:"id"`
+	ID    NodeID    `json:"id"`
 	Kind  NodeKind  `json:"kind"`
 	Label string    `json:"label"`
 	Attrs NodeAttrs `json:"attrs"`
@@ -62,8 +70,8 @@ type Node struct {
 
 // Edge is one typed, weighted relation between two nodes.
 type Edge struct {
-	Source   string   `json:"source"`
-	Target   string   `json:"target"`
+	Source   NodeID   `json:"source"`
+	Target   NodeID   `json:"target"`
 	Relation Relation `json:"relation"`
 	Weight   float64  `json:"weight"`
 }
@@ -73,9 +81,9 @@ type Edge struct {
 // (relation, target) or (relation, source) (edges), so renders and exports
 // are byte-stable across processes.
 type Graph struct {
-	nodes    map[string]Node
-	outEdges map[string][]Edge
-	inEdges  map[string][]Edge
+	nodes    map[NodeID]Node
+	outEdges map[NodeID][]Edge
+	inEdges  map[NodeID][]Edge
 }
 
 // NewGraph indexes the given nodes and edges. Duplicate edges (same source,
@@ -83,9 +91,9 @@ type Graph struct {
 // indexing stays idempotent.
 func NewGraph(nodes []Node, edges []Edge) *Graph {
 	graph := &Graph{
-		nodes:    make(map[string]Node, len(nodes)),
-		outEdges: make(map[string][]Edge),
-		inEdges:  make(map[string][]Edge),
+		nodes:    make(map[NodeID]Node, len(nodes)),
+		outEdges: make(map[NodeID][]Edge),
+		inEdges:  make(map[NodeID][]Edge),
 	}
 
 	for _, node := range nodes {
@@ -111,7 +119,7 @@ func NewGraph(nodes []Node, edges []Edge) *Graph {
 }
 
 // Node returns the node with the given ID.
-func (g *Graph) Node(id string) (Node, bool) {
+func (g *Graph) Node(id NodeID) (Node, bool) {
 	node, ok := g.nodes[id]
 
 	return node, ok
@@ -146,12 +154,12 @@ func (g *Graph) NodesByKind(kind NodeKind) []Node {
 }
 
 // OutEdges returns the edges leaving id, deterministically ordered.
-func (g *Graph) OutEdges(id string) []Edge {
+func (g *Graph) OutEdges(id NodeID) []Edge {
 	return slices.Clone(g.outEdges[id])
 }
 
 // InEdges returns the edges entering id, deterministically ordered.
-func (g *Graph) InEdges(id string) []Edge {
+func (g *Graph) InEdges(id NodeID) []Edge {
 	return slices.Clone(g.inEdges[id])
 }
 
@@ -175,8 +183,8 @@ func (g *Graph) NodeCount() int {
 // maximum weight, returning edges sorted deterministically.
 func mergeEdges(edges []Edge) []Edge {
 	type edgeKey struct {
-		source   string
-		target   string
+		source   NodeID
+		target   NodeID
 		relation Relation
 	}
 

@@ -106,6 +106,13 @@ Candidates from ROADMAP Theme 1: `sqlite-vec`, `hannoy` (pure-Go HNSW), an in-pr
 This sketch compiles against `go-graph-rag v0.1.0` in a scratch module (verified 2026-09-16,
 `env -u GOEXPERIMENT go build`); it is a DESIGN ARTIFACT — none of it is merged into core yet.
 
+> Amended 2026-10-15 (BD003 strong-ID hardening, annotations-only edit): node identity became the
+> strong type `NodeID` in core, so the sketch keys `VectorIndex.Replace` by `NodeID`, retypes
+> `VectorMatch.NodeID` and the `GraphStore.ReplaceGraph` hash map, and now also references the core
+> `NodeID` declaration. The `map[string]` references elsewhere in this document describe the
+> pre-hardening implementation and stay as written (point-in-time record); the sketch below is the
+> binding shape.
+
 ```go
 package graphrag
 
@@ -122,7 +129,7 @@ const MetricCosine DeclaredMetric = "cosine"
 // VectorMatch is one ranked candidate returned by a VectorIndex.
 type VectorMatch struct {
 	// NodeID is the node the backend matched.
-	NodeID string
+	NodeID NodeID
 	// Scored reports whether the backend returned a per-hit similarity.
 	// Class C backends may return ids without distances (DQL similar_to);
 	// for those the core re-scores over the loaded snapshot vectors.
@@ -162,7 +169,7 @@ type VectorIndex interface {
 	// Replace atomically swaps the full index contents. This is the
 	// full-rebuild model: the same discipline as Store.ReplaceGraph. A
 	// backend that cannot honor full-replace must fail here, not degrade.
-	Replace(vectors map[string]Vector) error
+	Replace(vectors map[NodeID]Vector) error
 
 	// Search returns up to q.TopK candidates, best first. Results MAY
 	// exceed MinScore filtering duties (the core re-applies it) but MUST
@@ -179,7 +186,7 @@ type VectorIndex interface {
 type GraphStore interface {
 	// ReplaceGraph atomically swaps the persisted graph (delete-then-insert
 	// inside one transaction today).
-	ReplaceGraph(nodes []Node, embeddingHashes map[string]string, edges []Edge) error
+	ReplaceGraph(nodes []Node, embeddingHashes map[NodeID]string, edges []Edge) error
 
 	// LoadGraph reads the full snapshot: nodes, edges, and the
 	// node-to-embedding-hash join keys.
