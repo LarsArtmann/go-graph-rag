@@ -68,6 +68,16 @@ v0.x allows breaking changes; v1 freezes the surface.
 Raw ideas:
 
 - Codify the wire contract (`Hit`, `SearchResult` JSON keys) as frozen
+- Explicit JSON round-trip test of `Node`/`Edge` under both json engines (the
+  goldens pin the v2-engine's output; a v1-vs-v2 decode-equals test would
+  complete the story)
+- Distinct `DocumentID` if documents ever split from nodes (chunking) — the
+  revisit trigger for the shared document/node ID namespace decision
+  (`graph.go` `NodeID`)
+- Naming review: `NodeAttrs.Source` (display metadata) vs `Edge.Source` (node
+  reference) — same word, two meanings; rename only with a consumer-aware plan
+- Surface vector-without-node placeholders louder in `SimilarPairs`
+  (`KindUnknown` rows are data holes today; decide render vs error)
 - Document the migration path when ANN/incremental land
 
 ## Non-goals

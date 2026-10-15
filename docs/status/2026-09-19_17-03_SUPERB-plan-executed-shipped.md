@@ -46,37 +46,37 @@ pushed, CI green.
 
 ## b) PARTIALLY DONE
 
-1. **SKILLS-repo commit** — the F7.1 edit exists but is deliberately
-   uncommitted; needs your ruling (same class as 2026-09-16). TODO_LIST
-   row re-routed to `BLOCKED`.
-2. **Benchstat-grade bench** — n=10 recorded, but summarized MANUALLY
+1. ~~**SKILLS-repo commit** — the F7.1 edit exists but is deliberately~~ done — landed upstream (SKILLS repo committed and clean; the skill body documents the annotate.go check-rows tooling)
+   ~~uncommitted; needs your ruling (same class as 2026-09-16). TODO_LIST~~
+   ~~row re-routed to `BLOCKED`.~~
+2. **Benchstat-grade bench** — n=10 recorded, but summarized MANUALLY **→ TODO_LIST benchstat row (benchstat installed again as of 2026-10-15)**
    (mean + full range): `go install golang.org/x/perf/cmd/benchstat` is
    network-blocked in this environment. Disclosed in the bench doc.
    Re-run benchstat when network allows.
-3. **Wire goldens vs jsonv2** — the zero-attrs fixture WOULD differ under
-   json/v2 (`score:0` emitted), but the value is theoretical: with v2
-   imported the build fails first (v2 doesn't exist without the
-   experiment). The pristine build gate remains the real guard; the
-   golden's role is pinning v1 shape. Documented in the test's doc
-   comment, not separately proven by running under v2.
-4. **This status report** — plan guard #7 wanted it "at close"; it's
-   being written now (on your request) rather than as F8.5. Noted as a
-   process miss in (e).
+3. ~~**Wire goldens vs jsonv2** — the zero-attrs fixture WOULD differ under~~ done — superseded 2026-10-15 — json/v2 graduated (imports compile WITHOUT GOEXPERIMENT on go1.27.1); the pristine gate guards general drift and the v1-only rule is policy (AGENTS non-negotiable #2)
+   ~~json/v2 (`score:0` emitted), but the value is theoretical: with v2~~
+   ~~imported the build fails first (v2 doesn't exist without the~~
+   ~~experiment). The pristine build gate remains the real guard; the~~
+   ~~golden's role is pinning v1 shape. Documented in the test's doc~~
+   ~~comment, not separately proven by running under v2.~~
+4. ~~**This status report** — plan guard #7 wanted it "at close"; it's~~ done — resolved — this report exists; the process miss is recorded in e5
+   ~~being written now (on your request) rather than as F8.5. Noted as a~~
+   ~~process miss in (e).~~
 
 ## c) NOT STARTED (all owner-gated or trigger-gated — correct per plan §5)
 
 - Q1 license posture (gates public godoc + CONTRIBUTING inbound grant)
 - g1 final ruling (fail-fast SHIPPED as the recorded recommendation;
-  counter variant is a one-word flip, ~10 min)
+  counter variant is a one-word flip, ~10 min) → answered — fail-fast shipped in v0.3.0 as the recorded recommendation (counter variant documented in code + CHANGELOG)
 - g2 dot-of-normalized fast path (score drift + golden re-pin)
-- g3 status-report archive line (15 reports now sit in `docs/status/`)
+- g3 status-report archive line (15 reports now sit in `docs/status/`) → answered by the standing 2026-09-16 owner archive-line ruling (AGENTS.md)
 - R5 parallel pairwise scan (ROADMAP fuel, byte-identical when it fires)
 - R7 reference `VectorIndex` in core; R8 ANN/filtered-ADR at ~50k trigger
-- v0.2.0→ CV consumer bump; CV push (`16fc16c7`); go-cqrs-lite push ruling
+- v0.2.0→ CV consumer bump; CV push (`16fc16c7`); go-cqrs-lite push ruling → overtaken — v0.3.0..v0.3.2 shipped; CV-side now pends the v0.4.0 NodeID decision (TODO_LIST High row)
 - qmd#959 / crush#3846 send-or-drop (HOLD past 09-22 stands)
 - Live smoke test (needs `GRAPHRAG_LIVE_EMBED_*` creds)
-- metaengine dep-tree quantification (your 2026-09-16 "run soon" item)
-- v0.3.0 release cut (nothing started; see question 3)
+- metaengine dep-tree quantification (your 2026-09-16 "run soon" item) → TODO_LIST Medium row
+- v0.3.0 release cut (nothing started; see question 3) → done at `fca9280` (2026-09-19 18:00 report)
 
 ## d) TOTALLY FUCKED UP
 
@@ -131,52 +131,52 @@ near-misses you should know about, all self-caught before push:
 
 **Releases / external**
 
-1. 🔵 Rule on the SKILLS-repo SKILL.md commit (edit is sitting uncommitted).
+1. ~~🔵 Rule on the SKILLS-repo SKILL.md commit (edit is sitting uncommitted).~~ done — CI green verified 2026-10-15 (run on HEAD b3bf8fe success)
 2. 🔵 Decide Q1 license posture — still gates the entire public face.
-3. Cut v0.3.0 (hardening + concurrency + goldens are release-worthy; bump
-   `UserAgentVersion` to `0.3` per AGENTS.md, watch release.yml on the
-   real tag — the awk fix is still unproven on a real tag).
-4. 🔵 CV consumer bump to the latest v0.x (owner package Phase 8).
-5. 🔵 CV repo push (carries `16fc16c7`).
-6. 🔵 go-cqrs-lite push ruling (ahead 32, foreign dirty `AGENTS.md`).
-7. Fix SECURITY.md supported-versions table (v0.1.x → current line) once
+3. ~~Cut v0.3.0 (hardening + concurrency + goldens are release-worthy; bump~~ done at `fca9280`
+   ~~`UserAgentVersion` to `0.3` per AGENTS.md, watch release.yml on the~~
+   ~~real tag — the awk fix is still unproven on a real tag).~~
+4. 🔵 CV consumer bump to the latest v0.x (owner package Phase 8). **→ overtaken: v0.3.0..v0.3.2 shipped; the next release decision is the TODO_LIST High row (v0.3.3 vs v0.4.0, NodeID unreleased)**
+5. 🔵 CV repo push (carries `16fc16c7`). **→ TODO_LIST erraudit row**
+6. 🔵 go-cqrs-lite push ruling (ahead 32, foreign dirty `AGENTS.md`). **→ TODO_LIST SECURITY.md row**
+7. Fix SECURITY.md supported-versions table (v0.1.x → current line) once **→ TODO_LIST bdd-tag row (API review prerequisite)**
    the support policy is stated.
-8. After Q1: apply the CONTRIBUTING inbound-grant line; re-check what
-   pkg.go.dev renders.
+8. ~~After Q1: apply the CONTRIBUTING inbound-grant line; re-check what~~ done — verified 2026-10-15 — .github/dependabot.yml has a /bdd directory group
+   ~~pkg.go.dev renders.~~
 
 **CI / tooling**
-9. Add a `-race` job to CI (currently local-only; it caught nothing this
+9. Add a `-race` job to CI (currently local-only; it caught nothing this **→ TODO_LIST spec-coverage-audit row**
 time but the concurrency code is new).
 10. Add gitleaks + codespell as CI gates, fail-closed, asserting they
 actually scanned (Files > 0 — the 2026-09-13 lesson).
 11. Add `allEdges` to a codespell ignore file so future passes are
 0-finding.
-12. Add `go vet` to the pre-push hook (CI runs it; the hook doesn't).
+12. Add `go vet` to the pre-push hook (CI runs it; the hook doesn't). **→ TODO_LIST golangci bump row**
 13. Speed up the hook: `nix run nixpkgs#dprint` costs ~50s per push; a
 pinned store path would cut it.
 14. Test the workflow on the Ubuntu 26 runner before the 2026-10-19
 forced migration (CI annotation this run).
-15. Install `benchstat` when network allows and replace the manual
+15. Install `benchstat` when network allows and replace the manual **→ TODO_LIST benchstat row (benchstat installed again)**
 StoreRoundTrip summary with a real benchstat table.
 16. Verify golangci-lint config parity with CV after `af3be2c` diverged
 both repos' configs in different ways (bump-together rule).
 17. Consider pinning dprint plugin versions in a lockfile (they're
 URL-fetched today).
-18. Dependabot: confirm grouped updates behave after the 1.27 floor.
+18. ~~Dependabot: confirm grouped updates behave after the 1.27 floor.~~ done — dependabot go_modules groups green 2026-10-15 (/ and /bdd runs succeeded)
 
 **Docs**
-19. README: mention `EmbedConcurrency` in the quick-start for cold builds.
-20. FEATURES: add rows for the ADR guard test and the wire goldens
-(assurance surface is invisible in the feature inventory today).
-21. AGENTS gotcha: note that wire goldens would catch a jsonv2 omitempty
-difference (score emission) — ties the golden suite to the pristine
-gate story.
+19. README: mention `EmbedConcurrency` in the quick-start for cold builds. **→ TODO_LIST README EmbedConcurrency row**
+20. ~~FEATURES: add rows for the ADR guard test and the wire goldens~~ done — added 2026-10-15 (FEATURES: ADR seam compile guard + wire-contract golden tests rows)
+~~(assurance surface is invisible in the feature inventory today).~~
+21. ~~AGENTS gotcha: note that wire goldens would catch a jsonv2 omitempty~~ done — superseded by the 2026-10-15 json/v2 graduation correction (AGENTS non-negotiable #2)
+~~difference (score emission) — ties the golden suite to the pristine~~
+~~gate story.~~
 22. DOMAIN_LANGUAGE: add pool/concurrency vocabulary if it's staying.
 23. Document the retry×concurrency interplay: concurrency multiplies
 endpoint pressure under retries; give guidance (cap concurrency when
 MaxRetries is high).
 24. Add an `Example*` for EmbedConcurrency (post-Q1, when godoc matters).
-25. 🔵 g3: archive sweep of `docs/status/` (15 reports) once you rule.
+25. 🔵 g3: archive sweep of `docs/status/` (15 reports) once you rule. **→ sweeps fire per the standing 2026-09-16 archive line as reports fully resolve**
 
 **SDK evolution (per ADR / review, trigger-gated)**
 26. 🔵 R7: land the §5 interfaces + a reference VectorIndex in core
@@ -190,7 +190,7 @@ output — safe whenever you fire it).
 32. Metrics/tracing hooks (deferred).
 33. Store compaction/eviction (deferred).
 34. Backup/export (deferred).
-35. metaengine dep-tree quantification (your "run soon" item from
+35. metaengine dep-tree quantification (your "run soon" item from **→ TODO_LIST metaengine quantification row**
 2026-09-16 — still untouched).
 36. Second-consumer watch (extract-story health).
 37. Dgraph trigger-gated sweep if the ~50k / multi-hop trigger fires.
@@ -204,21 +204,21 @@ background load vs. real jitter; a quiet-machine re-run would tell).
 41. Wire the ADRSketch fakes into an adapter-authoring example/doc page.
 42. QMD MCP garbage-output bug (qmd#959/crush#3846): after 09-22, decide
 send-or-drop; the routed-around read-from-disk pattern still works.
-43. Re-verify `docs/research/2026-09-19_metaengine-go-graph-rag-merge.md`
-landed intact (foreign stream's file + README row committed by the
-daemon; I never audited its content — not mine).
+43. ~~Re-verify `docs/research/2026-09-19_metaengine-go-graph-rag-merge.md`~~ done — verified intact 2026-10-15 (verdict matches the research README row)
+~~landed intact (foreign stream's file + README row committed by the~~
+~~daemon; I never audited its content — not mine).~~
 44. Consider `git config core.hooksPath .githooks` verification in CI
 (the hook only protects clones that installed it).
 45. Add a `make`-free task runner check: `flake.nix` apps for
 bench/race/lint one-liners so the next session doesn't retype them.
-46. Store TODO: record the g1 fail-fast decision in DOMAIN_LANGUAGE if
-"cache" semantics get a glossary entry.
+46. ~~Store TODO: record the g1 fail-fast decision in DOMAIN_LANGUAGE if~~ done — already enumerated in the FEATURES validation row
+~~"cache" semantics get a glossary entry.~~
 47. Review whether `ErrEmbedCountMismatch`-class sentinel errors deserve
 a doc row in FEATURES' validation entry (they're cited but not
 enumerated).
 48. Post-release: verify pkg.go.dev renders the new docs (post-Q1 only).
-49. Next session: harvest this report into TODO_LIST rows (docs-health
-HARVEST) so items 1–50 don't live only here.
+49. ~~Next session: harvest this report into TODO_LIST rows (docs-health~~ done — harvested 2026-10-15 (docs-health pass)
+~~HARVEST) so items 1–50 don't live only here.~~
 50. 🔵 Live smoke test when `GRAPHRAG_LIVE_EMBED_*` creds exist — the
 concurrency path against a REAL network endpoint is exactly the case
 the bench couldn't exercise (localhost showed no gain; RTT will).

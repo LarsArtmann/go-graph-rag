@@ -26,6 +26,7 @@ All notable changes to this project are documented in this file.
 
 - **Dead allocation in the concurrent-embed collector** (`embed_openai.go`): a 2026-10-11 refactor switched slot-flattening to `lo.Flatten` but left the preceding `make([]Vector, 0, len(texts))` allocation in place, immediately overwritten — flagged by `ineffassign` and caught while re-baselining CI.
 - **CI Lint step green again**: `setup-go`'s `go-version: "1.27"` resolved to Go 1.27.2 on the runner, whose export-data format the pinned golangci-lint v2.13.2 cannot decode (every typecheck import failed; master red 2026-10-11..15). The workflow now pins `go-version: "1.27.1"` to match the `GOTOOLCHAIN` pin; the two pins must move together with the golangci-lint pin (CV parity rule).
+- **Stale public-face docs re-synced** (2026-10-15 docs-health pass): README's install command now pins `v0.3.2`, its dependency-light constraint states the json/v1 rule as policy (json/v2 graduated — the compiler no longer discriminates), and the `NodeID` strong-ID constraint is surfaced; `SECURITY.md`'s supported-versions table now says `v0.3.x` (was still `v0.1.x`, contradicting the file's own latest-line policy); `docs/DOMAIN_LANGUAGE.md` gains the `NodeID` term.
 
 ## [0.3.2] - 2026-10-15
 
