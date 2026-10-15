@@ -91,24 +91,24 @@ Ranked; TODO_LIST-grade rows are already routed there; items 18+ are ROADMAP/tri
 
 1. Q1 license posture decision (package Q1) — now provably gates all public godoc.
 2. After Q1: apply the CONTRIBUTING inbound-grant line; re-cut a release (v0.2.1+) and verify pkg.go.dev renders godoc; re-check the README caveat can come down.
-3. Cut the CV consumer bump to v0.2.0 (owner package Phase 8).
+3. Cut the CV consumer bump to v0.2.0 (owner package Phase 8). **→ overtaken: v0.3.0..v0.3.2 shipped; CV-side now pends the v0.4.0 NodeID decision (TODO_LIST High row)**
 4. Push the CV repo (carries `16fc16c7`); rule on pushing go-cqrs-lite (ahead 32, foreign dirty tree).
 5. Send-or-drop qmd#959/crush#3846 patches (held past 09-22 by ruling; patches in issue texts).
 6. Provide `GRAPHRAG_LIVE_EMBED_*` creds → run the live smoke test.
 
 **P1 — engineering, ready now (TODO rows)**
 
-7. Compile-only test for the ADR §5 sketch + fake GraphStore fixture (R1).
-8. Cache-error policy decision (propagate vs `CacheErrors` counter) + single-hash cleanup (R2).
-9. Searcher aliasing: clone vectors map + DocumentKinds in the constructors (R3).
-10. `EmbeddingConfig.EmbedConcurrency` (default 1) + stdlib worker pool; bench before/after (R4).
-11. Extend `.githooks/pre-push` with tidy-drift + dprint (3 recurrences justify it).
-12. Benchmark hygiene batch: benchstat the round-trip bench (`-count 10`), document the ~37s 10k fixture cost in bench_test.go, add `BenchmarkSimilarPairs/docs=100`.
-13. Document `check-rows.py` in the docs-health SKILL.md body (skill repo).
-14. Resolve the lychee-reported redirecting URL.
-15. Run the full format gate (lychee/path sweep) over the review's new cross-links.
-16. Visual render check of the review HTML (browser or rendered-screenshot pass).
-17. Exhaustive FEATURES.md citation sweep (all ~40 rows, not a spot-check).
+7. ~~Compile-only test for the ADR §5 sketch + fake GraphStore fixture (R1).~~ done at `7f0f0ed`
+8. ~~Cache-error policy decision (propagate vs `CacheErrors` counter) + single-hash cleanup (R2).~~ done at `7f0f0ed`
+9. ~~Searcher aliasing: clone vectors map + DocumentKinds in the constructors (R3).~~ done at `7f0f0ed`
+10. ~~`EmbeddingConfig.EmbedConcurrency` (default 1) + stdlib worker pool; bench before/after (R4).~~ done at `7f0f0ed`
+11. ~~Extend `.githooks/pre-push` with tidy-drift + dprint (3 recurrences justify it).~~ done at `7f0f0ed`
+12. ~~Benchmark hygiene batch: benchstat the round-trip bench (`-count 10`), document the ~37s 10k fixture cost in bench_test.go, add `BenchmarkSimilarPairs/docs=100`.~~ done at `7f0f0ed`
+13. Document `check-rows.py` in the docs-health SKILL.md body (skill repo). **→ landed upstream (SKILLS repo committed; the skill body documents annotate.go check-rows)**
+14. ~~Resolve the lychee-reported redirecting URL.~~ done at `7f0f0ed`
+15. ~~Run the full format gate (lychee/path sweep) over the review's new cross-links.~~ done at `7f0f0ed`
+16. ~~Visual render check of the review HTML (browser or rendered-screenshot pass).~~ done at `7f0f0ed`
+17. ~~Exhaustive FEATURES.md citation sweep (all ~40 rows, not a spot-check).~~ done at `7f0f0ed`
 
 **P2 — speed levers & design decisions (owner taste)**
 
@@ -134,7 +134,7 @@ Ranked; TODO_LIST-grade rows are already routed there; items 18+ are ROADMAP/tri
 **P4 — externals & hygiene**
 
 33. Watch `release.yml` on the next real tag (unproven since the `350b815` fix).
-34. Confirm dependabot's actions group still covers added workflows after edits.
+34. ~~Confirm dependabot's actions group still covers added workflows after edits.~~ done — dependabot config verified 2026-10-15 (/ + /bdd groups; dependabot runs green)
 35. gitleaks/codespell on-demand pass over the new docs.
 36. Archive eligible status reports once Q1 resolves (several become fully-resolved the moment the license gate clears).
 37. go-cqrs-lite doc-consistency sweep after its push ruling (markers across FEATURES/modules.md).
@@ -146,16 +146,16 @@ Ranked; TODO_LIST-grade rows are already routed there; items 18+ are ROADMAP/tri
 43. Update the review HTML (or write a fresh one) after R1–R4 land — point-in-time artifact, annotate-or-supersede.
 44. Re-check pkg.go.dev importer counts / scores on any Dgraph revisit.
 45. `qmd embed` re-check if CV docs accumulate again.
-46. Skill-maintenance: annotate tooling already fixed upstream — re-verify after the next SKILLS flake propagation.
-47. Consider recording the "archive line" ruling (g3) in AGENTS.md once answered.
-48. Re-run `-race` after any concurrency work lands (R4/R5 make this mandatory, not optional).
+46. Skill-maintenance: annotate tooling already fixed upstream — re-verify after the next SKILLS flake propagation. **→ superseded upstream (docs-health skill ships annotate.go with check-rows documented)**
+47. ~~Consider recording the "archive line" ruling (g3) in AGENTS.md once answered.~~ done — already recorded — AGENTS.md Owner decisions 2026-09-16 carries the archive-line ruling
+48. ~~Re-run `-race` after any concurrency work lands (R4/R5 make this mandatory, not optional).~~ done — CI now runs go test -race on every push (go-test.yml, added 2026-10-15); R4 was race-verified locally at ship time
 49. Add a CHANGELOG entry per landed review recommendation as work lands (record-as-you-go, not batched).
 50. Keep daemon-commit hygiene: re-verify pristine gates after any daemon sweep that touches `.go` files (the third json-v2 recurrence came exactly this way).
 
 ## g) QUESTIONS (cannot answer myself)
 
-1. **Cache-error policy (gates R2)**: when a cache READ fails, should `Build` fail fast (propagate, symmetric with writes), or degrade to re-embedding and report it (e.g. `BuildResult.CacheErrors int`)? I can argue both; only you can pick the contract.
+1. ~~**Cache-error policy (gates R2)**: when a cache READ fails, should `Build` fail fast (propagate, symmetric with writes), or degrade to re-embedding and report it (e.g. `BuildResult.CacheErrors int`)? I can argue both; only you can pick the contract.~~ done at `7f0f0ed`
 2. **Dot-of-normalized fast path (gates R6)**: accept last-decimal user-visible score drift + one-time golden re-pin for ~3× pairwise arithmetic now, or keep exact cosine until the v1 freeze?
-3. **Status-report archive line**: is "own scope done + questions answered + open items tracked in living docs" enough to archive a status report (would archive 14-14 today), or keep the strict every-item-resolved line (archives nothing until Q1 resolves)?
+3. ~~**Status-report archive line**: is "own scope done + questions answered + open items tracked in living docs" enough to archive a status report (would archive 14-14 today), or keep the strict every-item-resolved line (archives nothing until Q1 resolves)?~~ done — answered by the standing 2026-09-16 owner archive-line ruling (strict every-item-resolved line; AGENTS.md)
 
 Waiting for instructions.
