@@ -114,8 +114,9 @@ numbers are re-measured.
   `git config core.hooksPath .githooks`), and the dprint/tidy gates ALSO
   catch non-experiment drift. All three blocking paths were proven by
   planted-failure dry-run pushes (2026-09-19).
-- golangci-lint is pinned to v2.13.2 in CI (CV parity). Bump both repos
-  together; the config requires the v2 binary.
+- golangci-lint pinned v2.14.0 in CI = local dev-shell binary (2026-10-15;
+  v2.13.2 could not decode Go 1.27.2 export data). CV still pins v2.13.2 —
+  bump it there in its own session (bump-together rule).
 - The json-v2 regression slipped in three times (pre-v0.1.0, `e67bd9b`,
   `e4a9145`) via daemon/parallel commits under the machine-wide
   `GOEXPERIMENT=jsonv2` shell; only the pristine build caught it.
@@ -143,13 +144,13 @@ numbers are re-measured.
   the gate exit as a session regression. Mix (re-baselined 2026-10-15,
   binary 518739c, behind BuildFlow HEAD): go-structure-linter `agent-config`
   error while AGENTS.md exceeds 220 lines; `securitymd` 2 owner-gated
-  errors (TODO_LIST); `erraudit` root error until the AsType migration
-  lands. Flat single-package layout is deliberate (no `pkg/`/`internal/`).
-  No `.buildflow.yml` skip entry on purpose: it would mute the linter's
-  other rules too.
-- CI is proven on ubuntu-26.04 (2026-10-15, green dispatch run: build/vet/
-  test -race/lint/bdd/format/tidy all pass); `go-test.yml` pins the runner
-  explicitly ahead of the 2026-10-19 ubuntu-latest label migration.
+  errors (TODO_LIST); erraudit held at 0 by one `//nolint:legacyerrors`
+  sentinel suppression — golangci warns "unknown linter legacyerrors" about
+  it (permanent two-tool token disagreement; keep the directive). Flat
+  single-package layout is deliberate (no `pkg/`/`internal/`); no
+  `.buildflow.yml` skip entry on purpose (it would mute other rules too).
+- CI is proven on ubuntu-26.04 (2026-10-15 green dispatch run — all steps
+  pass); `go-test.yml` pins the runner ahead of the 2026-10-19 migration.
 - Git Town runs on this machine and can snapshot dirty working-tree files as
   dangling "Git Town WIP" commits, then leave the files reverted (happened
   2026-10-15: TODO_LIST/ROADMAP/status-report writes vanished mid-session and
