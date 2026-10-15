@@ -7,7 +7,9 @@
 #    Dev shells export it machine-wide, which silently masks json/v2 usage
 #    that breaks pristine toolchains and CI; this regression reached the
 #    tree three times (pre-v0.1.0, e67bd9b, e4a9145) via daemon commits.
-# 2. Tidy drift: `go mod tidy` must produce zero diff against go.mod/go.sum.
+#    The bdd/ sub-module gate adds `go vet`: go build skips _test.go files,
+#    and the spec suite IS most of that module.
+# 2. Tidy drift: `go mod tidy` must produce zero diff for BOTH modules.
 # 3. dprint check: markdown/json/yaml formatting must be clean.
 #
 # Every gate blocks the push on failure.
@@ -18,10 +20,15 @@ env -u GOEXPERIMENT GOTOOLCHAIN=go1.27.1 go build ./... || {
     echo "Fix before pushing (usually: import encoding/json, not encoding/json/v2)." >&2
     exit 1
 }
+(cd bdd && env -u GOEXPERIMENT GOTOOLCHAIN=go1.27.1 go build ./... && env -u GOEXPERIMENT GOTOOLCHAIN=go1.27.1 go vet ./...) || {
+    echo "pre-push: FAILED - bdd module does not build/vet without GOEXPERIMENT=jsonv2." >&2
+    exit 1
+}
 
 echo "pre-push [2/3]: tidy drift (go mod tidy must diff to zero)..."
 env -u GOEXPERIMENT GOTOOLCHAIN=go1.27.1 go mod tidy
-if ! git diff --exit-code -- go.mod go.sum; then
+(cd bdd && env -u GOEXPERIMENT GOTOOLCHAIN=go1.27.1 go mod tidy)
+if ! git diff --exit-code -- go.mod go.sum bdd/go.mod bdd/go.sum; then
     echo "pre-push: FAILED - go.mod/go.sum drifted from 'go mod tidy'." >&2
     echo "Commit the tidied files (or restore them), then push again." >&2
     exit 1
