@@ -76,7 +76,9 @@ Runnable, output-verified versions of this flow live in
 | `NewOpenAICompatProvider` | network                | any OpenAI-style `/embeddings` endpoint (base URL, model, API key, timeout, retries)                                                                                    |
 
 Embeddings are cached namespaced by `content hash x provider x model` in the
-same SQLite file as the graph, so full rebuilds are cheap.
+same SQLite file as the graph, so full rebuilds are cheap. Cold builds over a
+network provider embed concurrently — set `EmbeddingConfig.EmbedConcurrency`
+(default 1) to raise throughput when the endpoint allows it.
 
 ## Search-time roles
 
@@ -102,7 +104,7 @@ Consumers who test in Ginkgo/Gomega style can use the optional, composable test
 kit — its own module, so the SDK's dependency budget never grows:
 
 ```bash
-go get github.com/larsartmann/go-graph-rag/bdd   # requires a bdd/v* tag (pending)
+go get github.com/larsartmann/go-graph-rag/bdd   # first bdd/v* tag pending (owner-gated)
 ```
 
 ```go
@@ -129,7 +131,7 @@ Expect(result).To(graphragbdd.HaveTopHit("article:retrieval"))
 ```
 
 Design and scope: [`docs/planning/2026-10-15_05-02_bdd-submodule-adr.md`](docs/planning/2026-10-15_05-02_bdd-submodule-adr.md).
-The kit's own 43-spec suite doubles as a black-box acceptance suite over the SDK.
+The kit's own 47-spec suite doubles as a black-box acceptance suite over the SDK.
 
 ## Design constraints (deliberate)
 

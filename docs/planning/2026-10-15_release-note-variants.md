@@ -39,7 +39,7 @@ between `## [x.y.z]` and the next `##` header, so keep `###` subsections.
   `HaveHitIDs`, `HaveNoHitsOfKind`, `HaveSimilarEdge`), and a
   `FailingProvider` for error paths. The kit keeps ginkgo/gomega out of the
   core dependency budget (AGENTS non-negotiable #3) and dogfoods itself via
-  its own 43-spec black-box suite. Scope and decisions:
+  its own 47-spec black-box suite. Scope and decisions:
   `docs/planning/2026-10-15_05-02_bdd-submodule-adr.md`. Consumers cannot
   fetch it from the proxy until the first `bdd/v*` tag lands (owner-gated).
 

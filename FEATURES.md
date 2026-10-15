@@ -27,7 +27,7 @@
 | Store round-trip / Reload from disk          | 🟢 `FULLY_FUNCTIONAL` | `Reload` via `LoadGraph`+`LoadEmbeddings` hash join; pinned by `store_spec_test.go` (reload equality, warm-rebuild counts, errors) |
 | Gomega matchers on SearchResult/SimilarPairs | 🟢 `FULLY_FUNCTIONAL` | `bdd/matchers.go`; positives, negatives, failure messages, wrong-type errors table-tested in `matchers_spec_test.go`               |
 | FailingProvider error-path stand-in          | 🟢 `FULLY_FUNCTIONAL` | `bdd/providers.go`; build-failure and query-failure propagation specs                                                              |
-| Kit self-acceptance suite (black-box)        | 🟢 `FULLY_FUNCTIONAL` | 43 specs, `package bdd_test`, order-independent across random seeds, `-race` clean                                                 |
+| Kit self-acceptance suite (black-box)        | 🟢 `FULLY_FUNCTIONAL` | 47 specs, `package bdd_test`, order-independent across random seeds, `-race` clean                                                 |
 
 ## Indexing
 

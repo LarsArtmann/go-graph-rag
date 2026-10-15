@@ -15,6 +15,11 @@ var errNoStore = errors.New("bdd harness: WithStore not configured")
 // errNotBuilt backs Search and SimilarPairs when Build has not succeeded yet.
 var errNotBuilt = errors.New("bdd harness: Build must succeed first")
 
+// errTooManySearchOptions backs Search when a spec passes more than one
+// SearchOptions: the variadic cannot merge them, so the spec bug must fail
+// loudly instead of silently dropping options.
+var errTooManySearchOptions = errors.New("bdd harness: at most one SearchOptions is accepted")
+
 // TB is the minimal test facade the harness needs: fatal setup errors, a
 // per-test temp directory, and cleanup registration. Both testing.TB values
 // (plain Test functions) and ginkgo.GinkgoT() satisfy it, so plain and BDD
@@ -172,7 +177,7 @@ func (h *Harness) Search(
 	}
 
 	if len(searchOptions) > 1 {
-		return nil, fmt.Errorf("bdd harness: search: at most one SearchOptions, got %d", len(searchOptions))
+		return nil, fmt.Errorf("bdd harness: search (got %d): %w", len(searchOptions), errTooManySearchOptions)
 	}
 
 	var options graphrag.SearchOptions

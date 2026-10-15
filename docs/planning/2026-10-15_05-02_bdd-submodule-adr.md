@@ -3,7 +3,7 @@
 |          |                                                                                                                                                                                                                                     |
 | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Date     | 2026-10-15                                                                                                                                                                                                                          |
-| Status   | Accepted and implemented (kit code + 43-spec suite in tree; first `bdd/v*` tag pending owner decision)                                                                                                                              |
+| Status   | Accepted and implemented (kit code + 47-spec suite in tree; first `bdd/v*` tag pending owner decision)                                                                                                                              |
 | Question | How do consumers test go-graph-rag in BDD style (Ginkgo/Gomega) over the REAL SDK machinery, without the core module's `go.mod` ever growing test-only dependencies?                                                                |
 | Decision | A separate, composable Go module `github.com/larsartmann/go-graph-rag/bdd` owning ginkgo+gomega, exposing builders, a demo corpus, a real-machinery `Harness`, Gomega matchers, and a `FailingProvider`. Core stays byte-identical. |
 | Method   | Three consumers studied file-by-file (CV, knowledge-graph, legal-graph-ai-system, all pinning v0.3.2); kit scope fixed by the fixtures every consumer hand-rolls; dogfooded by the module's own black-box spec suite.               |
@@ -45,7 +45,7 @@ avoids: test deps leaking into a module's public dependency graph.
    - Gomega matchers (`matchers.go`): `HaveTopHit`, `ContainHit`, `HaveHitIDs`,
      `HaveNoHitsOfKind`, `HaveSimilarEdge`, plus `SimilarEdgeScore`.
    - `FailingProvider` (`providers.go`) for error-path specs.
-3. **The module's own suite is the acceptance suite**: 43 black-box specs
+3. **The module's own suite is the acceptance suite**: 47 black-box specs
    (`package bdd_test`) exercising build/search/store/provider/matcher behavior against the
    real SDK — dogfooding from the exact consumer perspective the kit exists for.
 4. **Explicit YAGNI drops** (revisit only on consumer demand): `CreateBDDSuite` bootstrap helper
@@ -58,6 +58,11 @@ avoids: test deps leaking into a module's public dependency graph.
 > Amended 2026-10-15 (BD003 strong-ID hardening): core node IDs became the strong type
 > `graphrag.NodeID`, so the kit's ID-taking surfaces below carry it. Untyped string literals still
 > compile at every call site; only variable-typed callers add a conversion.
+>
+> Amended 2026-10-15 (API review, pre-freeze): `Harness.Search`'s variadic options keep the
+> signature, but the contract is hardened — at most one `SearchOptions` is accepted; passing more
+> fails the search instead of silently dropping options (a variadic cannot merge them, and a kit
+> must surface spec bugs loudly). The sketch above is otherwise FROZEN for `bdd/v0.1.0`.
 
 ```go
 package bdd // import github.com/larsartmann/go-graph-rag/bdd

@@ -6,7 +6,7 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
-- **BDD test-kit sub-module `bdd/`** (`github.com/larsartmann/go-graph-rag/bdd`, own go.mod): Ginkgo/Gomega test kit with `Doc`/`Edge` builders, a deterministic demo corpus + kind policy, a `Harness` over the real SDK machinery (hash provider by default, optional real SQLite store with `Reload` from disk), Gomega matchers (`HaveTopHit`, `ContainHit`, `HaveHitIDs`, `HaveNoHitsOfKind`, `HaveSimilarEdge`), and a `FailingProvider` for error paths. The kit keeps ginkgo/gomega out of the core dependency budget (AGENTS non-negotiable #3) and dogfoods itself via its own 43-spec black-box suite. Scope and decisions: `docs/planning/2026-10-15_05-02_bdd-submodule-adr.md`. Consumers cannot fetch it from the proxy until the first `bdd/v*` tag lands (owner-gated).
+- **BDD test-kit sub-module `bdd/`** (`github.com/larsartmann/go-graph-rag/bdd`, own go.mod): Ginkgo/Gomega test kit with `Doc`/`Edge` builders, a deterministic demo corpus + kind policy, a `Harness` over the real SDK machinery (hash provider by default, optional real SQLite store with `Reload` from disk), Gomega matchers (`HaveTopHit`, `ContainHit`, `HaveHitIDs`, `HaveNoHitsOfKind`, `HaveSimilarEdge`), and a `FailingProvider` for error paths. The kit keeps ginkgo/gomega out of the core dependency budget (AGENTS non-negotiable #3) and dogfoods itself via its own 47-spec black-box suite. Scope and decisions: `docs/planning/2026-10-15_05-02_bdd-submodule-adr.md`. Consumers cannot fetch it from the proxy until the first `bdd/v*` tag lands (owner-gated).
 
 ### Changed
 
