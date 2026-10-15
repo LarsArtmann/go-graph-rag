@@ -3,7 +3,7 @@
 Owner decides the version word; the matching block below is pasted into
 `CHANGELOG.md` as the renamed section (the other blocks move under
 `[Unreleased]` for the following cut). `release.yml` extracts everything
-between `## [x.y.z]` and the next `## ` header, so keep `###` subsections.
+between `## [x.y.z]` and the next `##` header, so keep `###` subsections.
 
 ## Variant A — `v0.3.3` (fixes only; `NodeID` + BDD kit held for v0.4.0)
 
