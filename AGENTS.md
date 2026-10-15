@@ -208,8 +208,10 @@ numbers are re-measured.
 
 ## Upstream sync
 
-The CV repo consumes this module from the proxy (`v0.x`; latest `v0.3.0`,
-CV-side bump pending — owner package Phase 8). The CV-side
+The CV repo consumes this module from the proxy (`v0.x`; latest `v0.3.2` —
+the 2026-10-15 consumer research observed CV already pinned to v0.3.2, so the
+next CV-facing event is the unreleased-`NodeID` release decision tracked in
+`TODO_LIST.md`, not a lagging bump). The CV-side
 mounting points: `internal/graphvocab` (kind/relation constants),
 `internal/features/graphrag/service` (SearcherOptions wiring, tracing/counting
 decoration), `internal/config` (`GraphRAGConfig` alias).

@@ -6,8 +6,8 @@ This is a library/SDK. Only the latest release line receives security fixes.
 
 | Version | Supported          |
 | ------- | ------------------ |
-| v0.1.x  | :white_check_mark: |
-| < v0.1  | :x:                |
+| v0.3.x  | :white_check_mark: |
+| < v0.3  | :x:                |
 
 ## Reporting a Vulnerability
 
