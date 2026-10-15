@@ -246,7 +246,7 @@ func TestOpenAICompatProvider_CancelDuringBackoff(t *testing.T) {
 
 	_, err := provider.Embed(ctx, []string{"alpha"})
 	require.Error(t, err)
-	assert.True(t, errors.Is(err, context.DeadlineExceeded) || errors.Is(err, ctx.Err()),
+	assert.True(t, errors.Is(err, context.DeadlineExceeded) || errors.Is(err, ctx.Err()), //nolint:legacyerrors // stdlib sentinel value match; AsType would regress wrapper-chain matching
 		"cancellation during the retry backoff must abort, not sleep out every retry: %v", err)
 }
 

@@ -328,9 +328,9 @@ func (e retryableEmbeddingError) Unwrap() error { return e.cause }
 
 // isRetryableEmbeddingErr reports whether err is worth another attempt.
 func isRetryableEmbeddingErr(err error) bool {
-	var retryable retryableEmbeddingError
+	_, ok := errors.AsType[retryableEmbeddingError](err)
 
-	return errors.As(err, &retryable)
+	return ok
 }
 
 // embedRequest performs a single POST /embeddings and validates the shape of
