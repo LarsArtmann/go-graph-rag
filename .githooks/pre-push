@@ -3,12 +3,15 @@
 #
 #   git config core.hooksPath .githooks
 #
-# 1. Pristine build: the module must build WITHOUT GOEXPERIMENT=jsonv2.
-#    Dev shells export it machine-wide, which silently masks json/v2 usage
-#    that breaks pristine toolchains and CI; this regression reached the
-#    tree three times (pre-v0.1.0, e67bd9b, e4a9145) via daemon commits.
-#    The bdd/ sub-module gate adds `go vet`: go build skips _test.go files,
-#    and the spec suite IS most of that module.
+# 1. Pristine build: the modules must build WITHOUT GOEXPERIMENT=jsonv2.
+#    Dev shells export it machine-wide. The guard dates to the json/v2
+#    regressions (pre-v0.1.0, e67bd9b, e4a9145), all via daemon commits;
+#    since go1.27.1 encoding/json/v2 graduated into stdlib and imports
+#    compile pristine (verified 2026-10-15), so today the gate enforces
+#    the v1-only POLICY less than it guards general pristine-build drift
+#    (other GOEXPERIMENT gates, env rot). The bdd/ sub-module gate adds
+#    `go vet`: go build skips _test.go files, and the spec suite IS most
+#    of that module.
 # 2. Tidy drift: `go mod tidy` must produce zero diff for BOTH modules.
 # 3. dprint check: markdown/json/yaml formatting must be clean.
 #
@@ -17,7 +20,7 @@
 echo "pre-push [1/3]: pristine build (env -u GOEXPERIMENT)..."
 env -u GOEXPERIMENT GOTOOLCHAIN=go1.27.1 go build ./... || {
     echo "pre-push: FAILED - tree does not build without GOEXPERIMENT=jsonv2." >&2
-    echo "Fix before pushing (usually: import encoding/json, not encoding/json/v2)." >&2
+    echo "Fix before pushing; also keep encoding/json v1-only per policy." >&2
     exit 1
 }
 (cd bdd && env -u GOEXPERIMENT GOTOOLCHAIN=go1.27.1 go build ./... && env -u GOEXPERIMENT GOTOOLCHAIN=go1.27.1 go vet ./...) || {
