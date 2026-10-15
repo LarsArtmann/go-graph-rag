@@ -158,7 +158,10 @@ func (h *Harness) Build(ctx context.Context) (*graphrag.BuildResult, error) {
 }
 
 // Search queries the built index through the harness provider. The optional
-// first SearchOptions element overrides the zero options.
+// SearchOptions makes overriding the harness policy a one-argument change:
+// pass none for the neutral policy, exactly one to override. Passing more
+// than one is a spec bug (the signature cannot merge them) and fails the
+// search instead of silently dropping options.
 func (h *Harness) Search(
 	ctx context.Context,
 	query string,
@@ -168,9 +171,13 @@ func (h *Harness) Search(
 		return nil, fmt.Errorf("bdd harness: search: %w", errNotBuilt)
 	}
 
+	if len(searchOptions) > 1 {
+		return nil, fmt.Errorf("bdd harness: search: at most one SearchOptions, got %d", len(searchOptions))
+	}
+
 	var options graphrag.SearchOptions
 
-	if len(searchOptions) > 0 {
+	if len(searchOptions) == 1 {
 		options = searchOptions[0]
 	}
 

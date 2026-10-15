@@ -37,4 +37,13 @@
 // Specs run against real SDK machinery, never mocks: the default provider is
 // the deterministic offline hash embedder and WithStore persists through a
 // real SQLite file, matching how the SDK is used in production.
+//
+// # Typed DescribeTable entries
+//
+// Ginkgo resolves Entry arguments through reflection. Once a table function's
+// parameters are named types (graphrag.NodeID, graphrag.NodeKind, ...), a
+// plain string literal inside Entry panics at suite build time with
+// "reflect: Call using string as type graphrag.NodeID". Convert literals in
+// the Entry — Entry("ranks first", graphrag.NodeID("doc:1")) — and keep
+// untyped literals only for parameters that are still plain string.
 package bdd
