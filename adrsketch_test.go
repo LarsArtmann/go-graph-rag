@@ -104,7 +104,7 @@ type GraphStore interface {
 
 	// LoadEmbeddings returns every cached vector of one provider/model
 	// namespace keyed by content hash.
-	LoadEmbeddings(provider, model string) (map[string]graphrag.Vector, error)
+	LoadEmbeddings(provider, model string) (map[graphrag.ContentHash]graphrag.Vector, error)
 
 	// Stats summarizes the persisted index for humans and endpoints.
 	Stats() (graphrag.StoreStats, error)
@@ -175,16 +175,16 @@ func (f *fakeVectorIndex) Close() error { return nil }
 // future adapter author can copy a working GraphStore implementation.
 type fakeGraphStore struct {
 	replacedNodes  []graphrag.Node
-	replacedHashes map[graphrag.NodeID]string
+	replacedHashes map[graphrag.NodeID]graphrag.ContentHash
 	replacedEdges  []graphrag.Edge
 	snapshot       *graphrag.LoadGraphSnapshot
-	embeddings     map[string]graphrag.Vector
+	embeddings     map[graphrag.ContentHash]graphrag.Vector
 	stats          graphrag.StoreStats
 }
 
 func (f *fakeGraphStore) ReplaceGraph(
 	nodes []graphrag.Node,
-	embeddingHashes map[graphrag.NodeID]string,
+	embeddingHashes map[graphrag.NodeID]graphrag.ContentHash,
 	edges []graphrag.Edge,
 ) error {
 	f.replacedNodes = nodes
@@ -198,7 +198,7 @@ func (f *fakeGraphStore) LoadGraph() (*graphrag.LoadGraphSnapshot, error) {
 	return f.snapshot, nil
 }
 
-func (f *fakeGraphStore) LoadEmbeddings(_, _ string) (map[string]graphrag.Vector, error) {
+func (f *fakeGraphStore) LoadEmbeddings(_, _ string) (map[graphrag.ContentHash]graphrag.Vector, error) {
 	return f.embeddings, nil
 }
 

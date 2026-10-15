@@ -186,7 +186,7 @@ type VectorIndex interface {
 type GraphStore interface {
 	// ReplaceGraph atomically swaps the persisted graph (delete-then-insert
 	// inside one transaction today).
-	ReplaceGraph(nodes []Node, embeddingHashes map[NodeID]string, edges []Edge) error
+	ReplaceGraph(nodes []Node, embeddingHashes map[NodeID]ContentHash, edges []Edge) error
 
 	// LoadGraph reads the full snapshot: nodes, edges, and the
 	// node-to-embedding-hash join keys.
@@ -194,7 +194,7 @@ type GraphStore interface {
 
 	// LoadEmbeddings returns every cached vector of one provider/model
 	// namespace keyed by content hash.
-	LoadEmbeddings(provider, model string) (map[string]Vector, error)
+	LoadEmbeddings(provider, model string) (map[ContentHash]Vector, error)
 
 	// Stats summarizes the persisted index for humans and endpoints.
 	Stats() (StoreStats, error)

@@ -51,7 +51,7 @@ var ErrStoreClosed = errors.New("graphrag: store is closed")
 
 // EmbeddingEntry couples a content hash with its vector for cache writes.
 type EmbeddingEntry struct {
-	Hash   string
+	Hash   ContentHash
 	Vector Vector
 }
 
@@ -59,7 +59,7 @@ type EmbeddingEntry struct {
 // it, and Build accepts it so tests can supply in-memory fakes.
 type Cache interface {
 	// CachedEmbedding returns the vector for a previously embedded text.
-	CachedEmbedding(provider, model, contentHash string) (Vector, bool, error)
+	CachedEmbedding(provider, model string, contentHash ContentHash) (Vector, bool, error)
 
 	// PutEmbeddings persists vectors under the provider/model namespace.
 	PutEmbeddings(provider, model string, entries []EmbeddingEntry) error
@@ -154,7 +154,7 @@ func (s *Store) storeContext() (context.Context, context.CancelFunc) {
 }
 
 // CachedEmbedding looks up a previously stored vector.
-func (s *Store) CachedEmbedding(provider, model, contentHash string) (Vector, bool, error) {
+func (s *Store) CachedEmbedding(provider, model string, contentHash ContentHash) (Vector, bool, error) {
 	ctx, cancel := s.storeContext()
 	defer cancel()
 
@@ -162,7 +162,7 @@ func (s *Store) CachedEmbedding(provider, model, contentHash string) (Vector, bo
 
 	err := s.db.QueryRowContext(ctx,
 		`SELECT vector FROM graphrag_embeddings WHERE content_hash = ? AND provider = ? AND model = ?`,
-		contentHash, provider, model,
+		string(contentHash), provider, model,
 	).Scan(&blob)
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, false, nil
@@ -238,7 +238,7 @@ func (s *Store) PutEmbeddings(provider, model string, entries []EmbeddingEntry) 
 
 	for _, entry := range entries {
 		if _, execErr := stmt.ExecContext(ctx,
-			entry.Hash, provider, model, entry.Vector.Dims(), entry.Vector.Encode(), now,
+			string(entry.Hash), provider, model, entry.Vector.Dims(), entry.Vector.Encode(), now,
 		); execErr != nil {
 			return finish(fmt.Errorf("graphrag: insert embedding: %w", execErr))
 		}
@@ -252,13 +252,13 @@ func (s *Store) PutEmbeddings(provider, model string, entries []EmbeddingEntry) 
 type LoadGraphSnapshot struct {
 	Nodes         []Node
 	Edges         []Edge
-	EmbeddingHash map[NodeID]string
+	EmbeddingHash map[NodeID]ContentHash
 }
 
 // ReplaceGraph atomically swaps the persisted graph. Rebuilds are full
 // replaces: the graph is derived data, and delete-then-insert inside one
 // transaction keeps the stored view consistent.
-func (s *Store) ReplaceGraph(nodes []Node, embeddingHashes map[NodeID]string, edges []Edge) error {
+func (s *Store) ReplaceGraph(nodes []Node, embeddingHashes map[NodeID]ContentHash, edges []Edge) error {
 	ctx, tx, finish, err := s.statement("graph tx")
 	if err != nil {
 		return err
@@ -291,7 +291,7 @@ func (s *Store) ReplaceGraph(nodes []Node, embeddingHashes map[NodeID]string, ed
 		hash := embeddingHashes[node.ID]
 
 		if _, execErr := nodeStmt.ExecContext(ctx,
-			node.ID, string(node.Kind), node.Label, string(encodedAttrs), hash, now,
+			node.ID, string(node.Kind), node.Label, string(encodedAttrs), string(hash), now,
 		); execErr != nil {
 			return finish(fmt.Errorf("graphrag: insert node %s: %w", node.ID, execErr))
 		}
@@ -336,7 +336,7 @@ func (s *Store) LoadGraph() (*LoadGraphSnapshot, error) {
 }
 
 // loadNodes reads all nodes plus their embedding hashes.
-func (s *Store) loadNodes(ctx context.Context) ([]Node, map[NodeID]string, error) {
+func (s *Store) loadNodes(ctx context.Context) ([]Node, map[NodeID]ContentHash, error) {
 	rows, err := s.db.QueryContext(ctx,
 		`SELECT id, kind, label, attrs, embedding_hash FROM graphrag_nodes ORDER BY id`,
 	)
@@ -347,7 +347,7 @@ func (s *Store) loadNodes(ctx context.Context) ([]Node, map[NodeID]string, error
 	defer func() { _ = rows.Close() }()
 
 	nodes := make([]Node, 0)
-	hashes := make(map[NodeID]string)
+	hashes := make(map[NodeID]ContentHash)
 
 	for rows.Next() {
 		var (
@@ -364,7 +364,7 @@ func (s *Store) loadNodes(ctx context.Context) ([]Node, map[NodeID]string, error
 		}
 
 		nodes = append(nodes, node)
-		hashes[node.ID] = hash
+		hashes[node.ID] = ContentHash(hash)
 	}
 
 	if rowsErr := rows.Err(); rowsErr != nil {
@@ -406,7 +406,7 @@ func (s *Store) loadEdges(ctx context.Context) ([]Edge, error) {
 
 // LoadEmbeddings returns every cached vector of one provider/model namespace
 // keyed by content hash, ready to be joined onto nodes via their hashes.
-func (s *Store) LoadEmbeddings(provider, model string) (map[string]Vector, error) {
+func (s *Store) LoadEmbeddings(provider, model string) (map[ContentHash]Vector, error) {
 	ctx, cancel := s.storeContext()
 	defer cancel()
 
@@ -420,7 +420,7 @@ func (s *Store) LoadEmbeddings(provider, model string) (map[string]Vector, error
 
 	defer func() { _ = rows.Close() }()
 
-	vectors := make(map[string]Vector)
+	vectors := make(map[ContentHash]Vector)
 
 	for rows.Next() {
 		var (
@@ -437,7 +437,7 @@ func (s *Store) LoadEmbeddings(provider, model string) (map[string]Vector, error
 			return nil, fmt.Errorf("graphrag: decode embedding %s: %w", hash, decodeErr)
 		}
 
-		vectors[hash] = vector
+		vectors[ContentHash(hash)] = vector
 	}
 
 	if rowsErr := rows.Err(); rowsErr != nil {
