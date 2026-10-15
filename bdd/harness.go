@@ -240,8 +240,8 @@ func (h *Harness) Reload() (*Harness, error) {
 func joinVectors(
 	snapshot *graphrag.LoadGraphSnapshot,
 	vectorsByHash map[string]graphrag.Vector,
-) map[string]graphrag.Vector {
-	joined := make(map[string]graphrag.Vector, len(snapshot.Nodes))
+) map[graphrag.NodeID]graphrag.Vector {
+	joined := make(map[graphrag.NodeID]graphrag.Vector, len(snapshot.Nodes))
 
 	for _, node := range snapshot.Nodes {
 		hash, ok := snapshot.EmbeddingHash[node.ID]

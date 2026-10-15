@@ -17,13 +17,13 @@ var errWrongActual = errors.New("bdd: matcher got an unexpected actual type")
 // HaveTopHit matches a *graphrag.SearchResult whose best hit is the node
 // nodeID: the primary "did retrieval rank the right thing first" assertion.
 func HaveTopHit( //nolint:ireturn // matcher factories return the Gomega interface by design
-	nodeID string,
+	nodeID graphrag.NodeID,
 ) types.GomegaMatcher {
 	return topHitMatcher{nodeID: nodeID}
 }
 
 type topHitMatcher struct {
-	nodeID string
+	nodeID graphrag.NodeID
 }
 
 func (m topHitMatcher) Match(actual any) (bool, error) {
@@ -48,13 +48,13 @@ func (m topHitMatcher) NegatedFailureMessage(actual any) string {
 // ContainHit matches a *graphrag.SearchResult with at least one hit for
 // nodeID, at any rank.
 func ContainHit( //nolint:ireturn // matcher factories return the Gomega interface by design
-	nodeID string,
+	nodeID graphrag.NodeID,
 ) types.GomegaMatcher {
 	return containHitMatcher{nodeID: nodeID}
 }
 
 type containHitMatcher struct {
-	nodeID string
+	nodeID graphrag.NodeID
 }
 
 func (m containHitMatcher) Match(actual any) (bool, error) {
@@ -77,13 +77,13 @@ func (m containHitMatcher) NegatedFailureMessage(actual any) string {
 // HaveHitIDs matches a *graphrag.SearchResult whose hits are exactly the
 // nodeIDs, in order: the pinned retrieval-inventory assertion.
 func HaveHitIDs( //nolint:ireturn // matcher factories return the Gomega interface by design
-	nodeIDs ...string,
+	nodeIDs ...graphrag.NodeID,
 ) types.GomegaMatcher {
 	return hitIDsMatcher{nodeIDs: nodeIDs}
 }
 
 type hitIDsMatcher struct {
-	nodeIDs []string
+	nodeIDs []graphrag.NodeID
 }
 
 func (m hitIDsMatcher) Match(actual any) (bool, error) {
@@ -143,15 +143,15 @@ func (m noHitsOfKindMatcher) NegatedFailureMessage(actual any) string {
 // aID/bID in either direction. Pair SimilarEdgeScore with a numerical
 // assertion when the score itself matters.
 func HaveSimilarEdge( //nolint:ireturn // matcher factories return the Gomega interface by design
-	aID string,
-	bID string,
+	aID graphrag.NodeID,
+	bID graphrag.NodeID,
 ) types.GomegaMatcher {
 	return similarEdgeMatcher{aID: aID, bID: bID}
 }
 
 type similarEdgeMatcher struct {
-	aID string
-	bID string
+	aID graphrag.NodeID
+	bID graphrag.NodeID
 }
 
 func (m similarEdgeMatcher) Match(actual any) (bool, error) {
@@ -175,7 +175,7 @@ func (m similarEdgeMatcher) NegatedFailureMessage(actual any) string {
 
 // SimilarEdgeScore returns the score of the aID/bID pair from a SimilarPairs
 // scan, in either direction, and whether the pair was present at all.
-func SimilarEdgeScore(pairs []graphrag.SimilarPair, aID string, bID string) (float64, bool) {
+func SimilarEdgeScore(pairs []graphrag.SimilarPair, aID graphrag.NodeID, bID graphrag.NodeID) (float64, bool) {
 	for _, pair := range pairs {
 		if (pair.A.ID == aID && pair.B.ID == bID) || (pair.A.ID == bID && pair.B.ID == aID) {
 			return pair.Score, true
@@ -206,12 +206,12 @@ func asSimilarPairs(actual any) ([]graphrag.SimilarPair, error) {
 }
 
 // hitIDs renders the hit node IDs of a search result in rank order.
-func hitIDs(result *graphrag.SearchResult) []string {
+func hitIDs(result *graphrag.SearchResult) []graphrag.NodeID {
 	if result == nil {
 		return nil
 	}
 
-	ids := make([]string, 0, len(result.Hits))
+	ids := make([]graphrag.NodeID, 0, len(result.Hits))
 
 	for _, hit := range result.Hits {
 		ids = append(ids, hit.Node.ID)

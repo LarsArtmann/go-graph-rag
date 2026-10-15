@@ -8,7 +8,7 @@ import (
 	"github.com/onsi/gomega/types"
 )
 
-func searchResultWithHits(ids ...string) *graphrag.SearchResult {
+func searchResultWithHits(ids ...graphrag.NodeID) *graphrag.SearchResult {
 	hits := make([]graphrag.Hit, 0, len(ids))
 
 	for index, id := range ids {

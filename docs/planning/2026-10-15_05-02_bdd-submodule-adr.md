@@ -55,6 +55,10 @@ avoids: test deps leaking into a module's public dependency graph.
 
 ## 3. Interface sketch (binding, implemented)
 
+> Amended 2026-10-15 (BD003 strong-ID hardening): core node IDs became the strong type
+> `graphrag.NodeID`, so the kit's ID-taking surfaces below carry it. Untyped string literals still
+> compile at every call site; only variable-typed callers add a conversion.
+
 ```go
 package bdd // import github.com/larsartmann/go-graph-rag/bdd
 
@@ -66,9 +70,9 @@ type TB interface {
 }
 
 // builders.go
-func Doc(id, text string, options ...DocOption) graphrag.Document // WithKind, WithLabel
-func Edge(source, target string, relation graphrag.Relation) graphrag.Edge
-func WeightedEdge(source, target string, relation graphrag.Relation, weight float64) graphrag.Edge
+func Doc(id graphrag.NodeID, text string, options ...DocOption) graphrag.Document // WithKind, WithLabel
+func Edge(source, target graphrag.NodeID, relation graphrag.Relation) graphrag.Edge
+func WeightedEdge(source, target graphrag.NodeID, relation graphrag.Relation, weight float64) graphrag.Edge
 
 // corpus.go — demo vocabulary: KindArticle, KindTopic, RelationCites, RelationMentions
 func DemoCorpus() ([]graphrag.Document, []graphrag.Edge)
@@ -87,12 +91,12 @@ func (h *Harness) SimilarPairs(minScore float64) []graphrag.SimilarPair
 func (h *Harness) Reload() (*Harness, error) // reopen store, LoadGraph+LoadEmbeddings, hash-join vectors
 
 // matchers.go — on *graphrag.SearchResult (HaveSimilarEdge on []graphrag.SimilarPair)
-func HaveTopHit(nodeID string) types.GomegaMatcher
-func ContainHit(nodeID string) types.GomegaMatcher
-func HaveHitIDs(nodeIDs ...string) types.GomegaMatcher
+func HaveTopHit(nodeID graphrag.NodeID) types.GomegaMatcher
+func ContainHit(nodeID graphrag.NodeID) types.GomegaMatcher
+func HaveHitIDs(nodeIDs ...graphrag.NodeID) types.GomegaMatcher
 func HaveNoHitsOfKind(kind graphrag.NodeKind) types.GomegaMatcher
-func HaveSimilarEdge(aID, bID string) types.GomegaMatcher
-func SimilarEdgeScore(pairs []graphrag.SimilarPair, aID, bID string) (float64, bool)
+func HaveSimilarEdge(aID, bID graphrag.NodeID) types.GomegaMatcher
+func SimilarEdgeScore(pairs []graphrag.SimilarPair, aID, bID graphrag.NodeID) (float64, bool)
 ```
 
 ## 4. Dependency rules

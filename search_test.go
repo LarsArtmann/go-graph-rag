@@ -160,7 +160,12 @@ func TestSimilarPairsFindsNearDuplicates(t *testing.T) {
 			assert.GreaterOrEqual(t, pairs[i-1].Score, pair.Score, "pairs must be sorted by descending score")
 		}
 
-		assert.NotContains(t, []graphrag.NodeID{pair.A.ID, pair.B.ID}, graphrag.NodeID("job:pastry"), "unrelated jobs never reach the threshold")
+		assert.NotContains(
+			t,
+			[]graphrag.NodeID{pair.A.ID, pair.B.ID},
+			graphrag.NodeID("job:pastry"),
+			"unrelated jobs never reach the threshold",
+		)
 
 		pairIDs := pair.A.ID + "|" + pair.B.ID
 		if pairIDs == "job:k8s|job:sre" {

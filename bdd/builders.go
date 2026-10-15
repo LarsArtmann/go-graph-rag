@@ -23,11 +23,11 @@ func WithLabel(label string) DocOption {
 // Doc builds one indexing document: id and text are required, the kind
 // defaults to the kit's demo article kind, and the label defaults to the ID.
 // Options override the defaults in order.
-func Doc(id string, text string, options ...DocOption) graphrag.Document {
+func Doc(id graphrag.NodeID, text string, options ...DocOption) graphrag.Document {
 	document := graphrag.Document{
 		ID:    id,
 		Kind:  KindArticle,
-		Label: id,
+		Label: string(id),
 		Text:  text,
 		Attrs: graphrag.NodeAttrs{}, //nolint:exhaustruct_v5 // demo docs carry no attrs; callers add their own
 	}
@@ -41,7 +41,7 @@ func Doc(id string, text string, options ...DocOption) graphrag.Document {
 
 // Edge builds one weighted graph edge with weight 1, the shape callers
 // hand-roll in every consumer test suite.
-func Edge(source string, target string, relation graphrag.Relation) graphrag.Edge {
+func Edge(source graphrag.NodeID, target graphrag.NodeID, relation graphrag.Relation) graphrag.Edge {
 	return graphrag.Edge{
 		Source:   source,
 		Target:   target,
@@ -52,8 +52,8 @@ func Edge(source string, target string, relation graphrag.Relation) graphrag.Edg
 
 // WeightedEdge builds one graph edge with an explicit weight.
 func WeightedEdge(
-	source string,
-	target string,
+	source graphrag.NodeID,
+	target graphrag.NodeID,
 	relation graphrag.Relation,
 	weight float64,
 ) graphrag.Edge {

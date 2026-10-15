@@ -36,7 +36,7 @@ var _ = Describe("Searching the built index", func() {
 		Expect(err).NotTo(HaveOccurred())
 		Expect(result.Hits).NotTo(BeEmpty())
 
-		relatedIDs := make([]string, 0)
+		relatedIDs := make([]graphrag.NodeID, 0)
 
 		for _, hit := range result.Hits {
 			for _, related := range hit.Related {
@@ -44,7 +44,7 @@ var _ = Describe("Searching the built index", func() {
 			}
 		}
 
-		Expect(relatedIDs).To(ContainElement("topic:search"))
+		Expect(relatedIDs).To(ContainElement(graphrag.NodeID("topic:search")))
 	})
 
 	It("caps the hit list at TopK", func() {

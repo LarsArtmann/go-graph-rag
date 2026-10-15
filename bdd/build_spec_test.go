@@ -69,13 +69,16 @@ var _ = Describe("Building an index", func() {
 	})
 
 	DescribeTable("connects lexically distinct articles through nothing",
-		func(aID string, bID string) {
+		func(aID graphrag.NodeID, bID graphrag.NodeID) {
 			pairs := harness.SimilarPairs(graphrag.DefaultSimilarThreshold)
 			Expect(pairs).NotTo(graphragbdd.HaveSimilarEdge(aID, bID))
 		},
-		Entry("retrieval vs storage", "article:retrieval", "article:storage"),
-		Entry("retrieval vs chunking", "article:retrieval", "article:chunking"),
-		Entry("storage vs chunking", "article:storage", "article:chunking"),
+		Entry("retrieval vs storage",
+			graphrag.NodeID("article:retrieval"), graphrag.NodeID("article:storage")),
+		Entry("retrieval vs chunking",
+			graphrag.NodeID("article:retrieval"), graphrag.NodeID("article:chunking")),
+		Entry("storage vs chunking",
+			graphrag.NodeID("article:storage"), graphrag.NodeID("article:chunking")),
 	)
 
 	It("produces the identical graph on a second cold build", func() {
