@@ -13,9 +13,13 @@ Standalone GraphRAG SDK extracted from the CV repo's `graphrag/` module
   deterministic offline hasher + OpenAI-compatible client (stdlib
   `encoding/json` only, NOT json/v2). The UA header is stamped from
   `UserAgentVersion` — bump it when cutting a release.
-- `graph.go` — `Node`/`Edge`/`Graph` + the `NodeKind`/`Relation` TYPES.
+- `graph.go` — `Node`/`Edge`/`Graph` + the `NodeKind`/`Relation`/`NodeID` TYPES.
   Domain kind/relation vocabularies are caller-side (CV keeps its own in
-  `internal/graphvocab`).
+  `internal/graphvocab`). Node identity is the strong `NodeID` (BD003
+  hardening, 2026-10-15): `Node.ID`, `Edge.Source`/`Target`, and
+  `Document.ID` share the one namespace (a document's ID becomes its node's
+  ID); JSON wire shapes are unchanged and untyped string literals still
+  assign directly — only `string` variables need `graphrag.NodeID(...)`.
 - `search.go` — `Searcher` hybrid retrieval + `SearcherOptions` policy
   (ReferenceKind / DocumentKinds / DetailKind) + `SimilarPairs` dedup scan.
 - `store.go` — SQLite graph + embedding cache (namespaced
@@ -79,6 +83,9 @@ GOTOOLCHAIN=go1.27.1 golangci-lint run ./...   # without the prefix the
                                                  # cannot load go >= 1.27.1
 go mod tidy && git diff --exit-code go.mod go.sum   # tidy drift gate
 nix run nixpkgs#dprint -- check                     # markdown/json/yaml fmt
+brandid-lint -rules BD001,BD003 .                   # strong-ID gate (BD003
+                                                    # report-only; -fix only
+                                                    # patches BD001 stubs)
 # bdd sub-module (same loop, from bdd/; golangci finds the parent config):
 (cd bdd && env -u GOEXPERIMENT GOTOOLCHAIN=go1.27.1 go test ./...)
 (cd bdd && GOTOOLCHAIN=go1.27.1 golangci-lint run ./...)

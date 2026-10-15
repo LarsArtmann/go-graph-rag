@@ -8,6 +8,20 @@ All notable changes to this project are documented in this file.
 
 - **BDD test-kit sub-module `bdd/`** (`github.com/larsartmann/go-graph-rag/bdd`, own go.mod): Ginkgo/Gomega test kit with `Doc`/`Edge` builders, a deterministic demo corpus + kind policy, a `Harness` over the real SDK machinery (hash provider by default, optional real SQLite store with `Reload` from disk), Gomega matchers (`HaveTopHit`, `ContainHit`, `HaveHitIDs`, `HaveNoHitsOfKind`, `HaveSimilarEdge`), and a `FailingProvider` for error paths. The kit keeps ginkgo/gomega out of the core dependency budget (AGENTS non-negotiable #3) and dogfoods itself via its own 43-spec black-box suite. Scope and decisions: `docs/planning/2026-10-15_05-02_bdd-submodule-adr.md`. Consumers cannot fetch it from the proxy until the first `bdd/v*` tag lands (owner-gated).
 
+### Changed
+
+- **Node identity is now the strong type `NodeID`** (brandid-lint BD003 type-safety sweep):
+  `Node.ID`, `Edge.Source`/`Edge.Target`, and `Document.ID` carry `graphrag.NodeID` (documents and
+  nodes share one ID namespace: a document's ID becomes its node's ID), and every ID-taking surface
+  follows — `Graph.Node`/`OutEdges`/`InEdges`, `BuildResult.Vectors` (`map[NodeID]Vector`) and
+  `.EmbeddingHash`, `NewSearcher`/`NewSearcherWithOptions`, `Store.ReplaceGraph`,
+  `LoadGraphSnapshot.EmbeddingHash`, plus the BDD kit's `Doc`/`Edge`/`WeightedEdge` builders and
+  `HaveTopHit`/`ContainHit`/`HaveHitIDs`/`HaveSimilarEdge`/`SimilarEdgeScore`. JSON wire shapes are
+  byte-identical (wire goldens unchanged), untyped string literals still assign directly
+  (`Node{ID: "job:1"}` keeps compiling); only callers passing `string` variables add an explicit
+  `graphrag.NodeID(...)` conversion. The seam ADR §5 sketch was amended in step (ADR-first), so
+  `VectorIndex.Replace` and `VectorMatch.NodeID` are `NodeID`-typed before any adapter exists.
+
 ### Fixed
 
 - **Dead allocation in the concurrent-embed collector** (`embed_openai.go`): a 2026-10-11 refactor switched slot-flattening to `lo.Flatten` but left the preceding `make([]Vector, 0, len(texts))` allocation in place, immediately overwritten — flagged by `ineffassign` and caught while re-baselining CI.
