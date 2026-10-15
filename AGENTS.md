@@ -155,6 +155,12 @@ numbers are re-measured.
   do NOT restructure into `pkg/` or `internal/`. No `.buildflow.yml` skip
   entry exists on purpose: skipping the whole step would mute the linter's
   other rules too.
+- Git Town runs on this machine and can snapshot dirty working-tree files as
+  dangling "Git Town WIP" commits, then leave the files reverted (happened
+  2026-10-15: TODO_LIST/ROADMAP/status-report writes vanished mid-session and
+  were recovered via `git restore --source=<wip-sha> -- <files>`). After any
+  batch of file writes, re-check `git status` still shows them modified; if
+  content vanishes, look in `git fsck --lost-found` before redoing the work.
 
 ## Owner decisions (2026-09-15)
 
