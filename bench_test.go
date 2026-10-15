@@ -42,6 +42,11 @@ import (
 // The wide range is background load on a desktop machine, not a code
 // change; both means land in the same order of magnitude as 2026-09-16.
 //
+// Sanity re-check 2026-10-15 (post-NodeID sweep, `-benchtime 100ms`,
+// single pass): Build/docs=100 3.9ms, Build/docs=1000 380ms,
+// SimilarPairs/docs=1000 359ms, StoreRoundTrip 19.7ms/186ms — all within
+// noise of the tables above; the NodeID map-key typing is perf-neutral.
+//
 // The Build/SimilarPairs scaling is quadratic in embedded-node count (10x
 // docs -> ~90x time): at ~50k nodes a full rebuild extrapolates to ~15
 // minutes. StoreRoundTrip shows persistence is NOT the bottleneck (10k
