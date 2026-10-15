@@ -96,6 +96,41 @@ policy assigns roles at search time:
 See `ExampleNewSearcherWithOptions` in the godoc examples for a runnable
 walkthrough of all three roles.
 
+## BDD test kit
+
+Consumers who test in Ginkgo/Gomega style can use the optional, composable test
+kit — its own module, so the SDK's dependency budget never grows:
+
+```bash
+go get github.com/larsartmann/go-graph-rag/bdd   # requires a bdd/v* tag (pending)
+```
+
+```go
+import graphragbdd "github.com/larsartmann/go-graph-rag/bdd"
+```
+
+The kit provides exactly what consumer test suites hand-roll today: `Doc`/`Edge`
+builders, a deterministic demo corpus with a matching `SearcherOptions` policy,
+a `Harness` over the real machinery (provider, optional SQLite store, `Build`,
+`Search`, `Reload` from disk), Gomega matchers (`HaveTopHit`, `ContainHit`,
+`HaveNoHitsOfKind`, ...), and a `FailingProvider` for error paths:
+
+```go
+docs, edges := graphragbdd.DemoCorpus()
+harness := graphragbdd.NewHarness(GinkgoT(), docs, edges,
+    graphragbdd.WithSearcherOptions(graphragbdd.DemoSearcherOptions()))
+
+_, err := harness.Build(ctx)
+Expect(err).NotTo(HaveOccurred())
+
+result, err := harness.Search(ctx, "hybrid search combines vector similarity")
+Expect(err).NotTo(HaveOccurred())
+Expect(result).To(graphragbdd.HaveTopHit("article:retrieval"))
+```
+
+Design and scope: [`docs/planning/2026-10-15_05-02_bdd-submodule-adr.md`](docs/planning/2026-10-15_05-02_bdd-submodule-adr.md).
+The kit's own 43-spec suite doubles as a black-box acceptance suite over the SDK.
+
 ## Design constraints (deliberate)
 
 - **Dependency-light**: stdlib-only except `samber/lo` and `modernc.org/sqlite`.

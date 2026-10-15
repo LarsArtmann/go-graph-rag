@@ -124,8 +124,8 @@ var _ = Describe("Building an index", func() {
 		_, err := mixed.Build(ctx)
 		Expect(err).To(HaveOccurred())
 
-		var dimsErr *graphrag.ErrDimsInconsistent
-		Expect(errors.As(err, &dimsErr)).To(BeTrue())
+		_, isDimsErr := errors.AsType[*graphrag.ErrDimsInconsistent](err)
+		Expect(isDimsErr).To(BeTrue())
 	})
 
 	It("collapses duplicate document IDs onto the first occurrence", func() {
