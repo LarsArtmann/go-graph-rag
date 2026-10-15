@@ -38,21 +38,21 @@ jobs:
       # The bdd/ test-kit module: same gates, own go.mod (replace => ../
       # resolves against this checkout), same lint config discovered from
       # the repo root, vet included because go build skips _test.go files.
-      - name: BDD module: build + vet
+      - name: BDD module build + vet
         working-directory: bdd
         run: |
           go build ./...
           go vet ./...
 
-      - name: BDD module: test
+      - name: BDD module test
         working-directory: bdd
         run: go test ./...
 
-      - name: BDD module: lint
+      - name: BDD module lint
         working-directory: bdd
         run: golangci-lint run ./...
 
-      - name: BDD module: tidy drift
+      - name: BDD module tidy drift
         working-directory: bdd
         run: |
           go mod tidy
