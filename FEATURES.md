@@ -79,12 +79,12 @@
 
 ## Vectors and configuration
 
-| Feature                                     | Status                | Notes                                                                               |
-| ------------------------------------------- | --------------------- | ----------------------------------------------------------------------------------- |
-| Vector codec (little-endian float32 blob)   | 🟢 `FULLY_FUNCTIONAL` | `vector.go:64`, `vector.go:77`; round-trip + misalignment pinned `embed_test.go:13` |
-| Cosine similarity / L2 normalize (NaN-safe) | 🟢 `FULLY_FUNCTIONAL` | `vector.go:97`, `vector.go:39`; zero/dims-mismatch → 0, pinned `embed_test.go:31`   |
+| Feature                                      | Status                | Notes                                                                                                                                                |
+| -------------------------------------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Vector codec (little-endian float32 blob)    | 🟢 `FULLY_FUNCTIONAL` | `vector.go:64`, `vector.go:77`; round-trip + misalignment pinned `embed_test.go:13`                                                                  |
+| Cosine similarity / L2 normalize (NaN-safe)  | 🟢 `FULLY_FUNCTIONAL` | `vector.go:97`, `vector.go:39`; zero/dims-mismatch → 0, pinned `embed_test.go:31`                                                                    |
 | Content hashing (`HashText` → `ContentHash`) | 🟢 `FULLY_FUNCTIONAL` | `vector.go:117`; cache keys carry the defined `ContentHash` type (BD003 blind spot closed by hand); wire/SQLite shapes unchanged; `embed_test.go:46` |
-| Koanf-tagged `Config` / `EmbeddingConfig`   | 🟢 `FULLY_FUNCTIONAL` | `config.go:9`, `config.go:32`; consumed by `NewProvider`; gating is caller-side     |
+| Koanf-tagged `Config` / `EmbeddingConfig`    | 🟢 `FULLY_FUNCTIONAL` | `config.go:9`, `config.go:32`; consumed by `NewProvider`; gating is caller-side                                                                      |
 
 ## Developer experience
 
