@@ -177,30 +177,30 @@ strictly last.
 
 Not executed in this plan; each has a recorded gate or decision:
 
-1. **Q1 license posture** — BLOCKED on owner (package Q1; now gates all
+1. **Q1 license posture** — BLOCKED on owner (package Q1; now gates all **→ routed — owner package Q1 + TODO_LIST High row (still open)**
    public godoc). CONTRIBUTING inbound-grant line queues behind it.
-2. **g1 → R2 alternative**: cache-error COUNTER approach — the plan ships
-   FAIL FAST as the recorded recommendation; one word flips it to the
-   counter variant (~10 min rework).
-3. **g2 → R6 dot-of-normalized fast path** — deferred: owner-visible score
+2. ~~**g1 → R2 alternative**: cache-error COUNTER approach — the plan ships~~ **Won't implement — fail-fast shipped as the recorded recommendation; counter variant documented in code + CHANGELOG (v0.3.0)..**
+   ~~FAIL FAST as the recorded recommendation; one word flips it to the~~
+   ~~counter variant (~10 min rework).~~
+3. **g2 → R6 dot-of-normalized fast path** — deferred: owner-visible score **→ routed — ROADMAP Theme 1 raw idea (owner-gated)**
    drift + golden re-pin; executes only on the owner's go.
-4. **g3 → status-report archive line** — no archives this pass; 14-14 stays
+4. **g3 → status-report archive line** — no archives this pass; 14-14 stays **→ routed — answered by the standing 2026-09-16 owner archive-line ruling (AGENTS.md)**
    in `docs/status/` pending the ruling.
-5. **R5 parallel pairwise scan** — ROADMAP Theme 1 fuel per the 2026-09-15
+5. **R5 parallel pairwise scan** — ROADMAP Theme 1 fuel per the 2026-09-15 **→ routed — ROADMAP Theme 1 raw idea**
    corpus decision (byte-identical output makes it safe whenever it fires).
-6. **v0.2.0 CV consumer bump** (owner package Phase 8, external repo).
-7. **CV repo push** (carries `16fc16c7`) and **go-cqrs-lite push ruling**
+6. **v0.2.0 CV consumer bump** (owner package Phase 8, external repo). **→ routed — overtaken: v0.3.0..v0.3.2 shipped; CV bump pends the v0.4.0 NodeID decision (TODO_LIST)**
+7. **CV repo push** (carries `16fc16c7`) and **go-cqrs-lite push ruling** **→ routed — external-repo owner actions**
    (ahead 32, foreign dirty tree) — external, owner action.
-8. **qmd#959/crush#3846 send-or-drop** — held past 2026-09-22 by owner
+8. **qmd#959/crush#3846 send-or-drop** — held past 2026-09-22 by owner **→ routed — TODO_LIST watch row**
    ruling; patches live in the issue texts.
-9. **Live-endpoint smoke test** — BLOCKED on `GRAPHRAG_LIVE_EMBED_*` creds.
-10. **R7/R8 arcs** — land ADR §5 interfaces + reference VectorIndex (on
+9. **Live-endpoint smoke test** — BLOCKED on `GRAPHRAG_LIVE_EMBED_*` creds. **→ routed — TODO_LIST BLOCKED row**
+10. **R7/R8 arcs** — land ADR §5 interfaces + reference VectorIndex (on **→ routed — seam ADR §9 triggers + ROADMAP Theme 1**
     implementation approval), ANN spike/harness/filtered-semantics/ADR at
     the ~50k trigger, incremental indexing, wire-contract v1 freeze
     decisions, metrics/tracing, compaction/eviction, backup/export.
-11. **Dgraph/metaengine trigger-gated sweeps; corpus re-ask ~2027-09;
+11. **Dgraph/metaengine trigger-gated sweeps; corpus re-ask ~2027-09; **→ routed — research README reopen triggers + ROADMAP Non-goals**
     second-consumer watch** — unchanged.
-12. **SKILLS-repo commit/push of F7.1's edit** — the edit lands uncommitted;
+12. **SKILLS-repo commit/push of F7.1's edit** — the edit lands uncommitted; **→ routed — landed upstream (SKILLS repo committed; skill body documents annotate.go)**
     push needs the same class of explicit ruling as 2026-09-16.
 
 ---
