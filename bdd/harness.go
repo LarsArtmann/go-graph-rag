@@ -36,7 +36,7 @@ type Harness struct {
 	Store *graphrag.Store
 
 	// Result holds the outcome of the latest successful Build.
-	Result graphrag.BuildResult
+	Result *graphrag.BuildResult
 
 	// Searcher answers queries over the latest built or reloaded index.
 	Searcher *graphrag.Searcher
@@ -107,7 +107,7 @@ func NewHarness(
 		Provider:     graphrag.NewHashProvider(),
 		Cache:        nil,
 		Store:        nil,
-		Result:       graphrag.BuildResult{},
+		Result:       nil,
 		Searcher:     nil,
 		documents:    documents,
 		edges:        edges,
@@ -126,7 +126,7 @@ func NewHarness(
 // Build runs graphrag.Build over the harness corpus, persists the graph when
 // WithStore is used, and wires the Searcher. It can be called again (e.g. to
 // assert cache-hit behavior); on error the previous index stays untouched.
-func (h *Harness) Build(ctx context.Context) (graphrag.BuildResult, error) {
+func (h *Harness) Build(ctx context.Context) (*graphrag.BuildResult, error) {
 	result, err := graphrag.Build(ctx, h.Provider, h.Cache, h.documents, h.edges, h.buildOptions)
 	if err != nil {
 		return result, fmt.Errorf("bdd harness: build: %w", err)

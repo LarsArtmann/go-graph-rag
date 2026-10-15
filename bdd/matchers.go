@@ -1,77 +1,133 @@
 package bdd
 
 import (
+	"errors"
 	"fmt"
 	"slices"
 	"strings"
 
 	"github.com/larsartmann/go-graph-rag"
-	"github.com/onsi/gomega/gcustom"
 	"github.com/onsi/gomega/types"
 )
+
+// errWrongActual backs matcher type errors: every matcher accepts exactly
+// one actual type and says so when handed another.
+var errWrongActual = errors.New("bdd: matcher got an unexpected actual type")
 
 // HaveTopHit matches a *graphrag.SearchResult whose best hit is the node
 // nodeID: the primary "did retrieval rank the right thing first" assertion.
 func HaveTopHit(nodeID string) types.GomegaMatcher { //nolint:ireturn // matcher factories return the Gomega interface by design
-	return gcustom.MakeMatcher(func(actual *graphrag.SearchResult) (bool, error) {
-		ids := hitIDs(actual)
+	return topHitMatcher{nodeID: nodeID}
+}
 
-		return len(ids) > 0 && ids[0] == nodeID, nil
-	}).
-		WithFailMessage(func(actual *graphrag.SearchResult) string {
-			return describeHits(actual, fmt.Sprintf("top hit to be %q", nodeID))
-		}).
-		WithNegatedFailureMessage(func(actual *graphrag.SearchResult) string {
-			return describeHits(actual, fmt.Sprintf("top hit NOT to be %q", nodeID))
-		})
+type topHitMatcher struct {
+	nodeID string
+}
+
+func (m topHitMatcher) Match(actual any) (bool, error) {
+	result, err := asSearchResult(actual)
+	if err != nil {
+		return false, err
+	}
+
+	ids := hitIDs(result)
+
+	return len(ids) > 0 && ids[0] == m.nodeID, nil
+}
+
+func (m topHitMatcher) FailureMessage(actual any) string {
+	return describeHits(actual, fmt.Sprintf("top hit %q", m.nodeID))
+}
+
+func (m topHitMatcher) NegatedFailureMessage(actual any) string {
+	return describeHits(actual, fmt.Sprintf("any top hit except %q", m.nodeID))
 }
 
 // ContainHit matches a *graphrag.SearchResult with at least one hit for
 // nodeID, at any rank.
 func ContainHit(nodeID string) types.GomegaMatcher { //nolint:ireturn // matcher factories return the Gomega interface by design
-	return gcustom.MakeMatcher(func(actual *graphrag.SearchResult) (bool, error) {
-		return slices.Contains(hitIDs(actual), nodeID), nil
-	}).
-		WithFailMessage(func(actual *graphrag.SearchResult) string {
-			return describeHits(actual, fmt.Sprintf("a hit for %q", nodeID))
-		}).
-		WithNegatedFailureMessage(func(actual *graphrag.SearchResult) string {
-			return describeHits(actual, fmt.Sprintf("no hit for %q", nodeID))
-		})
+	return containHitMatcher{nodeID: nodeID}
+}
+
+type containHitMatcher struct {
+	nodeID string
+}
+
+func (m containHitMatcher) Match(actual any) (bool, error) {
+	result, err := asSearchResult(actual)
+	if err != nil {
+		return false, err
+	}
+
+	return slices.Contains(hitIDs(result), m.nodeID), nil
+}
+
+func (m containHitMatcher) FailureMessage(actual any) string {
+	return describeHits(actual, fmt.Sprintf("a hit for %q at any rank", m.nodeID))
+}
+
+func (m containHitMatcher) NegatedFailureMessage(actual any) string {
+	return describeHits(actual, fmt.Sprintf("no hit for %q", m.nodeID))
 }
 
 // HaveHitIDs matches a *graphrag.SearchResult whose hits are exactly the
 // nodeIDs, in order: the pinned retrieval-inventory assertion.
 func HaveHitIDs(nodeIDs ...string) types.GomegaMatcher { //nolint:ireturn // matcher factories return the Gomega interface by design
-	return gcustom.MakeMatcher(func(actual *graphrag.SearchResult) (bool, error) {
-		return slices.Equal(hitIDs(actual), nodeIDs), nil
-	}).
-		WithFailMessage(func(actual *graphrag.SearchResult) string {
-			return describeHits(actual, fmt.Sprintf("hits %v in order", nodeIDs))
-		}).
-		WithNegatedFailureMessage(func(actual *graphrag.SearchResult) string {
-			return describeHits(actual, fmt.Sprintf("hits other than %v", nodeIDs))
-		})
+	return hitIDsMatcher{nodeIDs: nodeIDs}
+}
+
+type hitIDsMatcher struct {
+	nodeIDs []string
+}
+
+func (m hitIDsMatcher) Match(actual any) (bool, error) {
+	result, err := asSearchResult(actual)
+	if err != nil {
+		return false, err
+	}
+
+	return slices.Equal(hitIDs(result), m.nodeIDs), nil
+}
+
+func (m hitIDsMatcher) FailureMessage(actual any) string {
+	return describeHits(actual, fmt.Sprintf("hits %v in rank order", m.nodeIDs))
+}
+
+func (m hitIDsMatcher) NegatedFailureMessage(actual any) string {
+	return describeHits(actual, fmt.Sprintf("any hit list except %v", m.nodeIDs))
 }
 
 // HaveNoHitsOfKind matches a *graphrag.SearchResult with zero hits of the
 // given kind: the hub-exclusion assertion for SearcherOptions policies.
 func HaveNoHitsOfKind(kind graphrag.NodeKind) types.GomegaMatcher { //nolint:ireturn // matcher factories return the Gomega interface by design
-	return gcustom.MakeMatcher(func(actual *graphrag.SearchResult) (bool, error) {
-		for _, hit := range actual.Hits {
-			if hit.Node.Kind == kind {
-				return false, nil
-			}
-		}
+	return noHitsOfKindMatcher{kind: kind}
+}
 
-		return true, nil
-	}).
-		WithFailMessage(func(actual *graphrag.SearchResult) string {
-			return describeHits(actual, fmt.Sprintf("no hits of kind %q", kind))
-		}).
-		WithNegatedFailureMessage(func(actual *graphrag.SearchResult) string {
-			return describeHits(actual, fmt.Sprintf("at least one hit of kind %q", kind))
-		})
+type noHitsOfKindMatcher struct {
+	kind graphrag.NodeKind
+}
+
+func (m noHitsOfKindMatcher) Match(actual any) (bool, error) {
+	result, err := asSearchResult(actual)
+	if err != nil {
+		return false, err
+	}
+
+	for _, hit := range result.Hits {
+		if hit.Node.Kind == m.kind {
+			return false, nil
+		}
+	}
+
+	return true, nil
+}
+
+func (m noHitsOfKindMatcher) FailureMessage(actual any) string {
+	return describeHits(actual, fmt.Sprintf("no hits of kind %q", m.kind))
+}
+
+func (m noHitsOfKindMatcher) NegatedFailureMessage(actual any) string {
+	return describeHits(actual, fmt.Sprintf("at least one hit of kind %q", m.kind))
 }
 
 // HaveSimilarEdge matches a []graphrag.SimilarPair scan (as returned by
@@ -79,17 +135,31 @@ func HaveNoHitsOfKind(kind graphrag.NodeKind) types.GomegaMatcher { //nolint:ire
 // aID/bID in either direction. Pair SimilarEdgeScore with a numerical
 // assertion when the score itself matters.
 func HaveSimilarEdge(aID string, bID string) types.GomegaMatcher { //nolint:ireturn // matcher factories return the Gomega interface by design
-	return gcustom.MakeMatcher(func(actual []graphrag.SimilarPair) (bool, error) {
-		_, ok := SimilarEdgeScore(actual, aID, bID)
+	return similarEdgeMatcher{aID: aID, bID: bID}
+}
 
-		return ok, nil
-	}).
-		WithFailMessage(func(actual []graphrag.SimilarPair) string {
-			return describePairs(actual, fmt.Sprintf("a similar edge between %q and %q", aID, bID))
-		}).
-		WithNegatedFailureMessage(func(actual []graphrag.SimilarPair) string {
-			return describePairs(actual, fmt.Sprintf("no similar edge between %q and %q", aID, bID))
-		})
+type similarEdgeMatcher struct {
+	aID string
+	bID string
+}
+
+func (m similarEdgeMatcher) Match(actual any) (bool, error) {
+	pairs, err := asSimilarPairs(actual)
+	if err != nil {
+		return false, err
+	}
+
+	_, ok := SimilarEdgeScore(pairs, m.aID, m.bID)
+
+	return ok, nil
+}
+
+func (m similarEdgeMatcher) FailureMessage(actual any) string {
+	return describePairs(actual, fmt.Sprintf("a similar edge between %q and %q", m.aID, m.bID))
+}
+
+func (m similarEdgeMatcher) NegatedFailureMessage(actual any) string {
+	return describePairs(actual, fmt.Sprintf("no similar edge between %q and %q", m.aID, m.bID))
 }
 
 // SimilarEdgeScore returns the score of the aID/bID pair from a SimilarPairs
@@ -104,8 +174,27 @@ func SimilarEdgeScore(pairs []graphrag.SimilarPair, aID string, bID string) (flo
 	return 0, false
 }
 
-// hitIDs renders the hit node IDs of a search result in rank order; an empty
-// result yields a nil slice so comparisons stay exact.
+// asSearchResult narrows a matcher actual to a search result.
+func asSearchResult(actual any) (*graphrag.SearchResult, error) {
+	result, ok := actual.(*graphrag.SearchResult)
+	if !ok {
+		return nil, fmt.Errorf("%w: want *graphrag.SearchResult, got %T", errWrongActual, actual)
+	}
+
+	return result, nil
+}
+
+// asSimilarPairs narrows a matcher actual to a similar-pairs scan.
+func asSimilarPairs(actual any) ([]graphrag.SimilarPair, error) {
+	pairs, ok := actual.([]graphrag.SimilarPair)
+	if !ok {
+		return nil, fmt.Errorf("%w: want []graphrag.SimilarPair, got %T", errWrongActual, actual)
+	}
+
+	return pairs, nil
+}
+
+// hitIDs renders the hit node IDs of a search result in rank order.
 func hitIDs(result *graphrag.SearchResult) []string {
 	if result == nil {
 		return nil
@@ -120,11 +209,16 @@ func hitIDs(result *graphrag.SearchResult) []string {
 	return ids
 }
 
-// describeHits renders matcher failure context: expectation plus the actual
-// ranked hits with kinds and scores.
-func describeHits(result *graphrag.SearchResult, expectation string) string {
+// describeHits renders matcher failure context: the expectation plus the
+// actual ranked hits with kinds and scores.
+func describeHits(actual any, expectation string) string {
+	result, ok := actual.(*graphrag.SearchResult)
+	if !ok {
+		return fmt.Sprintf("Expected %s, but the actual value is a %T, not a search result", expectation, actual)
+	}
+
 	if result == nil {
-		return "Expected a search result, got nil (wanted " + expectation + ")"
+		return fmt.Sprintf("Expected %s, but the search result is nil", expectation)
 	}
 
 	parts := make([]string, 0, len(result.Hits))
@@ -137,7 +231,12 @@ func describeHits(result *graphrag.SearchResult, expectation string) string {
 }
 
 // describePairs renders matcher failure context over a similar-pairs scan.
-func describePairs(pairs []graphrag.SimilarPair, expectation string) string {
+func describePairs(actual any, expectation string) string {
+	pairs, ok := actual.([]graphrag.SimilarPair)
+	if !ok {
+		return fmt.Sprintf("Expected %s, but the actual value is a %T, not a similar-pairs scan", expectation, actual)
+	}
+
 	parts := make([]string, 0, len(pairs))
 
 	for _, pair := range pairs {
