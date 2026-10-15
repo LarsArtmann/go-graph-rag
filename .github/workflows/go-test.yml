@@ -17,7 +17,12 @@ jobs:
 
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
-          go-version: "1.27"
+          # Pin the exact patch: "1.27" resolves to the newest 1.27.x on the
+          # runner (1.27.2+), whose export-data format exceeds what the pinned
+          # golangci-lint v2.13.2 can decode — every typecheck import failed
+          # and the Lint step went red (master, 2026-10-11..15). Bump this
+          # pin together with the golangci-lint pin (CV parity rule).
+          go-version: "1.27.1"
 
       - name: Build
         run: go build ./...
