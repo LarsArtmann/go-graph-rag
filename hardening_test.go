@@ -340,7 +340,7 @@ func TestRenderContextGolden(t *testing.T) {
 // brokenCache fails every read, simulating a corrupted index file.
 type brokenCache struct{}
 
-func (brokenCache) CachedEmbedding(_, _, _ string) (graphrag.Vector, bool, error) {
+func (brokenCache) CachedEmbedding(_, _ string, _ graphrag.ContentHash) (graphrag.Vector, bool, error) {
 	return nil, false, errors.New("disk corrupted")
 }
 

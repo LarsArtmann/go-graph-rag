@@ -61,7 +61,7 @@ func TestStoreGraphPersistenceRoundTrip(t *testing.T) {
 		{Source: "job:1", Target: "skill:go", Relation: relRequires, Weight: 1},
 	}
 
-	hashes := map[graphrag.NodeID]string{"job:1": graphrag.HashText("job one text")}
+	hashes := map[graphrag.NodeID]graphrag.ContentHash{"job:1": graphrag.HashText("job one text")}
 
 	require.NoError(t, store.ReplaceGraph(posted, hashes, edges))
 

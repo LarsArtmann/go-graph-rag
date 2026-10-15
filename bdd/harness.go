@@ -239,7 +239,7 @@ func (h *Harness) Reload() (*Harness, error) {
 // snapshot's node-to-hash linkage; nodes without a cached vector are skipped.
 func joinVectors(
 	snapshot *graphrag.LoadGraphSnapshot,
-	vectorsByHash map[string]graphrag.Vector,
+	vectorsByHash map[graphrag.ContentHash]graphrag.Vector,
 ) map[graphrag.NodeID]graphrag.Vector {
 	joined := make(map[graphrag.NodeID]graphrag.Vector, len(snapshot.Nodes))
 

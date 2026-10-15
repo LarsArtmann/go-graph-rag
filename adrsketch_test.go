@@ -96,7 +96,7 @@ type VectorIndex interface {
 type GraphStore interface {
 	// ReplaceGraph atomically swaps the persisted graph (delete-then-insert
 	// inside one transaction today).
-	ReplaceGraph(nodes []graphrag.Node, embeddingHashes map[graphrag.NodeID]string, edges []graphrag.Edge) error
+	ReplaceGraph(nodes []graphrag.Node, embeddingHashes map[graphrag.NodeID]graphrag.ContentHash, edges []graphrag.Edge) error
 
 	// LoadGraph reads the full snapshot: nodes, edges, and the
 	// node-to-embedding-hash join keys.

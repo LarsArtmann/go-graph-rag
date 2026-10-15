@@ -22,6 +22,14 @@ All notable changes to this project are documented in this file.
   `graphrag.NodeID(...)` conversion. Consumer migration guide:
   [`docs/upgrading.md`](docs/upgrading.md). The seam ADR §5 sketch was amended in step (ADR-first), so
   `VectorIndex.Replace` and `VectorMatch.NodeID` are `NodeID`-typed before any adapter exists.
+- **Embedding-cache keys are now the strong type `ContentHash`** (completes the BD003 type-safety arc):
+  `HashText` returns `graphrag.ContentHash`, and the hash surfaces follow — `BuildResult.EmbeddingHash`
+  and `LoadGraphSnapshot.EmbeddingHash` (`map[NodeID]ContentHash`), `Store.ReplaceGraph`,
+  `Cache.CachedEmbedding`/`PutEmbeddings`/`EmbeddingEntry.Hash`, and `Store.LoadEmbeddings`
+  (`map[ContentHash]Vector`). JSON wire shapes and the SQLite schema are untouched (hashes convert to
+  string only at the SQL boundary); untyped string literals still assign directly, only callers holding
+  `string` variables add an explicit `graphrag.ContentHash(...)` conversion. The seam ADR §5 sketch was
+  amended in step (ADR-first).
 
 ### Fixed
 
