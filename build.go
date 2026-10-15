@@ -69,7 +69,7 @@ type BuildResult struct {
 	Vectors map[NodeID]Vector
 
 	// EmbeddingHash maps node ID to its content hash, for cache joins.
-	EmbeddingHash map[NodeID]string
+	EmbeddingHash map[NodeID]ContentHash
 
 	// Provider and Model identify the vector space of Vectors.
 	Provider string
@@ -150,14 +150,14 @@ func resolveVectors(
 	provider Provider,
 	cache Cache,
 	docs []Document,
-) (map[NodeID]Vector, map[NodeID]string, int, int, error) {
+) (map[NodeID]Vector, map[NodeID]ContentHash, int, int, error) {
 	vectors := make(map[NodeID]Vector, len(docs))
-	hashes := make(map[NodeID]string, len(docs))
+	hashes := make(map[NodeID]ContentHash, len(docs))
 	cacheHits := 0
 
 	misses := make([]Document, 0)
-	missHashes := make(map[string]NodeID)
-	missHashList := make([]string, 0)
+	missHashes := make(map[ContentHash]NodeID)
+	missHashList := make([]ContentHash, 0)
 
 	for _, doc := range docs {
 		if doc.Text == "" {
@@ -222,7 +222,7 @@ func resolveVectors(
 // — was considered and rejected for v0.x: nothing polls such a counter
 // today, so degradation would be invisible exactly where it costs money.
 // Revisit only with real telemetry demand.
-func lookupCache(cache Cache, provider Provider, hash string) (Vector, bool, error) {
+func lookupCache(cache Cache, provider Provider, hash ContentHash) (Vector, bool, error) {
 	if cache == nil {
 		return nil, false, nil
 	}
@@ -251,10 +251,10 @@ func embedAll(
 	ctx context.Context,
 	provider Provider,
 	misses []Document,
-	missHashes []string,
-) (map[string]Vector, error) {
+	missHashes []ContentHash,
+) (map[ContentHash]Vector, error) {
 	if len(misses) == 0 {
-		return map[string]Vector{}, nil
+		return map[ContentHash]Vector{}, nil
 	}
 
 	texts := lo.Map(misses, func(doc Document, _ int) string { return doc.Text })
@@ -269,7 +269,7 @@ func embedAll(
 	}
 
 	dims := 0
-	fresh := make(map[string]Vector, len(embedded))
+	fresh := make(map[ContentHash]Vector, len(embedded))
 
 	for i := range misses {
 		vector := embedded[i]

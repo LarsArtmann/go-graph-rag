@@ -114,10 +114,18 @@ func Cosine(a, b Vector) float64 {
 	return dot / (math.Sqrt(normA) * math.Sqrt(normB))
 }
 
-// HashText returns the hex-encoded SHA-256 of text. It is the cache key for
-// embeddings: identical text never re-pays the embedding provider.
-func HashText(text string) string {
+// ContentHash is the hex-encoded SHA-256 of a text's content: the cache
+// key for embeddings, so identical text never re-pays the embedding
+// provider. It is a defined type, so hashes cannot mix with plain strings,
+// node IDs, or raw text by accident, while untyped string literals still
+// assign directly. It is internal plumbing, not a wire concept: it never
+// appears in JSON shapes and converts to string only at the SQLite
+// boundary.
+type ContentHash string
+
+// HashText returns the ContentHash of text: SHA-256, hex-encoded.
+func HashText(text string) ContentHash {
 	sum := sha256.Sum256([]byte(text))
 
-	return hex.EncodeToString(sum[:])
+	return ContentHash(hex.EncodeToString(sum[:]))
 }
