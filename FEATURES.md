@@ -17,6 +17,18 @@
 > delivers it AND confirm it works. If you're unsure, it's `PARTIALLY_FUNCTIONAL`
 > at best, never round up.
 
+## Testing kit (`bdd/` module)
+
+| Feature                                       | Status                | Notes                                                                                                                             |
+| --------------------------------------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Doc/Edge/WeightedEdge builders                | 🟢 `FULLY_FUNCTIONAL` | `bdd/builders.go`; defaults kind=article, label=id; exercised across all spec files                                               |
+| Deterministic demo corpus + search policy     | 🟢 `FULLY_FUNCTIONAL` | `bdd/corpus.go`; 6 docs/5 edges calibrated for hash-provider behavior (near-dup, hubs); used by 40+ specs                          |
+| Harness over real SDK machinery               | 🟢 `FULLY_FUNCTIONAL` | `bdd/harness.go`; provider+store+Build+Search+SimilarPairs; pinned by `build_spec_test.go` / `search_spec_test.go`                |
+| Store round-trip / Reload from disk           | 🟢 `FULLY_FUNCTIONAL` | `Reload` via `LoadGraph`+`LoadEmbeddings` hash join; pinned by `store_spec_test.go` (reload equality, warm-rebuild counts, errors) |
+| Gomega matchers on SearchResult/SimilarPairs  | 🟢 `FULLY_FUNCTIONAL` | `bdd/matchers.go`; positives, negatives, failure messages, wrong-type errors table-tested in `matchers_spec_test.go`              |
+| FailingProvider error-path stand-in           | 🟢 `FULLY_FUNCTIONAL` | `bdd/providers.go`; build-failure and query-failure propagation specs                                                             |
+| Kit self-acceptance suite (black-box)         | 🟢 `FULLY_FUNCTIONAL` | 43 specs, `package bdd_test`, order-independent across random seeds, `-race` clean                                                |
+
 ## Indexing
 
 | Feature                                        | Status                | Notes                                                                                                   |
