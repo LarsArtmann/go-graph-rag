@@ -19,7 +19,8 @@ All notable changes to this project are documented in this file.
   `HaveTopHit`/`ContainHit`/`HaveHitIDs`/`HaveSimilarEdge`/`SimilarEdgeScore`. JSON wire shapes are
   byte-identical (wire goldens unchanged), untyped string literals still assign directly
   (`Node{ID: "job:1"}` keeps compiling); only callers passing `string` variables add an explicit
-  `graphrag.NodeID(...)` conversion. The seam ADR §5 sketch was amended in step (ADR-first), so
+  `graphrag.NodeID(...)` conversion. Consumer migration guide:
+  [`docs/upgrading.md`](docs/upgrading.md). The seam ADR §5 sketch was amended in step (ADR-first), so
   `VectorIndex.Replace` and `VectorMatch.NodeID` are `NodeID`-typed before any adapter exists.
 
 ### Fixed
