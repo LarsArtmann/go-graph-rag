@@ -1,7 +1,7 @@
 version: "2"
 run:
   timeout: 10m
-  go: 1.26.7
+  go: "1.27"
   build-tags:
     - goexperiment.arenas
     - goexperiment.goroutineleakprofile
@@ -390,7 +390,6 @@ linters:
           - forcetypeassert
           - makezero
           - ireturn
-          - exhaustruct
           - wrapcheck
           - recvcheck
           - contextcheck
@@ -435,5 +434,5 @@ formatters:
       - internal/database/
       - schema/
 issues:
-  max-issues-per-linter: 50
-  max-same-issues: 10
+  max-issues-per-linter: 0
+  max-same-issues: 0
