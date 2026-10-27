@@ -5,7 +5,7 @@ go 1.27
 require (
 	github.com/samber/lo v1.53.0
 	github.com/stretchr/testify v1.12.1
-	modernc.org/sqlite v1.60.1
+	modernc.org/sqlite v1.61.0
 )
 
 require (
