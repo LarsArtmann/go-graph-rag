@@ -9,7 +9,7 @@ go 1.27
 replace github.com/larsartmann/go-graph-rag => ../
 
 require (
-	github.com/larsartmann/go-graph-rag v0.0.0-00010101000000-000000000000
+	github.com/larsartmann/go-graph-rag v0.3.2
 	github.com/onsi/ginkgo/v2 v2.33.1
 	github.com/onsi/gomega v1.44.0
 )
@@ -33,8 +33,8 @@ require (
 	golang.org/x/sys v0.49.0 // indirect
 	golang.org/x/text v0.43.0 // indirect
 	golang.org/x/tools v0.52.0 // indirect
-	modernc.org/libc v1.79.1 // indirect
+	modernc.org/libc v1.80.0 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.12.1 // indirect
-	modernc.org/sqlite v1.61.0 // indirect
+	modernc.org/sqlite v1.61.1 // indirect
 )
