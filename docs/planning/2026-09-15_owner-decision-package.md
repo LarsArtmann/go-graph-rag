@@ -4,7 +4,8 @@
 - **Prepared by:** session executing `docs/planning/2026-09-15_18-30_SUPERB-pareto-execution-plan.md` (M13)
 - **Status:** ~~AWAITING OWNER DECISION on both questions. Nothing below is
   executed;~~ Q2 was executed 2026-09-16 (see the inline notes in the
-  checklist below); Q1 (license posture) is still awaiting the owner.
+  checklist below); ~~Q1 (license posture) is still awaiting the owner.~~ →
+  DECIDED 2026-11-10: MIT (see Owner answers below).
 
 ---
 
@@ -101,5 +102,7 @@ tagging, the fix is v0.2.1 — never re-tag.
 
 ## Owner answers (fill in)
 
-1. License posture: ☐ keep proprietary to v1 (recommended) ☐ Apache-2.0/MIT now ☐ other: ____
+1. ~~License posture: ☐ keep proprietary to v1 (recommended) ☐ Apache-2.0/MIT now ☐ other: ____~~ →
+   DECIDED 2026-11-10: **MIT** (Option 2, against the keep-proprietary recommendation). LICENSE
+   replaced; README/CONTRIBUTING/TODO_LIST/CHANGELOG/AGENTS synced the same day.
 2. ~~Release: ☐ cut v0.2.0 now (recommended) ☐ ride [Unreleased] until ____ ☐ v0.1.1 anyway~~ → EXECUTED 2026-09-16: v0.2.0 cut (tag `805aeba`); the tag-push release workflow failed on the awk extraction bug (fixed `350b815`) and the release was created manually; pkg.go.dev indexes v0.2.0 but renders no godoc (license restriction — blocked on Q1).

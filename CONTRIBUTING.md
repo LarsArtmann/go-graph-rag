@@ -2,9 +2,9 @@
 
 Thanks for your interest in contributing!
 
-Note: this repository is public but the code is PROPRIETARY (see LICENSE).
-Pull requests are welcome; reuse beyond PR submission needs explicit
-permission from the author.
+This project is MIT-licensed (see LICENSE). Issues and pull requests are
+welcome; by submitting one you grant the right to use your contribution in
+this project under the same license.
 
 ## How to Contribute
 

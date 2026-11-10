@@ -8,10 +8,12 @@ vector similarity with graph expansion (GraphRAG).
 
 API reference: [pkg.go.dev/github.com/larsartmann/go-graph-rag](https://pkg.go.dev/github.com/larsartmann/go-graph-rag)
 
-> pkg.go.dev currently hides the rendered godoc ("Documentation not displayed
-> due to license restrictions" — it does not recognize the PROPRIETARY
-> LICENSE file). The documentation of record lives in this repo; runnable,
-> output-verified examples are in [`example_test.go`](example_test.go).
+> pkg.go.dev hid the rendered godoc while the repo carried a PROPRIETARY
+> LICENSE ("Documentation not displayed due to license restrictions"). The
+> project is MIT-licensed since 2026-11-10; godoc is expected to render as
+> pkg.go.dev re-indexes — verify after the next tagged release. Until then
+> the documentation of record lives here; runnable, output-verified examples
+> are in [`example_test.go`](example_test.go).
 
 ## Installation
 
@@ -165,4 +167,4 @@ Found a vulnerability? Please report it privately — see
 
 ## License
 
-PROPRIETARY. Copyright (c) 2026 Lars Artmann. All rights reserved.
+MIT — Copyright (c) 2026 Lars Artmann. See [LICENSE](LICENSE).

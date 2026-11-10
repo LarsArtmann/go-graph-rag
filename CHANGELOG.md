@@ -10,6 +10,10 @@ All notable changes to this project are documented in this file.
 
 ### Changed
 
+- **Relicensed from PROPRIETARY to MIT** (owner decision, package Q1, 2026-11-10): third parties may now
+  use, modify, and redistribute the SDK. CONTRIBUTING carries the matching inbound-grant line, and
+  pkg.go.dev's "Documentation not displayed due to license restrictions" godoc block is expected to lift
+  as the site re-indexes (verify after the next tagged release).
 - **Node identity is now the strong type `NodeID`** (brandid-lint BD003 type-safety sweep):
   `Node.ID`, `Edge.Source`/`Edge.Target`, and `Document.ID` carry `graphrag.NodeID` (documents and
   nodes share one ID namespace: a document's ID becomes its node's ID), and every ID-taking surface

@@ -124,10 +124,11 @@ numbers are re-measured.
   (graduated), so the pristine gate guards general drift, not json/v2; the
   v1-only rule is policy (non-negotiable #2). Pristine-check before EVERY
   push; re-verify daemon commits that land on yours.
-- pkg.go.dev renders NO godoc for any version (license restriction — it does
-  not recognize the PROPRIETARY LICENSE file), so the README's pkg.go.dev
-  link lands on the restriction banner until the Q1 license decision lands.
-  Verified live 2026-09-19 (v0.2.0).
+- pkg.go.dev rendered NO godoc while the repo carried the PROPRIETARY
+  LICENSE (verified live 2026-09-19, v0.2.0). MIT since 2026-11-10 — godoc
+  is expected to lift as pkg.go.dev re-indexes; VERIFY after the next
+  tagged release (old versions may stay restricted until re-crawled), then
+  clear this gotcha.
 - Markdown is dprint-formatted (`dprint.json`); Go is gofmt (`.editorconfig`).
 - New research artifacts get a row in `docs/research/README.md` (artifact,
   date, question, verdict, reopen-triggers). The index stays research-only:
@@ -207,6 +208,14 @@ numbers are re-measured.
 - Core frozen during kit delivery (byte-identical `go.mod`/`go.sum`/files):
   the erraudit `errors.As`→`AsType` modernization and SECURITY.md
   contact/practices sections are queued in TODO_LIST, not applied.
+
+## Owner decisions (2026-11-10)
+
+- License posture (owner package Q1): DECIDED — **MIT**. PROPRIETARY LICENSE
+  replaced with the MIT text (Copyright (c) 2026 Lars Artmann); README,
+  CONTRIBUTING (inbound-grant line applied), TODO_LIST, CHANGELOG, and the
+  owner-decision package synced in the same pass. pkg.go.dev godoc
+  re-verification rides the next tagged release.
 
 ## Upstream sync
 
