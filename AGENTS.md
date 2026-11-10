@@ -128,12 +128,12 @@ numbers are re-measured.
   (`wire_golden_test.go` is the sanctioned exemption — it pins v1 bytes
   and documents v2's omitempty difference). Run that grep before EVERY
   push.
-- pkg.go.dev rendered NO godoc while the repo carried the PROPRIETARY
-  LICENSE (verified live 2026-09-19, v0.2.0). MIT since 2026-11-10 — v0.4.0
-  is the first MIT-carrying tag (proxy zips of v0.3.3 and earlier are
-  immutable, so THEIR restriction is permanent). Rendering check for v0.4.0
-  was still pending at cut time (pkg.go.dev 404s for ~an hour post-tag,
-  v0.2.0 precedent); VERIFY and then clear this gotcha.
+- pkg.go.dev RESOLVED (2026-11-10): godoc was hidden while the repo carried
+  the PROPRIETARY LICENSE (all versions through v0.3.3 — their proxy zips
+  are immutable, so their restriction is PERMANENT). v0.4.0 is the first
+  MIT-carrying tag and its page was verified rendering the same day (full
+  godoc, examples, License: MIT). The tagged-tree README still shows the
+  pre-verification caveat (renders on pkg.go.dev); master's is updated.
 - Markdown is dprint-formatted (`dprint.json`); Go is gofmt (`.editorconfig`).
 - New research artifacts get a row in `docs/research/README.md` (artifact,
   date, question, verdict, reopen-triggers). The index stays research-only:
