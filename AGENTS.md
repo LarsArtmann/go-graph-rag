@@ -35,11 +35,13 @@ Standalone GraphRAG SDK extracted from the CV repo's `graphrag/` module
   blocks truthful, `go test` enforces them), `bench_test.go` (reference
   numbers recorded in the file doc comment),
   `embed_openai_live_test.go` (env-gated, skips offline).
-- `.githooks/pre-push` — three-gate guard for BOTH modules (pristine build
-  [bdd adds `go vet`: `go build` skips `_test.go` files], tidy drift, dprint
-  check); install once per clone with
-  `git config core.hooksPath .githooks`. All bdd gate arms proven by planted
-  failures 2026-10-15.
+- CI (`.github/workflows/go-test.yml`) — authoritative gate on every push/PR for BOTH
+  modules: json/v1 policy check (grep for `encoding/json/v2` outside the
+  sanctioned `wire_golden_test.go`; added 2026-11-10, planted-failure proven),
+  build+vet, `go test -race`, golangci-lint, tidy drift, dprint. The former
+  `.githooks/pre-push` local guard was deliberately dropped by the owner
+  (`2002882`, 2026-11-02): opt-in local gates are false comfort; CI is
+  unbypassable.
 - `.github/workflows/release.yml` — GitHub Release automation on `v*` tags
   (notes extracted from the matching CHANGELOG section; empty extraction fails
   the run). Proven end-to-end on the v0.3.0 tag (2026-09-19, green run,
@@ -109,11 +111,11 @@ numbers are re-measured.
 ## Gotchas
 
 - The dev shell exports `GOEXPERIMENT=jsonv2` machine-wide; CI does not.
-  The `.githooks/pre-push` guard now runs ALL THREE gates on every push
-  (pristine build, tidy drift, dprint check — install with
-  `git config core.hooksPath .githooks`), and the dprint/tidy gates ALSO
-  catch non-experiment drift. All three blocking paths were proven by
-  planted-failure dry-run pushes (2026-09-19).
+  The former pre-push hook was dropped by the owner (`2002882`, 2026-11-02:
+  CI enforces the same checks and cannot be forgotten or bypassed) — the
+  pristine `env -u GOEXPERIMENT` build and `go mod tidy` drift checks are now
+  HABITS documented above, and CI's json/v1 policy check mechanizes the one
+  gate no build tool provides.
 - golangci-lint pinned v2.14.0 in CI = local dev-shell binary (2026-10-15;
   v2.13.2 could not decode Go 1.27.2 export data). CV still pins v2.13.2 —
   bump it there in its own session (bump-together rule).
@@ -126,8 +128,8 @@ numbers are re-measured.
   owner-gated). Diff review only covers the delta; the ONLY complete
   catcher is a full-tree `grep -rn 'encoding/json/v2' --include='*.go' .`
   (`wire_golden_test.go` is the sanctioned exemption — it pins v1 bytes
-  and documents v2's omitempty difference). Run that grep before EVERY
-  push.
+  and documents v2's omitempty difference). CI enforces exactly this grep
+  on every push/PR since 2026-11-10; local habit optional.
 - pkg.go.dev RESOLVED (2026-11-10): godoc was hidden while the repo carried
   the PROPRIETARY LICENSE (all versions through v0.3.3 — their proxy zips
   are immutable, so their restriction is PERMANENT). v0.4.0 is the first
