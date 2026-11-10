@@ -14,7 +14,12 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
-- Nothing yet.
+- **`store.go` restored to `encoding/json` (v1)**: the node-attrs marshal/unmarshal path had silently
+  carried the `encoding/json/v2` import since v0.3.1 (daemon commit; repo policy is v1-only), so every
+  released 0.3.x and v0.4.0 shipped it. No behavior change (wire goldens unchanged; round-trips are
+  engine-identical — the only nuance is the documented `NodeAttrs.Score` omitempty-on-zero difference in
+  stored attrs JSON, parsed identically by both engines). Caught by a full-tree sweep during v0.4.0
+  release verification, after diff review had only caught the newly-regressed files.
 
 ## [0.4.0] - 2026-11-10
 

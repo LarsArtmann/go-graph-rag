@@ -117,15 +117,17 @@ numbers are re-measured.
 - golangci-lint pinned v2.14.0 in CI = local dev-shell binary (2026-10-15;
   v2.13.2 could not decode Go 1.27.2 export data). CV still pins v2.13.2 —
   bump it there in its own session (bump-together rule).
-- The json-v2 regression slipped in FOUR times (pre-v0.1.0, `e67bd9b`,
-  `e4a9145`, and a 2026-11-10 daemon commit `bfaa047` caught by release
-  diff review during v0.4.0 prep) via daemon/parallel commits under the
-  machine-wide `GOEXPERIMENT=jsonv2` shell. CORRECTION (2026-10-15): on
-  go1.27.1 json/v2 compiles WITHOUT the flag (graduated), so NO build gate
-  catches it — the v1-only rule is policy (non-negotiable #2) and the only
-  proven catchers are diff review (release prep) and reading daemon commits
-  that land on yours. A `grep 'encoding/json/v2'` before every push is
-  cheap insurance.
+- The json-v2 regression is a STANDING daemon risk, not an event: after
+  the three documented slips (pre-v0.1.0, `e67bd9b`, `e4a9145`), a FOURTH
+  (`bfaa047`, 2026-11-10) was caught by release diff review during v0.4.0
+  prep — and the same sweep then found `store.go` had carried json/v2
+  CONTINUOUSLY since v0.3.1, shipping in every released 0.3.x and in
+  v0.4.0 (reverted on master 2026-11-10, `[Unreleased]`; v0.4.1 decision
+  owner-gated). Diff review only covers the delta; the ONLY complete
+  catcher is a full-tree `grep -rn 'encoding/json/v2' --include='*.go' .`
+  (`wire_golden_test.go` is the sanctioned exemption — it pins v1 bytes
+  and documents v2's omitempty difference). Run that grep before EVERY
+  push.
 - pkg.go.dev rendered NO godoc while the repo carried the PROPRIETARY
   LICENSE (verified live 2026-09-19, v0.2.0). MIT since 2026-11-10 — v0.4.0
   is the first MIT-carrying tag (proxy zips of v0.3.3 and earlier are
