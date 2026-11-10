@@ -220,6 +220,15 @@ numbers are re-measured.
 
 ## Owner decisions (2026-11-10)
 
+- **"go v2"** — `encoding/json/v2` is the canonical engine everywhere (see
+  non-negotiable #2). Verified first: on go1.27.x the v1 package is a shim
+  implemented over v2; the engines differ on omitempty-numerics and map-key
+  order; no prod map crosses a wire path. Executed as **v0.5.0** (tag
+  `9af2b9d`, CI green on the exact SHA; release.yml green + notes verified;
+  proxy indexed; clean-dir `go get` prints `0.5`; CI gate polarity flipped
+  with planted proof). Supersedes the v1-only policy AND the v0.4.1
+  question. pkg.go.dev rendering pending at cut time (v0.4.0 rendered after
+  ~40 min — same expectation).
 - License posture (owner package Q1): DECIDED — **MIT**. PROPRIETARY LICENSE
   replaced with the MIT text (Copyright (c) 2026 Lars Artmann); README,
   CONTRIBUTING (inbound-grant line applied), TODO_LIST, CHANGELOG, and the
