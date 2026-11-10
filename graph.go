@@ -45,9 +45,9 @@ type NodeAttrs struct {
 	RemotePolicy string `json:"remotePolicy,omitempty"`
 	Status       string `json:"status,omitempty"`
 	// Score is a display hint (e.g. a match score); zero means absent.
-	// Under GOEXPERIMENT=jsonv2 the omitempty option is a no-op on
-	// numerics, so the key may be emitted as 0 there; both engines decode
-	// it back to the same zero.
+	// The canonical engine is encoding/json/v2 (owner ruling 2026-11-10),
+	// where omitempty is a no-op on numerics: the key is emitted as 0.
+	// The v1 shim omitted it; both decode back to the same zero.
 	Score    float64    `json:"score,omitempty"`
 	PostedAt *time.Time `json:"postedAt,omitempty"`
 }

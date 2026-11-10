@@ -1,11 +1,13 @@
 package graphrag_test
 
 // Wire-contract goldens: the JSON shapes of Node, Edge, Hit, and
-// SearchResult are frozen public surface (ADR §3: "never delegated —
-// frozen at v1"). These tests pin the exact bytes encoding/json (v1)
-// produces for a fully-populated fixture, so any drift — a renamed tag, a
-// changed field, an engine difference like json/v2's no-op omitempty on
-// numerics — fails a test instead of a consumer.
+// SearchResult are frozen public surface (ADR §3: "never delegated").
+// These tests pin the exact bytes encoding/json/v2 produces for a
+// fully-populated fixture — v2 is the canonical engine since the
+// 2026-11-10 owner ruling ("go v2"); before that the same shapes were
+// pinned under the v1 engine, which omits zero numerics (e.g. Score)
+// where v2 writes them. Any drift — a renamed tag, a changed field, an
+// engine difference — fails a test instead of a consumer.
 //
 // Regenerating: `go test -run WireGolden -update .` rewrites the golden
 // files. A regeneration is a WIRE-CONTRACT EVENT: it needs a CHANGELOG
@@ -33,8 +35,9 @@ func TestWireGolden(t *testing.T) {
 	posted := time.Date(2026, 9, 19, 12, 0, 0, 0, time.UTC)
 
 	// hubNode deliberately leaves every NodeAttrs field zero: under
-	// encoding/json v1 the omitempty zeros (including Score) are omitted,
-	// and that absence is part of the pinned contract.
+	// encoding/json/v2 the numeric omitempty is a no-op, so Score and
+	// friends serialize as explicit zeros — that presence is part of the
+	// pinned contract (v1 omitted them; see the v0.5.0 CHANGELOG entry).
 	hubNode := graphrag.Node{ID: "hub:go", Kind: "hub", Label: "Go"}
 
 	docNode := graphrag.Node{

@@ -15,18 +15,19 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      # Repo policy: encoding/json (v1) only (AGENTS non-negotiable #2).
-      # No build or lint gate catches a json/v2 import — it compiles
-      # cleanly on go1.27.1+ — and the regression has repeatedly slipped
-      # in via daemon commits (a standing store.go violation shipped in
-      # every 0.3.x release, found 2026-11-10). wire_golden_test.go is
-      # the sanctioned exemption: it pins v1 wire bytes and documents
-      # v2's omitempty difference.
-      - name: json/v1 policy check
+      # Repo policy (owner ruling "go v2", 2026-11-10): encoding/json/v2 is
+      # the canonical engine — on Go 1.27 the v1 package is a compatibility
+      # shim implemented on top of v2, so new code imports v2 directly and
+      # the bare v1 import is forbidden everywhere (the two engines emit
+      # different bytes: omitempty-on-numerics and map-key ordering).
+      # Enforced since the same day the inverse rule was retired; both
+      # polarities exist because daemon commits repeatedly flipped imports
+      # unreviewed — whichever direction is policy, drift fails CI.
+      - name: json/v2 policy check
         run: |
-          matches="$(grep -rln --include='*.go' 'encoding/json/v2' . | grep -v '^\./wire_golden_test\.go$' || true)"
+          matches="$(grep -rln --include='*.go' '"encoding/json"$' . || true)"
           if [ -n "$matches" ]; then
-            echo "::error::encoding/json/v2 found outside the sanctioned golden test (policy: encoding/json v1 only)"
+            echo "::error::encoding/json (v1 shim) import found (policy: encoding/json/v2 everywhere)"
             echo "$matches"
             exit 1
           fi

@@ -6,6 +6,20 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- Nothing yet.
+
+### Changed
+
+- Nothing yet.
+
+### Fixed
+
+- Nothing yet.
+
+## [0.5.0] - 2026-11-10
+
+### Added
+
 - Adoption re-evaluation `docs/research/2026-11-10_metaengine-system-reevaluation.md`
   (resolves issue #2): re-ran the 2026-09-15 metaengine/system decision matrix against
   go-cqrs-lite v4.9.0+ (verified through system v4.18 / metaengine v4.23 on the proxy).
@@ -15,16 +29,18 @@ All notable changes to this project are documented in this file.
 
 ### Changed
 
-- Nothing yet.
+- **`encoding/json/v2` is now the canonical engine** (owner ruling 2026-11-10, "go v2"): on Go 1.27
+  the v1 package is a compatibility shim implemented on top of v2, so the SDK imports v2 directly
+  (`store.go`, `embed_openai.go`, and the test suite) and CI enforces the bare v1 import as a
+  violation. Wire delta vs the v1-era bytes: zero numerics under `omitempty` serialize explicitly
+  (`"score": 0` instead of omission); v1's map-key sorting does not apply, and no Go map crosses a
+  wire path. Both engines decode to identical values, the wire goldens have pinned v2 bytes since
+  the v0.3.1 re-pin, and v0.4.0 already shipped v2 in `store.go` — so no pinned contract changes.
+  Supersedes the v1-only policy (2026-09-15..2026-11-10) and the pending v0.4.1 decision.
 
 ### Fixed
 
-- **`store.go` restored to `encoding/json` (v1)**: the node-attrs marshal/unmarshal path had silently
-  carried the `encoding/json/v2` import since v0.3.1 (daemon commit; repo policy is v1-only), so every
-  released 0.3.x and v0.4.0 shipped it. No behavior change (wire goldens unchanged; round-trips are
-  engine-identical — the only nuance is the documented `NodeAttrs.Score` omitempty-on-zero difference in
-  stored attrs JSON, parsed identically by both engines). Caught by a full-tree sweep during v0.4.0
-  release verification, after diff review had only caught the newly-regressed files.
+- Nothing yet.
 
 ## [0.4.0] - 2026-11-10
 

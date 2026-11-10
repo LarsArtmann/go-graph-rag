@@ -25,8 +25,8 @@ The module must build without `GOEXPERIMENT=jsonv2`; see AGENTS.md for the
 pristine-toolchain check and all canonical commands.
 
 CI is the authoritative gate: every push and pull request runs, for both
-modules, a json/v1 policy check (no `encoding/json/v2` outside the
-sanctioned golden test), build + vet, tests with `-race`, golangci-lint,
+modules, a json/v2 policy check (the bare `encoding/json` v1-shim import
+fails anywhere it appears), build + vet, tests with `-race`, golangci-lint,
 tidy-drift, and dprint format checks. The equivalent local commands are
 documented in AGENTS.md; run them when you want feedback before pushing.
 

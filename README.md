@@ -18,7 +18,7 @@ API reference: [pkg.go.dev/github.com/larsartmann/go-graph-rag](https://pkg.go.d
 ## Installation
 
 ```bash
-go get github.com/larsartmann/go-graph-rag@v0.4.0
+go get github.com/larsartmann/go-graph-rag@v0.5.0
 ```
 
 ```go
@@ -138,9 +138,9 @@ The kit's own 47-spec suite doubles as a black-box acceptance suite over the SDK
 ## Design constraints (deliberate)
 
 - **Dependency-light**: stdlib-only except `samber/lo` and `modernc.org/sqlite`.
-  `encoding/json` (v1) only, as a stability policy — since Go 1.27.x a v2
-  import compiles with or without `GOEXPERIMENT`, so this is a rule the team
-  keeps, not a build the compiler enforces.
+  `encoding/json/v2` throughout (on Go 1.27 the v1 package is a compatibility
+  shim implemented on top of the v2 engine); zero numerics serialize
+  explicitly under `omitempty`, and both engines decode to identical values.
 - **Strong IDs**: node identity is the defined type `NodeID`; untyped string
   literals still assign directly, and the JSON wire shapes are unchanged.
 - **Full rebuild, not incremental**: `ReplaceGraph` swaps the whole persisted

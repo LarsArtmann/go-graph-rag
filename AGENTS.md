@@ -11,7 +11,7 @@ Standalone GraphRAG SDK extracted from the CV repo's `graphrag/` module
   config can alias them; `NewProvider` consumes `EmbeddingConfig`.
 - `embed.go` / `embed_hash.go` / `embed_openai.go` — provider seam +
   deterministic offline hasher + OpenAI-compatible client (stdlib
-  `encoding/json` only, NOT json/v2). The UA header is stamped from
+  `encoding/json/v2`). The UA header is stamped from
   `UserAgentVersion` — bump it when cutting a release.
 - `graph.go` — `Node`/`Edge`/`Graph` + the `NodeKind`/`Relation`/`NodeID` TYPES.
   Domain kind/relation vocabularies are caller-side (CV keeps its own in
@@ -36,8 +36,8 @@ Standalone GraphRAG SDK extracted from the CV repo's `graphrag/` module
   numbers recorded in the file doc comment),
   `embed_openai_live_test.go` (env-gated, skips offline).
 - CI (`.github/workflows/go-test.yml`) — authoritative gate on every push/PR for BOTH
-  modules: json/v1 policy check (grep for `encoding/json/v2` outside the
-  sanctioned `wire_golden_test.go`; added 2026-11-10, planted-failure proven),
+  modules: json/v2 policy check (bare `encoding/json` v1-shim import anywhere fails;
+  polarity flipped 2026-11-10 with the "go v2" ruling, planted-failure proven both ways),
   build+vet, `go test -race`, golangci-lint, tidy drift, dprint. The former
   `.githooks/pre-push` local guard was deliberately dropped by the owner
   (`2002882`, 2026-11-02): opt-in local gates are false comfort; CI is
@@ -52,13 +52,15 @@ Standalone GraphRAG SDK extracted from the CV repo's `graphrag/` module
 1. **No CV-domain vocabulary in prod code.** No `KindJob`, no job/company
    semantics, no CV-calibrated defaults in doc comments. Fixtures in tests
    may use any vocabulary.
-2. **`encoding/json` (v1) only.** POLICY, no longer build-enforced: since the
-   Go 1.27.x toolchains, `encoding/json/v2` graduated into stdlib and imports
-   compile WITHOUT `GOEXPERIMENT` (verified 2026-10-15 on go1.27.1, core and
-   bdd plants) — the pristine-build gate can no longer discriminate a json/v2
-   import. Keep v1 for API stability/wire-compat reasons. The one
-   `omitempty`-on-float (`NodeAttrs.Score`) is documented for the v2-engine
-   no-op behavior.
+2. **`encoding/json/v2` is the canonical engine** (owner ruling "go v2",
+   2026-11-10). On Go 1.27 the v1 package is a compatibility shim implemented
+   on top of v2 (`v2_encode.go`/`v2_decode.go` inside `encoding/json`), so the
+   SDK imports v2 directly and the bare v1 import is FORBIDDEN everywhere —
+   CI's `json/v2 policy check` enforces it. The engines emit different bytes
+   (v1 omits zero numerics under `omitempty` where v2 writes them —
+   `NodeAttrs.Score`; v1 sorts map keys where v2 uses iteration order — no Go
+   map crosses a prod wire path). History: the inverse v1-only policy ran
+   2026-09-15..2026-11-10.
 3. **stdlib-only except `samber/lo` + `modernc.org/sqlite`**
    (`testify` in tests). Adding a dependency needs a hard reason. Test-only
    deps (ginkgo, gomega) live in the `bdd/` sub-module, never core. Backend

@@ -9,7 +9,7 @@ go 1.27
 replace github.com/larsartmann/go-graph-rag => ../
 
 require (
-	github.com/larsartmann/go-graph-rag v0.4.0
+	github.com/larsartmann/go-graph-rag v0.5.0
 	github.com/onsi/ginkgo/v2 v2.33.1
 	github.com/onsi/gomega v1.44.0
 )
