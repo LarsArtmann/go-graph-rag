@@ -6,14 +6,40 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- Nothing yet.
+
+### Changed
+
+- Nothing yet.
+
+### Fixed
+
+- Nothing yet.
+
+## [0.4.0] - 2026-11-10
+
+### Changed
+
+- **Dependencies refreshed** (post-v0.3.3): `go.yaml.in/yaml/v3` v3.0.6, `modernc.org/libc` v1.80.1, and the `dprint/check` CI action v2.6. A daemon-commit `encoding/json/v2` import swap in `embed_openai.go` was caught and reverted during release prep (repo policy: `encoding/json` v1 only); no released version ever carried it.
+
+- **Relicensed from PROPRIETARY to MIT** (owner decision, package Q1, 2026-11-10): third parties may
+  now use, modify, and redistribute the SDK. CONTRIBUTING carries the matching inbound-grant line.
+  pkg.go.dev hid all godoc under the proprietary license; the zips of v0.3.3 and earlier are
+  immutable and keep that restriction, while this and later MIT-carrying versions are expected to
+  render (verification pending on this release).
+
+## [0.3.3] - 2026-11-03
+
+_(Section backfilled 2026-11-10: the tag was cut without CHANGELOG/UserAgentVersion sync — the breaking changes below shipped as a patch bump; tags are immutable, so the SemVer slip stands. The missing GitHub Release for this tag is tracked in TODO_LIST.)_
+
+### Added
+
 - **BDD test-kit sub-module `bdd/`** (`github.com/larsartmann/go-graph-rag/bdd`, own go.mod): Ginkgo/Gomega test kit with `Doc`/`Edge` builders, a deterministic demo corpus + kind policy, a `Harness` over the real SDK machinery (hash provider by default, optional real SQLite store with `Reload` from disk), Gomega matchers (`HaveTopHit`, `ContainHit`, `HaveHitIDs`, `HaveNoHitsOfKind`, `HaveSimilarEdge`), and a `FailingProvider` for error paths. The kit keeps ginkgo/gomega out of the core dependency budget (AGENTS non-negotiable #3) and dogfoods itself via its own 47-spec black-box suite; `Harness.Search` accepts at most one `SearchOptions` override and fails loudly on more). Scope and decisions: `docs/planning/2026-10-15_05-02_bdd-submodule-adr.md`. Consumers cannot fetch it from the proxy until the first `bdd/v*` tag lands (owner-gated).
 
 ### Changed
 
-- **Relicensed from PROPRIETARY to MIT** (owner decision, package Q1, 2026-11-10): third parties may now
-  use, modify, and redistribute the SDK. CONTRIBUTING carries the matching inbound-grant line, and
-  pkg.go.dev's "Documentation not displayed due to license restrictions" godoc block is expected to lift
-  as the site re-indexes (verify after the next tagged release).
+### Changed
+
 - **Node identity is now the strong type `NodeID`** (brandid-lint BD003 type-safety sweep):
   `Node.ID`, `Edge.Source`/`Edge.Target`, and `Document.ID` carry `graphrag.NodeID` (documents and
   nodes share one ID namespace: a document's ID becomes its node's ID), and every ID-taking surface

@@ -4,7 +4,7 @@ package graphrag
 import (
 	"bytes"
 	"context"
-	"encoding/json/v2"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -45,7 +45,7 @@ const (
 // UserAgentVersion is the SDK version stamped into the User-Agent header
 // of embedding requests so endpoint operators can attribute traffic. Bump
 // it with each release.
-const UserAgentVersion = "0.3"
+const UserAgentVersion = "0.4"
 
 // userAgent is the full User-Agent header value of embedding requests.
 const userAgent = "go-graph-rag/" + UserAgentVersion
