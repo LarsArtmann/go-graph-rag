@@ -1,13 +1,15 @@
 name: release
 
-# Drafted 2026-09-16 (seam-plan M9); fires only on a tag push. Nothing here
-# runs until the owner cuts the next tag (Q2 gate — see TODO_LIST.md).
-# Notes are extracted from the tag's CHANGELOG section; an empty extraction
-# fails the run instead of publishing a notes-less release.
+# Drafted 2026-09-16 (seam-plan M9); fires only on tag pushes: core tags
+# (v*) and bdd sub-module tags (bdd/v*, added 2026-11-11). Notes are
+# extracted from the tag's CHANGELOG section — core strips the leading v
+# (v0.5.0 -> "## [0.5.0]"), bdd keeps the full name
+# (bdd/v0.1.0 -> "## [bdd/v0.1.0]"); an empty extraction fails the run
+# instead of publishing a notes-less release.
 
 on:
   push:
-    tags: ["v*"]
+    tags: ["v*", "bdd/v*"]
 
 permissions:
   contents: write

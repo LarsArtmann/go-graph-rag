@@ -16,6 +16,20 @@ All notable changes to this project are documented in this file.
 
 - Nothing yet.
 
+## [bdd/v0.1.0] - 2026-11-11
+
+### Added
+
+- First release of the `bdd/` test-kit sub-module (`github.com/larsartmann/go-graph-rag/bdd`):
+  corpus and node/edge builders, a real-machinery `Harness` (in-process SDK wiring against a
+  temp SQLite store), Gomega matchers, and a `FailingProvider` fault-injection stub, so
+  consumer projects can BDD-test their GraphRAG integrations without re-deriving the rig.
+  43 specs, `-race` clean, order-independent; kit API frozen in the bdd ADR (2026-10-15).
+  Depends on core v0.5.0; ginkgo v2.34.0 per the sub-module's `go.mod`. The sub-module has no
+  `UserAgentVersion` (it makes no outbound HTTP calls). The release workflow gained the
+  matching `bdd/v*` trigger (notes for `bdd/v*` tags are extracted from sections titled
+  `## [bdd/...]`, since the leading-`v` strip does not apply).
+
 ## [0.5.0] - 2026-11-10
 
 ### Added
