@@ -47,6 +47,17 @@ import (
 // SimilarPairs/docs=1000 359ms, StoreRoundTrip 19.7ms/186ms — all within
 // noise of the tables above; the NodeID map-key typing is perf-neutral.
 //
+// Re-measured 2026-11-10 after restoring encoding/json v1 in store.go
+// (same machine, Go 1.27.x, `-benchtime 10x -count 10`, benchstat):
+// StoreRoundTrip/docs=1000 25.1ms ±4%, StoreRoundTrip/docs=10000 266ms
+// (±130%, background load), Build/docs=1000 905ms ±29%,
+// SimilarPairs/docs=1000 479ms ±36%, Search/docs=1000 1.7ms ±122%. The
+// 10x-iteration mode measures the fast benches slower and noisier than the
+// 2026-09-16 default-benchtime table (the same pattern the 2026-09-19
+// StoreRoundTrip re-measure showed); the store path the v1 restore
+// actually touches is statistically unchanged vs 2026-09-19 (32.3ms range
+// 23.4-41.3, n=10) — the json/v1 restore is perf-neutral within noise.
+//
 // The Build/SimilarPairs scaling is quadratic in embedded-node count (10x
 // docs -> ~90x time): at ~50k nodes a full rebuild extrapolates to ~15
 // minutes. StoreRoundTrip shows persistence is NOT the bottleneck (10k
