@@ -117,18 +117,21 @@ numbers are re-measured.
 - golangci-lint pinned v2.14.0 in CI = local dev-shell binary (2026-10-15;
   v2.13.2 could not decode Go 1.27.2 export data). CV still pins v2.13.2 —
   bump it there in its own session (bump-together rule).
-- The json-v2 regression slipped in three times (pre-v0.1.0, `e67bd9b`,
-  `e4a9145`) via daemon/parallel commits under the machine-wide
-  `GOEXPERIMENT=jsonv2` shell; only the pristine build caught it.
-  CORRECTION (2026-10-15): on go1.27.1 json/v2 compiles WITHOUT the flag
-  (graduated), so the pristine gate guards general drift, not json/v2; the
-  v1-only rule is policy (non-negotiable #2). Pristine-check before EVERY
-  push; re-verify daemon commits that land on yours.
+- The json-v2 regression slipped in FOUR times (pre-v0.1.0, `e67bd9b`,
+  `e4a9145`, and a 2026-11-10 daemon commit `bfaa047` caught by release
+  diff review during v0.4.0 prep) via daemon/parallel commits under the
+  machine-wide `GOEXPERIMENT=jsonv2` shell. CORRECTION (2026-10-15): on
+  go1.27.1 json/v2 compiles WITHOUT the flag (graduated), so NO build gate
+  catches it — the v1-only rule is policy (non-negotiable #2) and the only
+  proven catchers are diff review (release prep) and reading daemon commits
+  that land on yours. A `grep 'encoding/json/v2'` before every push is
+  cheap insurance.
 - pkg.go.dev rendered NO godoc while the repo carried the PROPRIETARY
-  LICENSE (verified live 2026-09-19, v0.2.0). MIT since 2026-11-10 — godoc
-  is expected to lift as pkg.go.dev re-indexes; VERIFY after the next
-  tagged release (old versions may stay restricted until re-crawled), then
-  clear this gotcha.
+  LICENSE (verified live 2026-09-19, v0.2.0). MIT since 2026-11-10 — v0.4.0
+  is the first MIT-carrying tag (proxy zips of v0.3.3 and earlier are
+  immutable, so THEIR restriction is permanent). Rendering check for v0.4.0
+  was still pending at cut time (pkg.go.dev 404s for ~an hour post-tag,
+  v0.2.0 precedent); VERIFY and then clear this gotcha.
 - Markdown is dprint-formatted (`dprint.json`); Go is gofmt (`.editorconfig`).
 - New research artifacts get a row in `docs/research/README.md` (artifact,
   date, question, verdict, reopen-triggers). The index stays research-only:
@@ -216,13 +219,24 @@ numbers are re-measured.
   CONTRIBUTING (inbound-grant line applied), TODO_LIST, CHANGELOG, and the
   owner-decision package synced in the same pass. pkg.go.dev godoc
   re-verification rides the next tagged release.
+- Release: **v0.4.0 cut 2026-11-10** (tag at `656e42e`, CI green on the
+  exact commit; release.yml green, notes correctly extracted from the
+  `[0.4.0]` section; proxy indexed; clean-dir `go get` + compile + run
+  verified; `UserAgentVersion` bumped to "0.4" in lockstep — test-enforced
+  pairing). Discovery during prep: **v0.3.3 (2026-11-03) had silently
+  shipped the NodeID/ContentHash breaking changes as an unlisted patch**
+  (no CHANGELOG section, no UA bump; GH Releases for v0.3.1 + v0.3.3 need
+  manual backfill — TODO_LIST row). json/v2 regression #4 (daemon commit
+  `bfaa047`) caught by release diff review and reverted pre-tag. pkg.go.dev
+  rendering of v0.4.0 was still pending at cut time.
 
 ## Upstream sync
 
-The CV repo consumes this module from the proxy (`v0.x`; latest `v0.3.2` —
-the 2026-10-15 consumer research observed CV already pinned to v0.3.2, so the
-next CV-facing event is the unreleased-`NodeID` release decision tracked in
-`TODO_LIST.md`, not a lagging bump). The CV-side
+The CV repo consumes this module from the proxy (`v0.x`; CV was pinned to
+v0.3.2 as of 2026-10-15, and v0.3.3 + v0.4.0 shipped since — so the next
+CV-facing event is the **CV-side bump to v0.4.0**, which also picks up the
+NodeID/ContentHash breaking types that v0.3.3 carried unannounced;
+migration guide `docs/upgrading.md`). The CV-side
 mounting points: `internal/graphvocab` (kind/relation constants),
 `internal/features/graphrag/service` (SearcherOptions wiring, tracing/counting
 decoration), `internal/config` (`GraphRAGConfig` alias).

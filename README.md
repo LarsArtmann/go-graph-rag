@@ -9,16 +9,18 @@ vector similarity with graph expansion (GraphRAG).
 API reference: [pkg.go.dev/github.com/larsartmann/go-graph-rag](https://pkg.go.dev/github.com/larsartmann/go-graph-rag)
 
 > pkg.go.dev hid the rendered godoc while the repo carried a PROPRIETARY
-> LICENSE ("Documentation not displayed due to license restrictions"). The
-> project is MIT-licensed since 2026-11-10; godoc is expected to render as
-> pkg.go.dev re-indexes — verify after the next tagged release. Until then
-> the documentation of record lives here; runnable, output-verified examples
-> are in [`example_test.go`](example_test.go).
+> LICENSE ("Documentation not displayed due to license restrictions"), and
+> the immutable proxy zips of v0.3.3 and earlier keep that restriction
+> permanently. The project is MIT-licensed since v0.4.0 (2026-11-10);
+> godoc rendering for that and later versions is expected once pkg.go.dev
+> indexes them (verification pending). The documentation of record lives
+> here; runnable, output-verified examples are in
+> [`example_test.go`](example_test.go).
 
 ## Installation
 
 ```bash
-go get github.com/larsartmann/go-graph-rag@v0.3.2
+go get github.com/larsartmann/go-graph-rag@v0.4.0
 ```
 
 ```go
