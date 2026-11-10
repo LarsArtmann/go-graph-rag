@@ -1,5 +1,11 @@
 # Metaengine / System Adoption: PRO/CONTRA Deep Research
 
+> **RE-RUN 2026-11-10** (go-graph-rag issue #2): the §9 trigger surface was re-scored against
+> go-cqrs-lite v4.9.0→v4.23.0 — verdict HELD, strengthened. Feedback #2/#3/#5 shipped, #4/#6
+> substantially closed, decisive gaps #1/#7 open and unscheduled. See
+> `2026-11-10_metaengine-system-reevaluation.md`; next re-run at metaengine graduation or v5
+> landing. This file is untouched below.
+
 |          |                                                                                                                                                                                                                                                                                                                                                     |
 | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Date     | 2026-09-15                                                                                                                                                                                                                                                                                                                                          |

@@ -6,7 +6,12 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
-- Nothing yet.
+- Adoption re-evaluation `docs/research/2026-11-10_metaengine-system-reevaluation.md`
+  (resolves issue #2): re-ran the 2026-09-15 metaengine/system decision matrix against
+  go-cqrs-lite v4.9.0+ (verified through system v4.18 / metaengine v4.23 on the proxy).
+  Verdict held and strengthened — adopt neither; correctness feedback #2/#3/#5 shipped,
+  #4/#6 substantially closed, the decisive capability gaps (#1 ANN, #7 rich edges) remain
+  open and unscheduled upstream. Next full re-run at metaengine graduation or v5 landing.
 
 ### Changed
 
