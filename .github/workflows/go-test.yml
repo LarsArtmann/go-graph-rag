@@ -68,7 +68,7 @@ jobs:
       # Markdown/JSON/YAML/Dockerfile formatting; Go stays gofmt-clean.
       # Local run: nix run nixpkgs#dprint -- fmt (or dprint fmt).
       - name: Format check
-        uses: dprint/check@7dc032d8874778fc024f6f9b4a7e6d896782c330 # v2.5
+        uses: dprint/check@371a959e3c77f34a76a03d2c50df2e3f2302d016 # v2.6
 
       - name: Tidy drift
         run: |

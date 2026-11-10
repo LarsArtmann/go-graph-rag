@@ -1,7 +1,7 @@
 package graphrag_test
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"net/http"
@@ -271,7 +271,7 @@ func BenchmarkEmbedConcurrency(b *testing.B) {
 			data[i] = map[string]any{"embedding": []float64{float64(number), 1}, "index": i}
 		}
 
-		_ = json.NewEncoder(w).Encode(map[string]any{"data": data, "model": "bench", "usage": map[string]int{}})
+		_ = json.MarshalWrite(w, map[string]any{"data": data, "model": "bench", "usage": map[string]int{}})
 	}))
 	b.Cleanup(server.Close)
 
