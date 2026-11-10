@@ -34,7 +34,7 @@ All notable changes to this project are documented in this file.
 
 ## [0.3.3] - 2026-11-03
 
-_(Section backfilled 2026-11-10: the tag was cut without CHANGELOG/UserAgentVersion sync — the breaking changes below shipped as a patch bump; tags are immutable, so the SemVer slip stands. The missing GitHub Release for this tag is tracked in TODO_LIST.)_
+_(Section backfilled 2026-11-10: the tag was cut without CHANGELOG/UserAgentVersion sync — the breaking changes below shipped as a patch bump; tags are immutable, so the SemVer slip stands. A GitHub pre-release for this tag was created manually 2026-11-04.)_
 
 ### Added
 
