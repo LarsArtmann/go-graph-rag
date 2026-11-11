@@ -61,13 +61,14 @@ jobs:
 
       # Strong-ID gate (BD001 brand hygiene + opt-in BD003 primitive-ID
       # detection), promoted from the local-only gate to CI 2026-11-11
-      # (SUPERB M09). Planted-failure proven both polarities: a string
-      # userId parameter fires BD003, an id.ID brand missing its Name()
-      # method fires BD001 (both exit non-zero); the clean tree exits 0.
-      # Pinned to the released linter module — @latest drifts.
+      # (SUPERB M09). Planted-failure proven: a string userId parameter
+      # fires BD003 and an id.ID brand missing its Name() fires BD001
+      # (both exit non-zero); the clean tree exits 0. Pinned to the
+      # LINTER SUBMODULE's own tag namespace (linter/v*) — the root
+      # module's v0.7.1 does not contain the package; @latest drifts.
       - name: Strong-ID gate (brandid-lint)
         run: |
-          go install github.com/larsartmann/go-branded-id/linter/cmd/brandid-lint@v0.7.1
+          go install github.com/larsartmann/go-branded-id/linter/cmd/brandid-lint@v0.5.1
           brandid-lint -rules BD001,BD003 .
 
       # The bdd/ test-kit module: same gates, own go.mod (replace => ../
