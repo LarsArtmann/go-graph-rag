@@ -247,11 +247,16 @@ numbers are re-measured.
 
 ## Upstream sync
 
-The CV repo consumes this module from the proxy (`v0.x`; CV was pinned to
-v0.3.2 as of 2026-10-15, and v0.3.3 + v0.4.0 shipped since — so the next
-CV-facing event is the **CV-side bump to v0.4.0**, which also picks up the
-NodeID/ContentHash breaking types that v0.3.3 carried unannounced;
-migration guide `docs/upgrading.md`). The CV-side
+The CV repo consumes this module from the proxy (`v0.x`). **CV adopted
+v0.5.0 on 2026-11-11** (M01 of the SUPERB pareto plan): the bump was
+API-neutral there — CV had already adopted the NodeID/ContentHash types via
+its v0.3.3 pin, and the json/v2 engine flip is a no-op under CV's
+`GOEXPERIMENT=jsonv2` devshell. Verified by the CV local full gate +
+devshell lint (CV CI could not arbitrate: GitHub Actions billing refusal,
+owner-side fix pending). CV folded its own linter-pin fix into the same
+wave (v2.13.2 → v2.15.0, devshell-matching). Remaining CV-facing events:
+the CI-green re-proof once billing is restored, and the standing
+MIT-attribution question (public binaries ⇒ notice owed). The CV-side
 mounting points: `internal/graphvocab` (kind/relation constants),
 `internal/features/graphrag/service` (SearcherOptions wiring, tracing/counting
 decoration), `internal/config` (`GraphRAGConfig` alias).
