@@ -82,7 +82,7 @@ Docs-health AUDIT over all 21 `2026-0*` files plus the six living docs. VERIFY c
 2. 🔵 ✓ Q1 license posture — still gates the entire public godoc face (TODO_LIST High).
 3. 🔵 ✓ Tag `bdd/v0.1.0` after the `Harness.Search` API review; extend `release.yml` to `bdd/v*` or keep kit releases manual (TODO_LIST Medium).
 4. 🔵 ✓ metaengine dep-tree quantification (owner "run soon", 2026-09-16; now a TODO_LIST Medium row).
-5. Push-watch: confirm the daemon-collected docs commits stay green (tip was green at `b3bf8fe`; this report adds more).
+5. ~~Push-watch: confirm the daemon-collected docs commits stay green~~ → confirmed long since (CI green through 2026-11-11).
 
 **Engineering, ready now (TODO_LIST rows)**
 

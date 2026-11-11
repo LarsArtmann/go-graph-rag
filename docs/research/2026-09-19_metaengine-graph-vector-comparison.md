@@ -104,6 +104,8 @@ other three documents implicitly assume:
 | Dgraph native ANN uncouples metric-at-schema coupling or starts returning distances | The dgraphengine vector path stops being degraded; scenario B gets cheaper                                |
 | CV adopts metaengine/system at the application layer (SUPERB T01/T29)               | go-graph-rag integrates as a query handler + rebuild command above metaengine, per the 2026-09-15 verdict |
 
+**Trigger re-check 2026-11-11 (M15):** all four NOT fired — metaengine still has no ANN-capable engine (re-evaluation 2026-11-10 confirms, trigger-gated upstream), the seam ADR remains unimplemented, dgraph shows no new ANN signal, and CV has not adopted metaengine/system.
+
 ---
 
 _Point-in-time comparison snapshot (2026-09-19). Never rewrite; annotate inline or

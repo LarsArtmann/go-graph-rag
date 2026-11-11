@@ -138,7 +138,7 @@ into `XTestGoFiles`. `gofmt -e` parses every file correctly. Facts isolated so f
 
 ## f) NEXT (ranked, up to 50)
 
-**Blocker investigation**
+**Blocker investigation** → RESOLVED same day (root cause: the `_test.go` filename suffix is what makes a spec file a test file; AGENTS gotcha records it). Checklist below is the historical debug ladder, kept point-in-time.
 
 1. In /tmp repro: add `func TestZ(t *testing.T)` to the misclassified spec file → recheck.
 2. In /tmp repro: swap dot-imports for named ginkgo/gomega imports → recheck.

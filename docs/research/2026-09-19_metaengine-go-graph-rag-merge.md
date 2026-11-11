@@ -195,16 +195,22 @@ only shared vocabulary.**
 
 ## 9. Revisit triggers
 
-| Trigger                                                                                                                         | Re-evaluate                                                                                                                  |
-| ------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| Seam ADR implementation starts AND an ANN backend lands (shared surface grows past ~300 lines: math + index plumbing + filters) | P3 leaf module becomes NPV-positive — re-run §3 inventory first                                                              |
-| A third consumer needs both stacks' math with identical semantics                                                               | P3                                                                                                                           |
-| CV app-layer adopts metaengine/system (SUPERB T01/T29)                                                                          | Not a merge trigger: integrate per 2026-09-15 (query handler + rebuild command above metaengine), dependency graph unchanged |
-| SDK adds multi-hop expansion (dgraph research §7 trigger)                                                                       | Implement SDK-native typed traversal; do NOT import metaengine's `any`-edge BFS                                              |
-| Q1 license decision lands (one repo goes OSS) → **FIRED 2026-11-10 (MIT)** — re-check owed: see the 2026-11-10 re-evaluation artifact, which re-ran the decision matrix and held the verdict (adopt neither) | ~~Re-check dependency-direction economics; today neutral (both PROPRIETARY)~~                                                 |
-| metaengine v5 stabilizes and its vector semantics converge with the SDK's (similarity API, dim handling)                        | Re-run §3; a leaf module only makes sense if the functions become actually identical                                         |
+| Trigger                                                                                                                                                                                                      | Re-evaluate                                                                                                                  |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| Seam ADR implementation starts AND an ANN backend lands (shared surface grows past ~300 lines: math + index plumbing + filters)                                                                              | P3 leaf module becomes NPV-positive — re-run §3 inventory first                                                              |
+| A third consumer needs both stacks' math with identical semantics                                                                                                                                            | P3                                                                                                                           |
+| CV app-layer adopts metaengine/system (SUPERB T01/T29)                                                                                                                                                       | Not a merge trigger: integrate per 2026-09-15 (query handler + rebuild command above metaengine), dependency graph unchanged |
+| SDK adds multi-hop expansion (dgraph research §7 trigger)                                                                                                                                                    | Implement SDK-native typed traversal; do NOT import metaengine's `any`-edge BFS                                              |
+| Q1 license decision lands (one repo goes OSS) → **FIRED 2026-11-10 (MIT)** — re-check owed: see the 2026-11-10 re-evaluation artifact, which re-ran the decision matrix and held the verdict (adopt neither) | ~~Re-check dependency-direction economics; today neutral (both PROPRIETARY)~~                                                |
+| metaengine v5 stabilizes and its vector semantics converge with the SDK's (similarity API, dim handling)                                                                                                     | Re-run §3; a leaf module only makes sense if the functions become actually identical                                         |
 
 ---
+
+**Trigger re-check 2026-11-11 (M15):** only the Q1/MIT trigger has fired —
+re-check CLOSED twice over (the 2026-11-10 re-evaluation re-ran the decision matrix and held
+`adopt neither`; the 2026-11-11 dep-tree quantification now also covers the dependency-direction
+economics with numbers). Remaining triggers: NOT fired (seam ADR unimplemented, no third
+consumer, CV has not adopted metaengine/system, no multi-hop expansion, v5 not landed).
 
 _Point-in-time decision record (2026-09-19). Never rewrite; annotate inline or
 archive. Line numbers and the json/v2 census were measured against both module

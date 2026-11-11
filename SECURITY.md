@@ -6,8 +6,8 @@ This is a library/SDK. Only the latest release line receives security fixes.
 
 | Version | Supported          |
 | ------- | ------------------ |
-| v0.4.x  | :white_check_mark: |
-| < v0.4  | :x:                |
+| v0.5.x  | :white_check_mark: |
+| < v0.5  | :x:                |
 
 ## Reporting a Vulnerability
 
@@ -16,7 +16,8 @@ responsibly:
 
 1. **Do NOT open a public GitHub issue.**
 2. Use [GitHub private vulnerability reporting](https://docs.github.com/en/code-security/how-tos/report-and-fix-vulnerabilities/report-privately)
-   on this repository (Security tab → "Report a vulnerability").
+   on this repository (Security tab → "Report a vulnerability", or directly:
+   <https://github.com/LarsArtmann/go-graph-rag/security/advisories/new>).
 3. Include a proof of concept or steps to reproduce if possible.
 4. You will receive an acknowledgment within 48 hours.
 
@@ -33,6 +34,30 @@ responsibly:
 - **The SQLite store is a local file with no authentication.** Protect the
   file system path (`Config.StoreDSN`) like any other data-at-rest concern;
   the store applies no encryption.
+
+## Security Practices
+
+- **Minimal dependency surface:** production code depends only on
+  `samber/lo` and `modernc.org/sqlite` (CGo-free SQLite); everything else is
+  the Go standard library. No dependency is added without a hard reason
+  (repo non-negotiable #3).
+- **CGo-free core:** the core module builds without CGo, keeping the
+  dependency/attack surface auditable as pure Go.
+- **No outbound I/O by default:** the offline hash embedder (`NewHashProvider`)
+  performs no network or file I/O; network calls exist only in the
+  OpenAI-compatible provider, against the operator-configured endpoint.
+- **Credentials are never logged:** API keys live in the caller's config
+  (`EmbeddingConfig.APIKey`) and are sent only as bearer tokens to the
+  configured endpoint; the SDK never logs them.
+- **Local-data posture:** the SQLite store is an unauthenticated local file;
+  callers protect the DSN path like any data-at-rest concern (see Scope
+  Notes).
+- **Continuous verification:** CI runs build, vet, race-enabled tests, lint,
+  and tidy-drift on every push for both modules (branch-protected `master`);
+  `govulncheck` runs in the BuildFlow gate; Dependabot keeps Go dependencies
+  and GitHub Actions current.
+- **Wire compatibility is pinned:** byte-level goldens cover the serialized
+  graph/cache shapes, so a serialization regression cannot ship silently.
 
 ## Dependency Policy
 

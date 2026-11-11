@@ -94,13 +94,13 @@
 
 Brainstorm, not a commitment list — most items below the first ~10 are ROADMAP fuel for `docs-health` HARVEST routing. Ordered roughly by impact.
 
-1. Commit (or daemon-collect) the dangling `AGENTS.md` + `CHANGELOG.md` doc edits.
-2. Confirm CI green on the daemon's 4 master commits (`build-test-lint` check).
-3. Decide + cut v0.4.0 (breaking-for-`string`-variables change in v0.x) with release notes from the CHANGELOG section; bump `UserAgentVersion` per AGENTS.md.
+1. ~~Commit (or daemon-collect) the dangling doc edits.~~ → done (daemon-collected same day).
+2. ~~Confirm CI green on the daemon's 4 master commits~~ → done (CI green through 2026-11-11).
+3. ~~Decide + cut v0.4.0...; bump `UserAgentVersion` per AGENTS.md.~~ → executed: v0.3.3 (with the types, 2026-11-03), v0.4.0 (2026-11-10, UA "0.4"), v0.5.0 (2026-11-10, UA "0.5").
 4. ~~Sync `bdd/go.mod` require to the new core tag; cut the first `bdd/v*` tag (owner-gated) so consumers can fetch the kit.~~ → done 2026-11-11 (`bdd/v0.1.0`, require v0.5.0, clean-dir consumer test green).
-5. CV-side bump: fold `NodeID` into owner package Phase 8; convert `internal/graphvocab`/service/config touchpoints where `string` variables cross the boundary.
-6. Bench sanity run (`-benchtime 100ms`) on `BenchmarkBuild`/`BenchmarkSimilarPairs`/`BenchmarkStoreRoundTrip` to confirm map-key typing is perf-neutral; schedule a full benchstat re-measure only if numbers move.
-7. Introduce `ContentHash` strong type for `EmbeddingEntry.Hash`, `Cache` seam, `HashText` outputs, and `Store` cache columns-boundary.
+5. ~~CV-side bump: fold `NodeID` into owner package Phase 8...~~ → done 2026-11-11 (CV adopted v0.5.0; the NodeID call sites were ALREADY converted by its v0.3.3 pin — zero source changes needed).
+6. ~~Bench sanity run...; schedule a full benchstat re-measure only if numbers move.~~ → done: full benchstat re-measure recorded 2026-11-10 (v1 engine, perf-neutral; table in `bench_test.go`).
+7. ~~Introduce `ContentHash` strong type...~~ → done (shipped with the strong-ID wave, released in v0.3.3+).
 8. Add `NodeID` (and later `ContentHash`) to `docs/DOMAIN_LANGUAGE.md` glossary.
 9. Add a short "upgrading to NodeID" consumer note (README section or `docs/`).
 10. README: add strong-ID typing as a selling point; re-verify the quickstart snippets copy-paste-run.

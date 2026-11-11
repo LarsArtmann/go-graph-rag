@@ -33,6 +33,18 @@ documented in AGENTS.md; run them when you want feedback before pushing.
 Markdown/JSON/YAML formatting is enforced by dprint in CI and by the hook
 locally; format with `nix run nixpkgs#dprint -- fmt` (or `dprint fmt`).
 
+## The auto-commit daemon and parallel sessions
+
+This repository runs an auto-commit daemon (heuristic messages like
+"chore: auto-commit N changed file(s)") and occasionally carries parallel
+working sessions. Two practical consequences for contributors:
+
+- **Expect your edits to be committed (and pushed) within minutes** of you
+  making them — do not stage/commit manually around the daemon; verify with
+  `git status` that what landed is yours.
+- **Never revert a diff you did not author** — check `git log` authorship
+  first; another session's change is deliberate until proven otherwise.
+
 ## Reporting Issues
 
 Please use GitHub Issues to report bugs or request features.

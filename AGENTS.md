@@ -167,6 +167,14 @@ numbers are re-measured.
   were recovered via `git restore --source=<wip-sha> -- <files>`). After any
   batch of file writes, re-check `git status` still shows them modified; if
   content vanishes, look in `git fsck --lost-found` before redoing the work.
+- Multi-writer hygiene: an auto-commit daemon and PARALLEL sessions commit to
+  this repo continuously (heuristic "chore: auto-commit" messages). Before
+  reverting ANY unexpected diff, check authorship first (`git log -1 --stat`,
+  compare against your own edit list) — another session's committed change is
+  deliberate until proven otherwise; judge, then act (a 2026-11-10 incident
+  nearly published an unauthored deletion via `git add -A`; never use
+  `git add -A` here). Also re-`view` a file immediately before every `edit`:
+  mtime races with the daemon/parallel sessions make stale reads fail.
 
 ## Owner decisions (2026-09-15)
 
