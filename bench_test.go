@@ -58,6 +58,16 @@ import (
 // actually touches is statistically unchanged vs 2026-09-19 (32.3ms range
 // 23.4-41.3, n=10) — the json/v1 restore is perf-neutral within noise.
 //
+// Re-measured 2026-11-11 under the canonical encoding/json/v2 engine
+// (v0.5.0 tree; same machine, Go 1.27.x, `-benchtime 10x -count 10`,
+// benchstat): Build/docs=100 3.764ms ±4%, Build/docs=1000 368.0ms ±5%,
+// Search/docs=100 93.1µs ±6%, Search/docs=1000 1.014ms ±15%,
+// SimilarPairs/docs=1000 411.1ms ±19%, StoreRoundTrip/docs=1000 23.45ms
+// ±12%, StoreRoundTrip/docs=10000 195.0ms ±44%, EmbedConcurrency
+// c=1/4/8 = 516µ/478µ/563µ (±14/11/23%). Every figure is within the
+// run-to-run spread of the v1-era tables above — the json/v2 engine is
+// performance-neutral end to end; no reference row needs retiring.
+//
 // The Build/SimilarPairs scaling is quadratic in embedded-node count (10x
 // docs -> ~90x time): at ~50k nodes a full rebuild extrapolates to ~15
 // minutes. StoreRoundTrip shows persistence is NOT the bottleneck (10k

@@ -226,6 +226,21 @@ numbers are re-measured.
   the erraudit `errors.As`→`AsType` modernization and SECURITY.md
   contact/practices sections are queued in TODO_LIST, not applied.
 
+## Owner decisions (2026-11-11)
+
+- Owner GO (blanket "execute the whole plan") on the SUPERB pareto plan
+  (`docs/planning/2026-11-11_00-13_SUPERB-pareto-execution-plan.md`):
+  M01 CV adopted v0.5.0 (zero source delta — NodeID arrived with its v0.3.3 pin;
+  json/v2 flip is a no-op under CV's jsonv2 devshell; CV folded its own
+  golangci v2.15.0 CI bump + templ replace allow-list entry into the wave;
+  CV CI could NOT arbitrate — GitHub Actions billing refusal, owner-side debt);
+  M02 `bdd/v0.1.0` RELEASED (release.yml `bdd/v*` trigger + planted dry-run tag
+  `bdd/v0.1.0-dryrun` proven both polarities then deleted; notes extracted from
+  the `[bdd/v0.1.0]` CHANGELOG section; proxy + clean-dir consumer test green);
+  M04-M15 executed as TODO_LIST records (M13 qmd/crush stays HOLD per plan).
+  Still owner-owned: MIT attribution answer for CV binaries; CV CI billing fix;
+  SDK CI golangci pin alignment to v2.15.0 (local proof blocked by DNS flake).
+
 ## Owner decisions (2026-11-10)
 
 - **"go v2"** — `encoding/json/v2` is the canonical engine everywhere (see
