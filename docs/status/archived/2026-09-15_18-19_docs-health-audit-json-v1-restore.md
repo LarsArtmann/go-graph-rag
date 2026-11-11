@@ -34,7 +34,7 @@
 
 All created as TODO_LIST rows this session, none begun (deliberately — docs-health session):
 
-1. Branch protection on `master` requiring `go-test` (still 404-verified open).
+1. ~~Branch protection on `master` requiring `go-test` (still 404-verified open).~~ → landed since (master is branch-protected on the `build-test-lint` check; verified live 2026-11-11).
 2. Repo topics + homepage (`[]` / null, verified).
 3. `SECURITY.md` (absent, verified).
 4. Godoc examples (`func Example*` count: 0, grep-verified).
@@ -42,7 +42,7 @@ All created as TODO_LIST rows this session, none begun (deliberately — docs-he
 6. Version-stamped OpenAI UA (hardcoded `"go-graph-rag/0.1"` at `embed_openai.go:239`).
 7. `KindUnknown` public-fate decision.
 8. dprint wiring into CI (or dropping `dprint.json`).
-9. License-posture decision (public + PROPRIETARY + PR flow) — owner-gated.
+9. ~~License-posture decision (public + PROPRIETARY + PR flow) — owner-gated.~~ → resolved 2026-11-10: relicensed MIT (owner decision, package Q1 executed).
 
 ## d) TOTALLY FUCKED UP (honesty ledger)
 
@@ -87,7 +87,7 @@ Nothing catastrophic: no data loss, no build broken by me, all gates green befor
 **P2 — cross-repo / owner-gated:**
 15. ~~Annotate CV status report `2026-09-15_17-09` item c7 ("SDK master is RED") as resolved, citing `40fa417` + the push. Medium / S / Documentation (CV repo).~~ done at `16fc16c7`
 16. ~~Annotate the CV TODO_LIST pin-equality row's graphrag part (carried there since extraction day). Low / S / Documentation (CV repo).~~ done at `16fc16c7`
-17. License-posture decision (public + PROPRIETARY + PR flow). Owner / S / Decision.
+17. ~~License-posture decision (public + PROPRIETARY + PR flow). Owner / S / Decision.~~ → resolved 2026-11-10: MIT (package Q1 executed).
 18. ~~Release cadence: v0.1.1 for the json-v1 restore + docs, or ride [Unreleased]? Owner / S / Decision.~~ done (decided v0.2.0 per the owner-package recommendation; cut 2026-09-16 (805aeba, CHANGELOG 0.2.0))
 19. ~~File/fix the QMD `get`/`multi_get` serialization bug (returns `&{ptr}` objects). Medium / M / Tooling (crush config repo).~~ done (filed tobi/qmd#959 + charmbracelet/crush#3846; upstream fix pending (TODO_LIST))
 20. ~~Optional: live-endpoint smoke test for the openai-compat provider behind an env flag (wire contract is httptest-verified only). Low / M / Quality.~~ done (embed_openai_live_test.go env-gated, offline skip verified (status 19-33 §a.14))

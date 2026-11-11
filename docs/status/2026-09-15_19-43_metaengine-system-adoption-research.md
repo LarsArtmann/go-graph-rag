@@ -72,7 +72,7 @@ Nothing catastrophic: no code touched, no builds broken, report committed and fo
 
 **P2 — pre-existing repo items noticed this session (from TODO_LIST.md, attributed):**
 
-11. License posture decision package (BLOCKED on owner — TODO_LIST Q1).
+11. ~~License posture decision package (BLOCKED on owner — TODO_LIST Q1).~~ → resolved 2026-11-10: MIT.
 12. Cut v0.2.0 so godoc examples become visible (BLOCKED on owner — TODO_LIST Q2).
 13. ~~QMD MCP `get`/`multi_get` garbage bug — external (crush-config repo), TODO_LIST row; my session re-confirmed the repro.~~ done (root-caused both sides; filed tobi/qmd#959 + charmbracelet/crush#3846 (upstream fix pending, tracked in TODO_LIST))
 14. ~~CV-repo extraction-story annotations (TODO_LIST; 15 min, external).~~ done at `16fc16c7`

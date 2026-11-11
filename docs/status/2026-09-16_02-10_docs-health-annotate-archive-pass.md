@@ -124,12 +124,12 @@ scores (10/10) are unaffected.
 1. ~~**The seam design itself** — owner decision #2 (DESIGN NOW) is encoded as~~ done (done — seam ADR delivered 2026-09-16 (docs/planning/2026-09-16_13-25_seam-store-search-adr.md))
    ~~the TODO_LIST High row; zero design work done. Main candidate for the next~~
    ~~work session.~~
-2. ~~**Owner decisions** — license posture (Q1) and v0.2.0 cut (Q2) still~~ done (Q2 executed 2026-09-16 (v0.2.0 cut, 805aeba; owner package annotated); Q1 still open)
+2. ~~**Owner decisions** — license posture (Q1) and v0.2.0 cut (Q2) still~~ done (Q2 executed 2026-09-16 (v0.2.0 cut, 805aeba; owner package annotated); ~~Q1 still open~~ → Q1 executed 2026-11-10: MIT).
    ~~await answers; package checkboxes unfilled.~~
 3. **All pre-existing TODO_LIST rows** untouched this session: tag protection,
    `Build` identical-text doc comment, benchstat re-run, `ExampleNewStore`,
    `SearcherOptions` example, store round-trip benchmark, CONTRIBUTING
-   inbound-grant (BLOCKED on Q1), CV-repo push (external), live smoke creds
+   inbound-grant (~~BLOCKED on Q1~~ → unblocked + applied 2026-11-10 with the MIT relicense), CV-repo push (external), live smoke creds
    (BLOCKED), qmd#959/crush#3846 watch, GH release automation, `qmd embed`.
 4. **ROADMAP-grade arcs** untouched: ANN/HNSW spike, incremental indexing,
    plus the three newly added ideas (harness, filtered-ANN semantics, ADR).

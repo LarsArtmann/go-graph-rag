@@ -132,11 +132,11 @@ commitments. TODO_LIST-grade rows are already routed.
 
 **P0 — owner-gated**
 
-1. License posture decision (owner package Q1) — BLOCKED.
+1. ~~License posture decision (owner package Q1) — BLOCKED.~~ → resolved 2026-11-10: MIT (package Q1 executed).
 2. Approve the v0.2.0 cut (owner package Q2) — BLOCKED.
 3. Execute the v0.2.0 go-release checklist on approval (tag → proxy →
    pkg.go.dev → CV bump).
-4. Apply the CONTRIBUTING inbound-grant line (after Q1).
+4. ~~Apply the CONTRIBUTING inbound-grant line (after Q1).~~ → done 2026-11-10 with the MIT relicense.
 5. Push the CV repo (external; carries the `16fc16c7` annotations).
 
 **P1 — the chosen engineering work**

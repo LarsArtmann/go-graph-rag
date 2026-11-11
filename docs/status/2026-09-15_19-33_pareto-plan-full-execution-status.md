@@ -105,7 +105,7 @@ All verifiable with the cited evidence:
 ## c) NOT STARTED
 
 1. ~~**v0.2.0 release** — owner-gated; checklist fully prepared (M13).~~ done (executed 2026-09-16 — v0.2.0 cut (805aeba; owner package annotated inline))
-2. **License posture decision** — owner-gated; recommendation written.
+2. ~~**License posture decision** — owner-gated; recommendation written.~~ → resolved 2026-11-10: MIT (owner decision; package Q1 executed).
 3. **CONTRIBUTING inbound-grant softening** — one line drafted in the
    package, not applied (presumes the license answer).
 4. **ANN/HNSW backend, incremental indexing** — ROADMAP-scale, deliberately

@@ -136,7 +136,7 @@ near-misses you should know about, all self-caught before push:
 3. ~~Cut v0.3.0 (hardening + concurrency + goldens are release-worthy; bump~~ done at `fca9280`
    ~~`UserAgentVersion` to `0.3` per AGENTS.md, watch release.yml on the~~
    ~~real tag — the awk fix is still unproven on a real tag).~~
-4. 🔵 CV consumer bump to the latest v0.x (owner package Phase 8). **→ overtaken: v0.3.0..v0.3.2 shipped; the next release decision is the TODO_LIST High row (v0.3.3 vs v0.4.0, NodeID unreleased)**
+4. 🔵 CV consumer bump to the latest v0.x (owner package Phase 8). **→ overtaken: v0.3.0..v0.3.2 shipped; the next release decision is the TODO_LIST High row (v0.3.3 vs v0.4.0, NodeID unreleased)** → overtaken again: v0.3.3 shipped 2026-11-03 (NodeID released in it), v0.4.0 2026-11-10, and CV adopted v0.5.0 on 2026-11-11 (M01) — the bump row is CLOSED.
 5. 🔵 CV repo push (carries `16fc16c7`). **→ TODO_LIST erraudit row**
 6. 🔵 go-cqrs-lite push ruling (ahead 32, foreign dirty `AGENTS.md`). **→ TODO_LIST SECURITY.md row**
 7. Fix SECURITY.md supported-versions table (v0.1.x → current line) once **→ TODO_LIST bdd-tag row (API review prerequisite)**
