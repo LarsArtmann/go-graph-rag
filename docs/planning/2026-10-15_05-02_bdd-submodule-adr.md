@@ -108,7 +108,7 @@ func SimilarEdgeScore(pairs []graphrag.SimilarPair, aID, bID graphrag.NodeID) (f
 
 - Kit budget: `ginkgo/v2 v2.33.1` + `gomega v1.44.0` + the SDK. Nothing else without an ADR
   amendment. (v2.33.1 over CV's v2.33.0: patch bump, tidy's resolution, no API delta.)
-- The kit imports no `encoding/json` at all, keeping the v1-only policy trivially true.
+- The kit imports no `encoding/json` at all. ~~keeping the v1-only policy trivially true.~~ → note 2026-11-11: the policy was superseded 2026-11-10 (owner "go v2" ruling — json/v2 is canonical); the kit's no-json-import property itself still holds and is now policy-neutral.
 - Core `go.mod`/`go.sum` must stay byte-identical through kit work (CI tidy-drift gate covers
   both modules separately).
 

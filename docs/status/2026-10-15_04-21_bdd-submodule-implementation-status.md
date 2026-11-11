@@ -223,10 +223,11 @@ into `XTestGoFiles`. `gofmt -e` parses every file correctly. Facts isolated so f
 
 ## g) QUESTIONS FOR THE OWNER (cannot be decided from the repo)
 
-1. **Release posture**: once verified, should I cut `bdd/v0.1.0` (plus
+1. ~~**Release posture**: once verified, should I cut `bdd/v0.1.0` (plus
    whatever core tag/require bump it needs), or is tagging strictly
    owner-gated? Until a tag or SHA-pin exists, consumers cannot fetch the
-   module from the proxy.
+   module from the proxy.~~ → ANSWERED 2026-11-11: owner GO (SUPERB plan M02
+   executed) — `bdd/v0.1.0` cut, released, proxy-verified.
 2. **Bootstrap helper**: should the kit also ship a CV-`platform/bddkit`-style
    `CreateBDDSuite(t, name)` helper, or keep the raw Ginkgo bootstrap
    (I skipped it as YAGNI)?

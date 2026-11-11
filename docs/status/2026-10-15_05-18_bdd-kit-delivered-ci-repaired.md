@@ -58,7 +58,9 @@ artifacts listed by `git ls-files`).
     (core plant, bdd plant, /tmp module, `go env` config check): on go1.27.1,
     `encoding/json/v2` imports compile WITHOUT `GOEXPERIMENT`. The pristine
     build gate can no longer discriminate json/v2; the v1-only rule is now
-    policy, not mechanics. Hook header, AGENTS non-negotiable #2/#5, and the
+    policy, not mechanics. ~~the v1-only rule~~ → superseded 2026-11-10: the
+    owner ruled "go v2" — `encoding/json/v2` is CANONICAL (AGENTS
+    non-negotiable #2 rewritten; CI enforces the v1 import as the failure). Hook header, AGENTS non-negotiable #2/#5, and the
     recurring-regression gotcha all corrected; gate-1 proof re-done with a real
     vet failure.
 12. **Docs delivered.** ADR `docs/planning/2026-10-15_05-02_bdd-submodule-adr.md`
@@ -94,8 +96,10 @@ artifacts listed by `git ls-files`).
 
 ## c) NOT STARTED
 
-1. `bdd/v0.1.0` tag + release.yml `bdd/v*` trigger decision (owner-gated;
-   release.yml's `v*` trigger will NOT fire for kit tags).
+1. ~~`bdd/v0.1.0` tag + release.yml `bdd/v*` trigger decision (owner-gated;
+   release.yml's `v*` trigger will NOT fire for kit tags).~~ → RESOLVED
+   2026-11-11: trigger added + planted dry-run proven + `bdd/v0.1.0` tagged,
+   released, and proxy-verified (M02).
 2. Consumer pilots (CV `platform/bddkit` comparison; legal-graph-ai-system's
    planned testify→ginkgo migration is the natural first user).
 3. Dependabot/renovate coverage for the `bdd/` module (config existence

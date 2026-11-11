@@ -71,6 +71,10 @@ between `## [x.y.z]` and the next `##` header, so keep `###` subsections.
 - **v0.3.3**: consumers get the two behavior fixes now; the `NodeID` sweep
   and the BDD kit stay unreleased; CV's pending bump should then skip
   straight to the later v0.4.0.
+  → OUTCOME (2026-11-11): this variant's shape ACTUALLY happened — but
+  accidentally: v0.3.3 shipped the NodeID types unannounced (SemVer slip,
+  documented), so the "stay unreleased" premise is false in hindsight; the kit
+  released separately as `bdd/v0.1.0` (2026-11-11).
 - **v0.4.0**: one cut ships all four sessions of work; CV bumps once;
   `UserAgentVersion` must move `0.3` → `0.4` in the same change (the UA↔
   CHANGELOG consistency test enforces it).

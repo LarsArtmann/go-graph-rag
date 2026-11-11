@@ -64,7 +64,7 @@
 2. `brandid-lint` as a pre-push or CI gate (owner decision; currently a local-only command).
 3. TODO_LIST.md harvest from section f.
 4. Benchmark re-measure + `bench_test.go` table re-record (benchstat protocol) — only if the owner wants post-change numbers.
-5. v0.4.0 release cut with this change; `bdd` require sync + first `bdd/v*` tag (owner-gated).
+5. ~~v0.4.0 release cut with this change; `bdd` require sync + first `bdd/v*` tag (owner-gated).~~ → executed: v0.3.3 (with the types) shipped 2026-11-03, v0.4.0 2026-11-10, bdd require synced + `bdd/v0.1.0` tagged 2026-11-11.
 6. CV-side adoption (owner package Phase 8): `internal/graphvocab`, `internal/features/graphrag/service`, `internal/config` touchpoints.
 7. `NodeID` glossary entry in `docs/DOMAIN_LANGUAGE.md`.
 8. Kit-consumer gotcha note (typed `DescribeTable` entries) in `bdd/doc.go`.
@@ -97,7 +97,7 @@ Brainstorm, not a commitment list — most items below the first ~10 are ROADMAP
 1. Commit (or daemon-collect) the dangling `AGENTS.md` + `CHANGELOG.md` doc edits.
 2. Confirm CI green on the daemon's 4 master commits (`build-test-lint` check).
 3. Decide + cut v0.4.0 (breaking-for-`string`-variables change in v0.x) with release notes from the CHANGELOG section; bump `UserAgentVersion` per AGENTS.md.
-4. Sync `bdd/go.mod` require to the new core tag; cut the first `bdd/v*` tag (owner-gated) so consumers can fetch the kit.
+4. ~~Sync `bdd/go.mod` require to the new core tag; cut the first `bdd/v*` tag (owner-gated) so consumers can fetch the kit.~~ → done 2026-11-11 (`bdd/v0.1.0`, require v0.5.0, clean-dir consumer test green).
 5. CV-side bump: fold `NodeID` into owner package Phase 8; convert `internal/graphvocab`/service/config touchpoints where `string` variables cross the boundary.
 6. Bench sanity run (`-benchtime 100ms`) on `BenchmarkBuild`/`BenchmarkSimilarPairs`/`BenchmarkStoreRoundTrip` to confirm map-key typing is perf-neutral; schedule a full benchstat re-measure only if numbers move.
 7. Introduce `ContentHash` strong type for `EmbeddingEntry.Hash`, `Cache` seam, `HashText` outputs, and `Store` cache columns-boundary.

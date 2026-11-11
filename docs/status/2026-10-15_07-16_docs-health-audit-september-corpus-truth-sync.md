@@ -49,7 +49,7 @@ Docs-health AUDIT over all 21 `2026-0*` files plus the six living docs. VERIFY c
 
 ## c) NOT STARTED (owner-gated or trigger-gated, now tracked)
 
-1. **Next core release decision (v0.3.3 vs v0.4.0)** — v0.3.2 shipped from red-CI code with the dead-allocation defect (fixed post-tag in `[Unreleased]`); the `NodeID` change is also unreleased and breaking for `string`-variable callers; `bdd/go.mod` require-sync + first `bdd/v*` tag ride the same decision. TODO_LIST High row (questions g1-g3 of the 06-14 report).
+1. ~~**Next core release decision (v0.3.3 vs v0.4.0)** — v0.3.2 shipped from red-CI code with the dead-allocation defect (fixed post-tag in `[Unreleased]`); the `NodeID` change is also unreleased and breaking for `string`-variable callers; `bdd/go.mod` require-sync + first `bdd/v*` tag ride the same decision.~~ → resolved by events: v0.3.3 shipped 2026-11-03 (with the types, unannounced — backfilled CHANGELOG 2026-11-10), v0.4.0 2026-11-10, `bdd/v0.1.0` tagged 2026-11-11; CV adopted v0.5.0 2026-11-11.
 2. **Q1 license posture** — unchanged; still gates the entire public godoc face (TODO_LIST High row).
 3. **`bdd/v0.1.0` tag + `release.yml` `bdd/v*` trigger** — owner-gated; API review of `Harness.Search` variadic options is the recorded prerequisite (TODO_LIST Medium row).
 4. **`ContentHash` strong type, golangci bump with CV parity, metaengine dep-tree quantification, UA↔CHANGELOG consistency test, Ginkgo typed-entries doc, kit spec-coverage audit, NodeID consumer note, EmbedConcurrency README mention, benchstat StoreRoundTrip re-run, brandid-lint gate promotion** — all TODO_LIST rows as of this pass.
@@ -146,7 +146,7 @@ Docs-health AUDIT over all 21 `2026-0*` files plus the six living docs. VERIFY c
 
 ## g) Questions I cannot figure out myself
 
-1. **Release shape**: should the next cut be **v0.3.3** (dead-allocation + CI fixes only, keep `NodeID` unreleased) or **v0.4.0** (bundle the strong-ID change with its consumer migration note)? And do you want the bench table re-measured (benchstat, `-count 10`) as part of that release, or is the pre-`NodeID` table fine to keep?
+1. ~~**Release shape**: should the next cut be **v0.3.3** (dead-allocation + CI fixes only, keep `NodeID` unreleased) or **v0.4.0** (bundle the strong-ID change with its consumer migration note)? And do you want the bench table re-measured (benchstat, `-count 10`) as part of that release, or is the pre-`NodeID` table fine to keep?~~ → overtaken: v0.3.3 shipped with the types (SemVer slip, documented), v0.4.0 followed; the bench table was re-measured under the v1 engine 2026-11-10 (perf-neutral, recorded in `bench_test.go`).
 2. **`bdd/v0.1.0` timing**: tag now that master CI is green (kit is dogfooded by its own 43-spec suite), or only after a consumer pilot (CV `platform/bddkit` comparison, or legal-graph-ai-system's planned testify→ginkgo migration)? Related: is the `Harness.Search` variadic-options shape acceptable to freeze, or should the API review block the tag?
 3. **Git Town policy**: is Git Town's WIP-stash behavior intentionally active on this machine (in which case the AGENTS gotcha + post-write `git status` reflex is the mitigation), or should it be disabled for repos with an auto-commit daemon so mid-session wipes like today's can't recur?
 

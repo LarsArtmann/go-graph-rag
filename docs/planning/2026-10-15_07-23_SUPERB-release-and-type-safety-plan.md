@@ -7,7 +7,8 @@
   ALL open TODOs are included and routed below.
 - **Context:** Four sessions of shipped work (BDD kit, `NodeID` sweep, the
   dead-allocation fix, the CI repair) are sitting unreleased on master behind
-  ONE owner word. The Ubuntu 26 runner migration lands 2026-10-19 (4 days).
+  ONE owner word. ~~unreleased~~ → resolved after this plan: v0.3.3 (2026-11-03),
+  v0.4.0 (2026-11-10), v0.5.0 (2026-11-10), `bdd/v0.1.0` (2026-11-11) all shipped. The Ubuntu 26 runner migration lands 2026-10-19 (4 days).
   The lint story has a version-skew risk (local v2.14.0 vs CI v2.13.2). The
   BD003 arc has one known blind spot (`ContentHash`). This plan executes every
   ungated TODO and reduces every owner-gated TODO to a single-word decision.
@@ -186,9 +187,11 @@ migration announcement requires action before 2026-10-19.
 
 Not executed in this plan; each has a recorded gate or decision:
 
-1. **Q1 license posture** — BLOCKED on owner (TODO_LIST High); gates public
+1. ~~**Q1 license posture** — BLOCKED on owner (TODO_LIST High); gates public
    godoc + CONTRIBUTING inbound grant; the archive sweep of Q1-gated status
-   reports unblocks the moment it lands.
+   reports unblocks the moment it lands.~~ → EXECUTED 2026-11-10: MIT; godoc
+   renders (verified v0.4.0/v0.5.0); inbound grant applied; Q1-gated archive
+   sweep executed 2026-11-11 (docs-truth pass).
 2. **The version word: `v0.3.3` vs `v0.4.0`** — owner; F1.7 stages both
    variants so the decision is one word. Includes the bench-table re-measure
    question (F1.1/F1.2 make either answer safe).
@@ -201,7 +204,7 @@ Not executed in this plan; each has a recorded gate or decision:
    (TODO_LIST Medium).
 6. **qmd#959/crush#3846 send-or-drop** — held past 2026-09-22 by owner
    ruling; patches live in the issue texts (TODO_LIST Medium watch row).
-7. **CONTRIBUTING inbound-grant line** — queues behind Q1 (TODO_LIST Medium).
+7. ~~**CONTRIBUTING inbound-grant line** — queues behind Q1 (TODO_LIST Medium).~~ → done 2026-11-10 with the MIT relicense.
 8. **metaengine dep-tree quantification** — owner "run soon" item
    (TODO_LIST Medium; feeds any adapter-cost question).
 9. **`brandid-lint` promotion to pre-push/CI** — owner decision + planted-

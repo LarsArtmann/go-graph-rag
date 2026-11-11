@@ -89,7 +89,7 @@ because anyone forgot to DRY them.
   depending on an application SDK bakes the inversion into the fleet permanently.
   Every future "which depends on which" question answers itself wrongly.
 - **API freeze at the worst time.** The SDK is v0.x with CV pinned at v0.2.0 and the
-  Q1 license decision pending; metaengine is mid v4→v5 churn (ADR-0123 deprecations,
+  ~~Q1 license decision pending~~ → landed 2026-11-10: MIT; metaengine is mid v4→v5 churn (ADR-0123 deprecations,
   compat shims). Making the SDK the dependency target converts its internal choices
   (`Vector` type shape, cosine semantics) into a cross-repo public contract while it
   most needs freedom to change.
@@ -121,7 +121,7 @@ because anyone forgot to DRY them.
 - **json/v2 contamination — the recurring regression class.** 66 non-test files in
   metaengine import `encoding/json/v2`, including the exact candidate files
   (`vector_search.go`, `sqliteengine/vector.go`, `pebbleengine/vector.go`,
-  `bboltengine/vector.go`). SDK non-negotiable #2 requires json/v1-only builds; the
+  `bboltengine/vector.go`). ~~SDK non-negotiable #2 requires json/v1-only builds~~ → superseded 2026-11-10 ("go v2" ruling — json/v2 canonical); the
   experiment-gated regression has already slipped into this repo three times
   (pre-v0.1.0, `e67bd9b`, `e4a9145`), each caught only by the pristine build. Every
   moved file is a scrub-and-retest, and one miss is a red CI master.
@@ -201,7 +201,7 @@ only shared vocabulary.**
 | A third consumer needs both stacks' math with identical semantics                                                               | P3                                                                                                                           |
 | CV app-layer adopts metaengine/system (SUPERB T01/T29)                                                                          | Not a merge trigger: integrate per 2026-09-15 (query handler + rebuild command above metaengine), dependency graph unchanged |
 | SDK adds multi-hop expansion (dgraph research §7 trigger)                                                                       | Implement SDK-native typed traversal; do NOT import metaengine's `any`-edge BFS                                              |
-| Q1 license decision lands (one repo goes OSS)                                                                                   | Re-check dependency-direction economics; today neutral (both PROPRIETARY)                                                    |
+| Q1 license decision lands (one repo goes OSS) → **FIRED 2026-11-10 (MIT)** — re-check owed: see the 2026-11-10 re-evaluation artifact, which re-ran the decision matrix and held the verdict (adopt neither) | ~~Re-check dependency-direction economics; today neutral (both PROPRIETARY)~~                                                 |
 | metaengine v5 stabilizes and its vector semantics converge with the SDK's (similarity API, dim handling)                        | Re-run §3; a leaf module only makes sense if the functions become actually identical                                         |
 
 ---

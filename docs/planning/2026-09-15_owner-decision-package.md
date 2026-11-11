@@ -86,8 +86,11 @@ Executed 2026-09-16 (release date); notes below recorded inline.
     (2026-09-16: proxy indexed v0.2.0; pkg.go.dev doc processing still pending hours
     later. Deeper finding: v0.1.0's page says "Documentation not displayed due to
     license restrictions" — no LICENSE file pkg.go.dev recognizes, so godoc is
-    hidden for every version. The public-face payoff of releases stays blocked on
-    the Q1 license decision; see TODO_LIST High row.)
+    hidden for every version. ~~The public-face payoff of releases stays blocked on
+    the Q1 license decision; see TODO_LIST High row.~~ → RESOLVED 2026-11-10: MIT
+    landed (package Q1 executed); godoc verified rendering on v0.4.0 and v0.5.0
+    (License: MIT) the same day. Old PROPRIETARY-era zips keep the restriction
+    forever (proxy immutability).)
 [x] Phase 7: GitHub Release created for v0.2.0 — NOT via workflow: the tag-push
     release.yml failed on the awk -v escape bug (fixed on master, 350b815);
     release created manually with the same extraction logic and notes
