@@ -29,8 +29,9 @@ Standalone GraphRAG SDK extracted from the CV repo's `graphrag/` module
   builders, demo corpus, real-machinery `Harness`, Gomega matchers, `FailingProvider`;
   ginkgo/gomega live here and ONLY here. Requires the SDK by published version
   with a `replace => ../` for local dev. Decisions + interface sketch:
-  `docs/planning/2026-10-15_05-02_bdd-submodule-adr.md`. First `bdd/v*` tag is
-  owner-gated; until then consumers must use a sibling checkout.
+  `docs/planning/2026-10-15_05-02_bdd-submodule-adr.md`. Released as
+  `bdd/v0.1.0` (2026-11-11): release.yml fires on `bdd/v*` tags and
+  consumers `go get github.com/larsartmann/go-graph-rag/bdd` from the proxy.
 - Tests: `example_test.go` (runnable godoc examples — keep the `// Output:`
   blocks truthful, `go test` enforces them), `bench_test.go` (reference
   numbers recorded in the file doc comment),
@@ -42,10 +43,14 @@ Standalone GraphRAG SDK extracted from the CV repo's `graphrag/` module
   `.githooks/pre-push` local guard was deliberately dropped by the owner
   (`2002882`, 2026-11-02): opt-in local gates are false comfort; CI is
   unbypassable.
-- `.github/workflows/release.yml` — GitHub Release automation on `v*` tags
-  (notes extracted from the matching CHANGELOG section; empty extraction fails
-  the run). Proven end-to-end on the v0.3.0 tag (2026-09-19, green run,
-  correct notes) after the v0.2.0 awk-extraction failure (fixed `350b815`).
+- `.github/workflows/release.yml` — GitHub Release automation on `v*` AND
+  `bdd/v*` tags (notes extracted from the matching CHANGELOG section; empty
+  extraction fails the run). CHANGELOG section-heading contract: core
+  releases are `## [X.Y.Z]` (the workflow strips the leading `v`), kit
+  releases keep the full tag name `## [bdd/vX.Y.Z]`. Proven end-to-end on
+  v0.3.0 (2026-09-19, after the v0.2.0 awk-extraction failure fixed
+  `350b815`) and on `bdd/v0.1.0` (2026-11-11; the trigger was proven by a
+  planted `bdd/v0.1.0-dryrun` tag in both polarities first, then deleted).
 
 ## Non-negotiables
 
@@ -105,10 +110,12 @@ master is branch-protected on the `build-test-lint` check. CI tests run with
 `embed_openai_live_test.go`).
 
 Benchmark reference numbers follow a benchstat protocol:
-`go test -bench . -count 10` summarized with benchstat (pinned
-`golang.org/x/perf v0.0.0-20260908200009`); the current table, machine, and
-date live in the `bench_test.go` doc comment — re-record there whenever
-numbers are re-measured.
+`go test -bench . -benchtime 10x -count 10` summarized with benchstat
+(pinned `golang.org/x/perf v0.0.0-20260908200009`) — canonical since
+2026-11-11 (the 2026-09-16 table used default benchtime and is not directly
+comparable to 10x-mode runs); the current table, machine, and date live in
+the `bench_test.go` doc comment — re-record there whenever numbers are
+re-measured.
 
 ## Gotchas
 
@@ -118,20 +125,26 @@ numbers are re-measured.
   pristine `env -u GOEXPERIMENT` build and `go mod tidy` drift checks are now
   HABITS documented above, and CI's json/v1 policy check mechanizes the one
   gate no build tool provides.
-- golangci-lint pinned v2.14.0 in CI = local dev-shell binary (2026-10-15;
-  v2.13.2 could not decode Go 1.27.2 export data). CV still pins v2.13.2 —
-  bump it there in its own session (bump-together rule).
+- golangci-lint v2.15.0 EVERYWHERE since 2026-11-11: CI installs the exact
+  pinned tag (proven 0-issues on both modules BEFORE the bump — prove the
+  pinned artifact, not the local build), the dev-shell binary is v2.15.0,
+  and CV's CI matches (the bump-together rule is TRUE again — CV had
+  drifted ahead to v2.15.0 on 2026-11-11 while this repo sat at v2.14.0).
+  History: v2.13.2 could not decode Go 1.27.2 export data.
 - The json-v2 regression is a STANDING daemon risk, not an event: after
   the three documented slips (pre-v0.1.0, `e67bd9b`, `e4a9145`), a FOURTH
   (`bfaa047`, 2026-11-10) was caught by release diff review during v0.4.0
   prep — and the same sweep then found `store.go` had carried json/v2
   CONTINUOUSLY since v0.3.1, shipping in every released 0.3.x and in
-  v0.4.0 (reverted on master 2026-11-10, `[Unreleased]`; v0.4.1 decision
-  owner-gated). Diff review only covers the delta; the ONLY complete
-  catcher is a full-tree `grep -rn 'encoding/json/v2' --include='*.go' .`
-  (`wire_golden_test.go` is the sanctioned exemption — it pins v1 bytes
-  and documents v2's omitempty difference). CI enforces exactly this grep
-  on every push/PR since 2026-11-10; local habit optional.
+  v0.4.0 (reverted on master 2026-11-10; the v0.4.1 question this raised
+  was superseded the same day by the "go v2" ruling shipped as v0.5.0).
+  Diff review only covers the delta; a full-tree grep is the only complete
+  catcher — in the v1-only era that meant grepping for `encoding/json/v2`
+  imports (the sweep that caught `store.go`), and under the v2-only policy
+  it means grepping for the bare `"encoding/json"` v1 import, which CI
+  runs on every push/PR since 2026-11-10. Nothing is exempt:
+  `wire_golden_test.go` pins v2 bytes via `encoding/json/v2` itself.
+  Local habit optional.
 - pkg.go.dev RESOLVED (2026-11-10): godoc was hidden while the repo carried
   the PROPRIETARY LICENSE (all versions through v0.3.3 — their proxy zips
   are immutable, so their restriction is PERMANENT). v0.4.0 is the first
@@ -175,6 +188,11 @@ numbers are re-measured.
   nearly published an unauthored deletion via `git add -A`; never use
   `git add -A` here). Also re-`view` a file immediately before every `edit`:
   mtime races with the daemon/parallel sessions make stale reads fail.
+  The daemon can also PARK for 10+ minutes on a dirty tree, then sweep
+  everything in one bulk commit (observed 2026-11-11) — a quiet daemon is
+  not proof your change landed. For critical artifacts, verify with
+  `git log`/`git status` and commit yourself (enumerated paths, never
+  `git add -A`) rather than waiting on a parked daemon.
 
 ## Owner decisions (2026-09-15)
 
