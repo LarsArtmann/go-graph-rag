@@ -1,6 +1,6 @@
 # Upgrading
 
-## To the json/v2 release (next release after v0.4.0)
+## To v0.5.0 — encoding/json/v2 everywhere (2026-11-10)
 
 The SDK now marshals with `encoding/json/v2` end to end (owner ruling
 2026-11-10; on Go 1.27 the v1 package is a shim over the v2 engine).
@@ -10,7 +10,10 @@ engine omitted the key. Both engines decode to identical values, so
 stored graphs, embedding caches, and JSON consumers survive untouched;
 only exact-byte comparisons (checksums over serialized JSON) notice.
 
-## To the `NodeID` release (next release after v0.3.2)
+## To v0.3.3 — the `NodeID` identity type (2026-11-03)
+
+Shipped 2026-11-03; at the time it landed without a CHANGELOG section
+(backfill owed on the GitHub release), so this guide is the upgrade record.
 
 Graph identity moved from `string` to the defined type `graphrag.NodeID`, and
 every ID-taking API follows: `Node.ID`, `Edge.Source`/`Edge.Target`,

@@ -31,6 +31,13 @@ import (
 //	                               + LoadEmbeddings on a real SQLite file)
 //	StoreRoundTrip/docs=10000  197.4 ms/op
 //
+// Canonical re-measure protocol (2026-11-11): `go test -bench . -benchtime
+// 10x -count 10` summarized with benchstat (pinned
+// golang.org/x/perf v0.0.0-20260908200009). Every re-measure after
+// 2026-09-19 uses it; the 2026-09-16 table above was recorded at default
+// benchtime and is NOT directly comparable to 10x-mode runs (the 2026-11-10
+// note below quantifies the gap) — compare re-measures to re-measures.
+//
 // StoreRoundTrip re-measured 2026-09-19 at benchstat grade (same machine,
 // Go 1.27.1, `-benchtime 10x -count 10`; benchstat itself could not be
 // installed offline, so the summary below is computed from the same 10 raw

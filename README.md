@@ -106,7 +106,7 @@ Consumers who test in Ginkgo/Gomega style can use the optional, composable test
 kit — its own module, so the SDK's dependency budget never grows:
 
 ```bash
-go get github.com/larsartmann/go-graph-rag/bdd   # first bdd/v* tag pending (owner-gated)
+go get github.com/larsartmann/go-graph-rag/bdd # released as bdd/v0.1.0 (bdd/v* tag namespace)
 ```
 
 ```go

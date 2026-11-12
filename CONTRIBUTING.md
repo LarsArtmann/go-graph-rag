@@ -44,6 +44,11 @@ working sessions. Two practical consequences for contributors:
   `git status` that what landed is yours.
 - **Never revert a diff you did not author** — check `git log` authorship
   first; another session's change is deliberate until proven otherwise.
+- **CI is the only gate that matters** — the repo ships no local git hooks
+  (the former `.githooks/` pre-push guard was dropped 2026-11-02; CI enforces
+  the same checks and cannot be bypassed). If your clone carries a stale
+  `git config core.hooksPath .githooks`, it is harmless (git ignores missing
+  hook directories); clean it with `git config --unset core.hooksPath`.
 
 ## Reporting Issues
 
