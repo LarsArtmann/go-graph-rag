@@ -54,7 +54,7 @@ jobs:
       # install pulls v1, which cannot parse version: "2" configs. Pin the
       # exact version and prove THAT artifact locally before the push —
       # never verify a CI pin against a local build (the brandid red-run
-      # lesson, run 42984676562). v2.15.0 2026-11-11: installed at the
+      # lesson, run 42984676562). v2.15.0 2026-11-12: installed at the
       # exact tag (go1.27.1-built) and proven 0-issues on BOTH modules
       # before this bump; matches the dev-shell binary and CV's CI pin
       # (bump-together rule). v2.13.2 could not decode Go 1.27.2 export data.

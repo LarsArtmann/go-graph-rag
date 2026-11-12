@@ -31,7 +31,7 @@ import (
 //	                               + LoadEmbeddings on a real SQLite file)
 //	StoreRoundTrip/docs=10000  197.4 ms/op
 //
-// Canonical re-measure protocol (2026-11-11): `go test -bench . -benchtime
+// Canonical re-measure protocol (2026-11-12): `go test -bench . -benchtime
 // 10x -count 10` summarized with benchstat (pinned
 // golang.org/x/perf v0.0.0-20260908200009). Every re-measure after
 // 2026-09-19 uses it; the 2026-09-16 table above was recorded at default

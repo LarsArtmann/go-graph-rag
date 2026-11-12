@@ -10,7 +10,19 @@ All notable changes to this project are documented in this file.
 
 ### Changed
 
-- Nothing yet.
+- CI golangci-lint pin v2.14.0 → v2.15.0, matching the dev-shell binary and CV's CI pin
+  (the bump-together rule). The exact `@v2.15.0` artifact was installed and proven
+  0-issues on both modules BEFORE the bump (the "prove the pinned artifact" rule from
+  the 2026-11-11 brandid red-run).
+- Docs truth pass: README's BDD install line reflects the released `bdd/v0.1.0`; the
+  upgrading guide headings name the actual releases (v0.5.0 = encoding/json/v2,
+  v0.3.3 = `NodeID`); bench re-measures standardized on `-benchtime 10x -count 10`;
+  AGENTS corrected the json-policy catcher grep direction and recorded the linter
+  alignment plus the daemon's park-then-sweep pattern; CONTRIBUTING explains the
+  dropped local hooks and the stale `core.hooksPath` cleanup.
+- SECURITY.md: `bdd/v0.1.x` support line, the dated govulncheck receipt (2026-11-12:
+  zero third-party findings — every advisory is Go stdlib, fixed in newer 1.27.x
+  toolchains), and the wire-golden bullet now names `encoding/json/v2` explicitly.
 
 ### Fixed
 

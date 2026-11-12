@@ -47,6 +47,8 @@ undercounts the shipped set.
 - **`system` was promoted out of EXPERIMENTAL** (2026-11-03,
   `docs/status/2026-11-03_18-42_system-promotion-out-of-experimental.md`): module suite green
   (10.0s run; 60+ tests under `-race` per FEATURES), no experimental stamp in its `doc.go`.
+  _(2026-11-12: their FEATURES now says a counted "205 tests" with an agreed counting rule —
+  the "60+" citation above preserves what that doc said at measurement time.)_
 - **metaengine family stays 🧪 Experimental** (all 17 `doc.go` stamps; FEATURES.md engine rows).
 - **License asymmetry is new**: go-cqrs-lite is still PROPRIETARY (`LICENSE`), while this SDK went
   MIT on 2026-11-10 (CHANGELOG `[0.4.0]`). The original CONTRA #7 ("third parties inherit a

@@ -125,7 +125,7 @@ re-measured.
   pristine `env -u GOEXPERIMENT` build and `go mod tidy` drift checks are now
   HABITS documented above, and CI's json/v1 policy check mechanizes the one
   gate no build tool provides.
-- golangci-lint v2.15.0 EVERYWHERE since 2026-11-11: CI installs the exact
+- golangci-lint v2.15.0 EVERYWHERE since 2026-11-12: CI installs the exact
   pinned tag (proven 0-issues on both modules BEFORE the bump — prove the
   pinned artifact, not the local build), the dev-shell binary is v2.15.0,
   and CV's CI matches (the bump-together rule is TRUE again — CV had

@@ -57,7 +57,7 @@ responsibly:
   Notes).
 - **Continuous verification:** CI runs build, vet, race-enabled tests, lint,
   and tidy-drift on every push for both modules (branch-protected `master`);
-  `govulncheck` runs in the BuildFlow gate (receipt 2026-11-11: zero
+  `govulncheck` runs in the BuildFlow gate (receipt 2026-11-12: zero
   third-party findings — every advisory is a Go standard-library one,
   fixed in 1.27.x patch releases newer than the go1.27 floor, so build
   consumers with the newest 1.27.x toolchain); Dependabot keeps Go
