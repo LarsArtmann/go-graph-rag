@@ -12,17 +12,17 @@
 
 **VERIFIED this session (live commands, timestamps from shell output):**
 
-| Claim | Proof |
-| --- | --- |
-| Root config schema-valid | `golangci-lint config verify` exit 0 (15:02) |
-| bdd discovers same config; also schema-valid | `cd bdd && golangci-lint config verify` exit 0 (15:02) |
-| buildflow gate green | `buildflow -s golangci-lint` → "✓ BuildFlow passed 3/3" (15:03, real 8.3s lint); cached re-run confirmed |
-| Lint results unchanged by the fix | `GOTOOLCHAIN=go1.27.1 golangci-lint run ./...` → "0 issues." exit 0, BOTH modules (15:04-15:07) — matches the recorded v2.15.0 zero-issue baseline |
-| Root module healthy | `go build` + `go vet` + `go test ./...` → ok 3.028s |
-| bdd module healthy | `env -u GOEXPERIMENT` build + vet + test → ok 0.021s |
-| Formatting green | `nix run nixpkgs#dprint -- check` exit 0 (15:39) |
-| Removed keys were dead config | sourcegraph @golangci/golangci-lint@v2.15.0: `FunlenSettings` = lines/statements/ignore-comments ONLY; `VarnamelenSettings` has no `ignore-for-root-var`; mnd `IgnoredNumbers []string` |
-| Daemon commit intact | `266787e` (15:03:59, `.golangci.yaml` only); grep re-check: 35 quoted numbers, 0 hits for dead keys |
+| Claim                                        | Proof                                                                                                                                                                                   |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Root config schema-valid                     | `golangci-lint config verify` exit 0 (15:02)                                                                                                                                            |
+| bdd discovers same config; also schema-valid | `cd bdd && golangci-lint config verify` exit 0 (15:02)                                                                                                                                  |
+| buildflow gate green                         | `buildflow -s golangci-lint` → "✓ BuildFlow passed 3/3" (15:03, real 8.3s lint); cached re-run confirmed                                                                                |
+| Lint results unchanged by the fix            | `GOTOOLCHAIN=go1.27.1 golangci-lint run ./...` → "0 issues." exit 0, BOTH modules (15:04-15:07) — matches the recorded v2.15.0 zero-issue baseline                                      |
+| Root module healthy                          | `go build` + `go vet` + `go test ./...` → ok 3.028s                                                                                                                                     |
+| bdd module healthy                           | `env -u GOEXPERIMENT` build + vet + test → ok 0.021s                                                                                                                                    |
+| Formatting green                             | `nix run nixpkgs#dprint -- check` exit 0 (15:39)                                                                                                                                        |
+| Removed keys were dead config                | sourcegraph @golangci/golangci-lint@v2.15.0: `FunlenSettings` = lines/statements/ignore-comments ONLY; `VarnamelenSettings` has no `ignore-for-root-var`; mnd `IgnoredNumbers []string` |
+| Daemon commit intact                         | `266787e` (15:03:59, `.golangci.yaml` only); grep re-check: 35 quoted numbers, 0 hits for dead keys                                                                                     |
 
 **NOT verified (and why):**
 
