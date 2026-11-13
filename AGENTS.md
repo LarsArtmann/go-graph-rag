@@ -131,6 +131,16 @@ re-measured.
   and CV's CI matches (the bump-together rule is TRUE again — CV had
   drifted ahead to v2.15.0 on 2026-11-11 while this repo sat at v2.14.0).
   History: v2.13.2 could not decode Go 1.27.2 export data.
+- `golangci-lint run` does NOT schema-validate the config — only
+  `golangci-lint config verify` does, and buildflow's gate runs verify
+  FIRST. The extraction copy (`1e65a63`) silently drifted from CV's config
+  for two months: dead keys `funlen.ignore-strings` +
+  `varnamelen.ignore-for-root-var` (no such settings in golangci-lint, v1
+  or v2) and unquoted `mnd.ignored-numbers` (schema wants strings) — all
+  caught 2026-11-13 by the buildflow verify gate, all in the ONE parent
+  `.golangci.yaml` that bdd discovers (a root-vs-bdd error split in one
+  report just means jsonschema map-iteration order). CI never caught it
+  because CI runs `run`, not `verify`.
 - The json-v2 regression is a STANDING daemon risk, not an event: after
   the three documented slips (pre-v0.1.0, `e67bd9b`, `e4a9145`), a FOURTH
   (`bfaa047`, 2026-11-10) was caught by release diff review during v0.4.0
