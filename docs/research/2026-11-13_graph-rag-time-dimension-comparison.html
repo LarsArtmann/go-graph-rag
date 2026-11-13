@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Report Title</title>
+    <title>Graph RAG Time Dimension &mdash; Design Comparison 2026-11-13</title>
     <style>
       /* =========================================================================
          BAUHAUS LIGHT — Editorial template
@@ -850,9 +850,9 @@
   <body>
     <!-- Full-bleed top bar (optional — remove for quieter reports) -->
     <div class="top-bar">
-      <span>REPORT TYPE</span>
-      <span>YYYY-MM-DD</span>
-      <span>AUTHOR / TEAM</span>
+      <span>RESEARCH &middot; DESIGN COMPARISON</span>
+      <span>2026-11-13</span>
+      <span>GO-GRAPH-RAG &middot; CVAGENT &middot; METAENGINE</span>
     </div>
 
     <div class="layout">
@@ -860,12 +860,15 @@
       <aside class="sidebar" data-nav>
         <nav>
           <div class="label">Contents</div>
-          <a href="#summary">Summary</a>
-          <a href="#scorecard">Scorecard</a>
-          <a href="#strengths">Strengths</a>
-          <a href="#findings">Findings</a>
-          <a href="#proposal">Proposal</a>
-          <a href="#appendix">Appendix</a>
+          <a href="#summary">00 &middot; Verdict</a>
+          <a href="#question">01 &middot; Question &amp; method</a>
+          <a href="#design-a">02 &middot; Design A: cvagent</a>
+          <a href="#design-b">03 &middot; Design B: Atlas</a>
+          <a href="#head-to-head">04 &middot; Head-to-head</a>
+          <a href="#metaengine">05 &middot; Metaengine synthesis</a>
+          <a href="#converged">06 &middot; Converged architecture</a>
+          <a href="#decisions">07 &middot; Open decisions</a>
+          <a href="#appendix">08 &middot; Evidence</a>
         </nav>
       </aside>
 
@@ -880,191 +883,642 @@
             <div class="square"></div>
             <div class="tri"></div>
           </div>
-          <div class="eyebrow">REPORT TYPE &middot; YYYY-MM-DD</div>
-          <h1>Report Title</h1>
+          <div class="eyebrow">RESEARCH &middot; DESIGN COMPARISON &middot; 2026-11-13</div>
+          <h1>Graph RAG Across the Portfolio &mdash; With a Git Time Dimension</h1>
           <p class="subtitle">
-            One or two sentences that set the frame: who this is for, what was
-            reviewed, and what the reader will take away.
+            The same question was answered twice on the same day, in two repos,
+            by two sessions. This report compares both designs head-to-head,
+            synthesizes them against the metaengine capabilities they converge
+            on, and recommends a path.
           </p>
           <div class="meta">
-            <span class="tag amber">Scope: example</span>
-            <span class="tag">Version: 1.0.0</span>
-            <span class="tag teal">Status: draft</span>
+            <span class="tag amber">Sources: 2 design docs</span>
+            <span class="tag">go-graph-rag v0.5.0</span>
+            <span class="tag">metaengine v4</span>
+            <span class="tag teal">Status: both designs PROPOSED</span>
           </div>
         </header>
 
         <!-- Scorecard -->
         <section id="scorecard" class="scorecard">
+          <div class="score-card">
+            <div class="score">2</div>
+            <div class="label">Same-day designs</div>
+          </div>
           <div class="score-card score-good">
-            <div class="score">8</div>
-            <div class="label">Items passing</div>
-          </div>
-          <div class="score-card score-warn">
-            <div class="score">3</div>
-            <div class="label">Warnings</div>
-          </div>
-          <div class="score-card score-bad">
-            <div class="score">1</div>
-            <div class="label">Blockers</div>
+            <div class="score">0</div>
+            <div class="label">Core SDK changes needed</div>
           </div>
           <div class="score-card">
-            <div class="score">12</div>
-            <div class="label">Total reviewed</div>
+            <div class="score">13</div>
+            <div class="label">Metaengine backends</div>
+          </div>
+          <div class="score-card score-warn">
+            <div class="score">6</div>
+            <div class="label">Open owner decisions</div>
           </div>
         </section>
 
         <!-- Summary -->
         <section id="summary">
-          <h2><span class="num">00</span>Summary</h2>
+          <h2><span class="num">00</span>Verdict</h2>
           <p>
-            Replace this with the bottom-line verdict. A good summary tells the
-            reader whether the subject is ready, what the biggest risk is, and
-            what one action would unlock the most value.
+            The two designs are not rivals: they answer the same question with
+            different products over the same repositories. Design A (cvagent)
+            is a <strong>portfolio-knowledge projection</strong> &mdash; skills,
+            evidence, and activity folded from an existing event-sourced
+            journal. Design B (Atlas) is a <strong>code-content RAG</strong> &mdash;
+            files, docs, commits, and dependency edges embedded for semantic
+            retrieval on the go-graph-rag SDK. The real disagreement is
+            retrieval philosophy: deterministic graph-first queries versus
+            embeddings-first hybrid search.
+          </p>
+          <p>
+            Metaengine is the missing middle both designs converge on: graph
+            adjacency ADTs, filtered vector search, and event-fed projections
+            behind one engine-swappable planner &mdash; while go-graph-rag keeps
+            the RAG semantics metaengine deliberately lacks (embedding
+            providers, similarity derivation, hybrid ranking, LLM-ready
+            rendering). This extends, and stays consistent with, the standing
+            <em>complementary-layers</em> and <em>adopt-neither-into-the-SDK</em>
+            verdicts of 2026-09-19 / 2026-11-10.
           </p>
           <div class="callout callout-amber">
             <strong>The bottom line</strong>
-            State the verdict plainly. If the report is blocking, say so. If
-            it's mostly positive, lead with that.
+            If one ships, ship the cvagent route first (cheaper, decisive,
+            existing dashboard surface); the Atlas content layer is the
+            differentiating second act. But this is a fresh same-day split
+            brain &mdash; an explicit ownership ruling is needed before either
+            starts.
           </div>
         </section>
 
         <!-- Strengths -->
-        <section id="strengths">
-          <h2><span class="num">&#9670;</span>What's already excellent</h2>
+        <section id="question">
+          <h2><span class="num">01</span>The question &amp; method</h2>
           <p>
-            Before the criticism: acknowledge what works. This builds trust and
-            keeps the report from reading like a pure complaint list.
+            <em>How can we build a graph RAG presentation of all programming
+            projects that includes a git based time dimension?</em>
           </p>
+          <p>
+            On 2026-11-13 two independent sessions answered it, each grounded
+            in a different host repo. Neither knew about the other:
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Source</th>
+                  <th>Host</th>
+                  <th>What it builds on</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>~/projects/Code-To-CV-Agent/docs/planning/2026-11-13_graph-rag-time-dimension-design.md</code></td>
+                  <td>cvagent (Code-To-CV-Agent)</td>
+                  <td>Its event-sourced journal: <code>GitHistoryCollected</code>, <code>FactsExtracted</code>, <code>domain.Repository</code>, evidence with confidence</td>
+                </tr>
+                <tr>
+                  <td><code>go-graph-rag/docs/planning/2026-11-13_14-18_atlas-ecosystem-graph-design.md</code></td>
+                  <td>go-graph-rag (this SDK's repo)</td>
+                  <td>The SDK itself: <code>Build</code>, <code>Store</code>, <code>Searcher</code>, <code>NodeAttrs.PostedAt</code></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            This report was produced by reading both designs, verifying every
+            API claim against the current source trees of both repos (see
+            &sect;08), and cross-referencing five prior research episodes in
+            <code>docs/research/</code> that already studied the
+            metaengine/go-graph-rag relationship.
+          </p>
+        </section>
+
+        <section id="design-a">
+          <h2><span class="num">02</span>Design A &mdash; cvagent: the projection</h2>
+          <p>
+            Core insight, in the doc's own words: <em>this is a projection
+            problem, not a RAG problem</em>. Classic GraphRAG stacks exist to
+            extract entities from unstructured text; cvagent's journal already
+            contains a typed, evidenced entity-relation graph (repositories,
+            skills, authors, fact evidence with confidence). The graph is one
+            more read-model projection, rebuilt by replay like everything else.
+            No LLM entity extraction needed.
+          </p>
+
+          <h3>Time semantics: bitemporal, for free</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Axis</th>
+                  <th>Source</th>
+                  <th>Meaning</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Valid time</td>
+                  <td>commit timestamps in evidence</td>
+                  <td>when the work actually happened</td>
+                </tr>
+                <tr>
+                  <td>Transaction time</td>
+                  <td>journal entry timestamps</td>
+                  <td>when the agent learned about it (provenance; survives repair replay)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Proposed data model</h3>
+          <pre><code><span class="tok-keyword">type</span> <span class="tok-type">GraphEdge</span> <span class="tok-keyword">struct</span> {        <span class="tok-comment">// Demonstrates | CoOccursWith | Authored | CollaboratedWith</span>
+    From, To      <span class="tok-type">string</span>
+    Weight        <span class="tok-type">int</span>
+    FirstSeen, LastSeen <span class="tok-type">time.Time</span>   <span class="tok-comment">// UTC &mdash; evidence-bounded skill lifespan</span>
+    Buckets       <span class="tok-keyword">map</span>[<span class="tok-type">string</span>]<span class="tok-type">int</span>        <span class="tok-comment">// "2026-10": 12 &mdash; same keys as CommitsByMonth</span>
+}</code></pre>
+          <p>
+            Commit nodes never materialize individually &mdash; they collapse
+            into edge bucket weights, keeping the graph at hundreds of nodes
+            (canvas-renderable). Author date over commit date (rebases distort
+            commit dates); UTC at every boundary.
+          </p>
+
+          <h3>The one real gap</h3>
+          <div class="issue issue-important">
+            <span class="severity severity-important">Gap &middot; admitted by the doc</span>
+            <h3>The journal discards individual commits</h3>
+            <div class="where">internal/domain/run.go &middot; GitHistoryCollected</div>
+            <p>
+              Only aggregates survive (<code>CommitCount</code>,
+              <code>UniqueAuthors</code>, <code>CommitsByMonth</code>,
+              <code>TopFiles</code>); per-commit data lives solely as fact
+              evidence. The recommended fix is a new add-only event
+              <code>scan.commit_activity_collected</code> carrying bounded
+              per-month &times; per-author &times; per-file-skill buckets, so
+              the graph stays replayable from the journal alone. Direct
+              repository reads are rejected as a shadow truth.
+            </p>
+          </div>
+
+          <h3>Retrieval &amp; presentation</h3>
+          <p>
+            Graph-first retrieval is the offline default: deterministic typed
+            subgraph queries answer "what did I build with Go in 2023" with no
+            embeddings at all. Embeddings are opt-in fuzzy recall only
+            (OpenAI + chromem-go), feeding <code>cvagent ask</code>. The
+            presentation rides the existing dashboard: read-only
+            <code>GET /graph</code> + <code>/graph.json?from=2023&amp;to=2024&amp;skill=go</code>,
+            Cytoscape.js as a committed static asset, time-slider brushing,
+            as-of snapshots, T1&rarr;T2 diffs, and skill-lane timelines.
+          </p>
+          <div class="callout callout-teal">
+            <strong>Why this design is strong</strong>
+            It reuses already-collected typed data, keeps the graph tiny,
+            honors every standing house convention (read-only web, add-only
+            events, metaengine read models, offline-first), and lists explicit
+            open questions for the owner.
+          </div>
+        </section>
+
+        <section id="design-b">
+          <h2><span class="num">03</span>Design B &mdash; Atlas: the content RAG</h2>
+          <p>
+            Premise: a new consumer repo (working name <code>atlas</code>) on
+            top of the go-graph-rag SDK, with <strong>zero core changes</strong>
+            &mdash; the hook is already there: <code>NodeAttrs.PostedAt
+            *time.Time</code> (graph.go:52). A harvester CLI walks every repo
+            and produces documents plus caller edges in three tiers.
+          </p>
+
+          <h3>Tier 1 &mdash; ecosystem graph (event time in the graph)</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Node kind</th>
+                  <th>Embedded text</th>
+                  <th>Time carrier</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td><code>project</code></td><td>README summary</td><td>repo first-commit date</td></tr>
+                <tr><td><code>file</code></td><td>source/head (filtered)</td><td>last-commit date via <code>git log -1 -- path</code></td></tr>
+                <tr><td><code>doc</code></td><td>ADRs, CHANGELOG, TODO_LIST</td><td>doc mtime from git</td></tr>
+                <tr><td><code>commit</code></td><td>subject + body</td><td><code>PostedAt</code> = author date, <code>Location</code> = short hash</td></tr>
+                <tr><td><code>person</code></td><td><em>hub, no vector</em></td><td>&mdash;</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            Caller edges: <code>project&mdash;contains&rarr;file/doc</code>,
+            <code>commit&mdash;touches&rarr;file</code> (from
+            <code>git log --name-status</code>; vectorless, so cheap),
+            <code>commit&mdash;authored_by&rarr;person</code>, and the killer
+            edge: <code>project&mdash;depends_on&rarr;project</code> from
+            <code>go.mod</code> requires &mdash; the ecosystem's real
+            dependency web. The SDK then auto-derives
+            <code>similar_to</code> edges across everything, giving a
+            cross-repo semantic map; <code>SimilarPairs</code> doubles as a
+            cross-repo duplication detector.
+          </p>
+
+          <h3>Tier 2 &mdash; time queries without touching the SDK</h3>
+          <p>
+            <code>SearcherOptions</code> has kind filters but no time filter;
+            the design wraps the <code>Searcher</code> (the CV decoration
+            pattern) and post-filters hits on
+            <code>PostedAt &isin; [since, until]</code>:
+          </p>
+          <pre><code>$ atlas search <span class="tok-string">"event store error handling"</span> --since 2026-09</code></pre>
+
+          <h3>Tier 3 &mdash; time travel via as-of rebuilds</h3>
+          <p>
+            Full bitemporal attrs would explode node count with per-blob file
+            versions. Instead: <code>atlas build --as-of 2026-09-01</code>
+            checks out that date into a git worktree, builds a second graph
+            into its own SQLite file (<code>Store</code> is one graph per
+            DSN), pointing <code>Build</code>'s <code>Cache</code> seam at the
+            shared long-lived cache DB so unchanged texts re-embed nothing.
+            "What changed" = node-set diff between snapshots.
+          </p>
+          <div class="callout callout-amber">
+            <strong>Admitted weakness</strong>
+            Everything routes through vector ranking: the Tier-2 decorator can
+            only re-rank cosine hits, it cannot enumerate ("all activity in
+            2023" is not a first-class query). &sect;05 shows the fix.
+          </div>
+          <p>
+            <strong>Scale guard:</strong> similar-edge derivation is pairwise
+            over embedded nodes &mdash; ~30 repos &times; files plus selective
+            commits (doc/config-touching, merges, releases, or a 12-month
+            window) keeps the corpus in the ~5&ndash;10k embedded-node sweet
+            spot.
+          </p>
+        </section>
+
+        <section id="head-to-head">
+          <h2><span class="num">04</span>Head-to-head</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Dimension</th>
+                  <th>Design A: cvagent projection</th>
+                  <th>Design B: Atlas content RAG</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Core insight</td>
+                  <td>Projection, not extraction &mdash; graph is a replayable read model</td>
+                  <td>New harvester on the SDK; <code>PostedAt</code> is the time hook</td>
+                </tr>
+                <tr>
+                  <td>Source of truth</td>
+                  <td>Journal replay (self-healing, add-only events)</td>
+                  <td>Direct git read (ground truth, no scan-coverage dependency)</td>
+                </tr>
+                <tr>
+                  <td>Node semantics</td>
+                  <td>Repository / Skill / Author / Topic</td>
+                  <td>project / file / doc / commit / person</td>
+                </tr>
+                <tr>
+                  <td>Commits</td>
+                  <td><strong>Collapsed</strong> into edge bucket weights (no commit nodes)</td>
+                  <td><strong>Materialized</strong> and embedded (messages are retrieval corpus)</td>
+                </tr>
+                <tr>
+                  <td>Time model</td>
+                  <td>Bitemporal for free; edge <code>FirstSeen/LastSeen</code> + monthly buckets</td>
+                  <td>Unitemporal <code>PostedAt</code>; as-of via worktree rebuild into a second store</td>
+                </tr>
+                <tr>
+                  <td>Retrieval</td>
+                  <td>Deterministic graph-first (typed subgraph queries, zero embeddings); chromem-go opt-in</td>
+                  <td>Embeddings-first hybrid (that is the SDK); time as a post-filter decorator</td>
+                </tr>
+                <tr>
+                  <td>As-of</td>
+                  <td>In-graph edge filtering by <code>FirstSeen</code>/buckets (month granularity)</td>
+                  <td>Any-commit reconstruction incl. content-as-of (worktree)</td>
+                </tr>
+                <tr>
+                  <td>Scale</td>
+                  <td>~100 repos &rarr; <strong>hundreds</strong> of nodes, canvas-renderable</td>
+                  <td>~30 repos &rarr; 5&ndash;10k embedded nodes, search-fine but layout-heavy</td>
+                </tr>
+                <tr>
+                  <td>Presentation</td>
+                  <td>Existing dashboard + Cytoscape; brushing, as-of, diff, skill lanes (concrete)</td>
+                  <td>Greenfield: CLI / templ+HTMX web / go-aichat chat (options, pick 1&ndash;2)</td>
+                </tr>
+                <tr>
+                  <td>New code</td>
+                  <td>One fold + one event + one endpoint</td>
+                  <td>An entire new repo + harvester</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
           <div class="strengths">
             <div class="strength">
-              <div class="check">+</div>
+              <div class="check">A</div>
               <div class="text">
-                <strong>Specific strength one</strong>
-                <span>Explain why it matters and what it enables.</span>
+                <strong>Where Design A wins</strong>
+                <span>The projection insight is the better architecture given cvagent exists (scanning and fact extraction already done and typed); deterministic-first retrieval answers precise time questions without embeddings; bucket collapse keeps the graph renderable; bitemporal provenance and replay discipline arrive free; it is more decisive overall.</span>
               </div>
             </div>
             <div class="strength">
-              <div class="check">+</div>
+              <div class="check">B</div>
               <div class="text">
-                <strong>Specific strength two</strong>
-                <span
-                  >Reference files, metrics, or patterns where possible.</span
-                >
+                <strong>Where Design B wins</strong>
+                <span>Content is in the corpus &mdash; file/doc/commit text is embedded, so semantic recall over what the code actually says is possible at all; the go.mod dependency web between repos; similar_to + SimilarPairs give the cross-repo semantic map and duplication detection; git ground truth; time travel to any commit including content-as-of.</span>
               </div>
             </div>
           </div>
-        </section>
-
-        <!-- Findings -->
-        <section id="findings">
-          <h2><span class="num">01</span>Findings</h2>
-          <p>These are the issues that need attention, ordered by impact.</p>
-
-          <!-- Issue 1 -->
-          <div class="issue issue-critical" id="issue-1">
-            <span class="severity severity-critical"
-              >Blocking &middot; High impact</span
-            >
-            <h3>Critical issue title</h3>
-            <div class="where">
-              path/to/file.go:42-58 &middot; short context
-            </div>
-            <p>
-              Describe the problem, cite the code or behavior, and explain why
-              it matters to the reader's goals.
-            </p>
-            <pre><code>// Example of the problematic pattern
-func BadExample() {}</code></pre>
-            <div class="callout callout-teal">
-              <strong>Fix: recommended action</strong>
-              State the concrete fix, including file names, function names, or
-              configuration changes.
-            </div>
-          </div>
-
-          <!-- Issue 2 -->
-          <div class="issue issue-important" id="issue-2">
-            <span class="severity severity-important"
-              >Important &middot; Medium impact</span
-            >
-            <h3>Important issue title</h3>
-            <div class="where">path/to/another.go:12-19</div>
-            <p>
-              Explain the risk. Important issues are not blockers but would make
-              a careful reviewer hesitate before shipping.
-            </p>
-          </div>
-
-          <!-- Issue 3 -->
-          <div class="issue issue-nice" id="issue-3">
-            <span class="severity severity-nice"
-              >Nice to have &middot; Low impact</span
-            >
-            <h3>Nice-to-have improvement</h3>
-            <div class="where">docs/ or config</div>
-            <p>
-              Minor polish, documentation gaps, or future-proofing suggestions
-              go here.
-            </p>
+          <div class="callout callout-amber">
+            <strong>Verdict</strong>
+            Complementary lenses over the same repositories, linkable on repo
+            IDs. Neither subsumes the other: A cannot answer "which projects
+            discuss the same pattern"; B cannot answer "skill lifespan with
+            evidence and confidence".
           </div>
         </section>
 
-        <!-- Proposal -->
-        <section id="proposal">
-          <h2><span class="num">02</span>What the solution could look like</h2>
+        <section id="metaengine">
+          <h2><span class="num\">05</span>The metaengine synthesis</h2>
           <p>
-            If the findings were fixed, what would the new state be? Show the
-            target API, structure, or workflow.
+            Asked how <code>go-cqrs-lite/metaengine</code> relates, the answer
+            is: more than expected &mdash; it already implements both halves of
+            the storage story the two designs hand-roll separately, plus the
+            projection discipline Design B conceded it lacked.
           </p>
-          <pre><code>// Target state after the recommended changes
-type BetterAPI struct {
-    Field string
-}</code></pre>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Capability</th>
+                  <th>Where (verified 2026-11-13)</th>
+                  <th>What it gives</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Graph ADT</td>
+                  <td><code>v4/types.go:60</code> (<code>Edge</code>/<code>EdgeRemoval</code>), <code>execute.go:225-238</code>, <code>graph_fallback.go:32</code></td>
+                  <td>Depth-N BFS traversal (directed + undirected), native on engines, multimap fallback elsewhere &mdash; Design A's graph-first retrieval as a first-class query</td>
+                </tr>
+                <tr>
+                  <td>Vector search</td>
+                  <td><code>v4/vector_search.go</code> (<code>VectorBackend</code>, <code>VectorFilter:40</code>); vector.go in sqlite, pg, duckdb, badger, pebble, bbolt, dgraph engines</td>
+                  <td>Top-k cosine with filters applied <em>before</em> ranking &mdash; engine-level filtered retrieval</td>
+                </tr>
+                <tr>
+                  <td>Projection machinery</td>
+                  <td><code>Store</code> + <code>Query[Q,R]</code>, planned tables, materialized views</td>
+                  <td>Read models folded from events, rebuilt by replay</td>
+                </tr>
+                <tr>
+                  <td>Engine interchange</td>
+                  <td>13 backends: memory, sqlite, turso, pebble, bbolt, badger, duckdb, pg, mysql, bigtable, iroh, dgraph</td>
+                  <td>sqlite in dev &rarr; pg/duckdb/dgraph without code change</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Relation to each design</h3>
+          <p>
+            <strong>To Design A:</strong> its Option A <em>is</em> a
+            metaengine projection. One refinement the doc misses: the Graph
+            ADT edge is adjacency+weight only (<code>Edge{From, To}</code>,
+            deliberately label-free) &mdash; <code>FirstSeen/LastSeen/Buckets</code>
+            cannot ride the ADT edge; they belong in a planned collection keyed
+            by (from, to), with the ADT kept for traversal. Two structures, one
+            engine.
+          </p>
+          <p>
+            <strong>To Design B:</strong> metaengine is the concrete instance
+            of go-graph-rag's own seam ADR (2026-09-16, scenario B of the
+            dgraph research &mdash; and <code>dgraphengine</code> exists,
+            closing the loop that research opened). A
+            <code>graphrag-metaengine</code> adapter module would implement
+            the pluggable store/search seam with an engine family instead of
+            one bespoke SQLite schema. Two more relations: the metaengine
+            I/O rule (all durable data I/O through metaengine) makes the
+            adapter the <em>legal</em> bridge, not a nicety, for any
+            system-based host; and <code>VectorFilterBackend</code> applied
+            before ranking turns Tier-2's post-filter hack into a native
+            filtered query &mdash; fixing the enumeration weakness.
+          </p>
+
+          <h3>What it does not replace</h3>
           <div class="callout callout-teal">
-            <strong>This is the target</strong>
-            Summarize why this state is better and what it unlocks.
+            <strong>Standing verdict, re-confirmed</strong>
+            Per <code>2026-09-19_metaengine-graph-vector-comparison.md</code>:
+            complementary layers, not competitors. go-graph-rag keeps the RAG
+            semantics metaengine has no opinion about &mdash; the provider
+            seam + content-hash embedding cache, similar-edge derivation,
+            hybrid ranking policy, <code>RenderContext</code>,
+            <code>SimilarPairs</code>. metaengine is substrate; graphrag is
+            the semantic layer on top.
+          </div>
+          <p>
+            <strong>Caveats:</strong> adopt-neither-into-the-SDK held on
+            2026-11-10 (decisive gaps #1 ANN, #7 rich graph edges still open);
+            per-engine modules carry EXPERIMENTAL stamps; a system-based
+            consumer pays the measured dependency tree (184 modules / ~8 MB
+            binary, no slim path &mdash; 2026-11-11 quantification); and at
+            the current ~5&ndash;10k-node corpus the SDK's own SQLite store is
+            sufficient, so the adapter is justified by engine ambition or a
+            system-based host, not by scale today.
+          </p>
+        </section>
+
+        <section id="converged">
+          <h2><span class="num">06</span>The converged architecture</h2>
+          <p>
+            Metaengine is the missing middle that converges both designs onto
+            one substrate &mdash; durable journal + projections + graph +
+            vectors &mdash; leaving the top layer as the only real product
+            difference:
+          </p>
+          <div class="diagram">
+            <span class="node">git repos</span>
+            <span class="arrow">&rarr;</span>
+            <span class="node">journal / harvest events</span>
+            <span class="arrow">&rarr;</span>
+            <span class="node node-core">metaengine substrate<br />(graph ADT &middot; vectors &middot; projections)</span>
+            <span class="arrow">&rarr;</span>
+            <span class="node node-good">skill lens<br />(cvagent dashboard)</span>
+            <span class="arrow">+</span>
+            <span class="node node-good">content lens<br />(go-graph-rag hybrid search)</span>
+          </div>
+          <p>
+            Even if only Atlas ships, it should adopt Design A's
+            journal-first discipline &mdash; durable harvest events projected
+            into the graph, instead of re-walking git on every rebuild &mdash;
+            which makes transaction-time provenance free on that side too.
+            The two lenses link on repo node IDs.
+          </p>
+
+          <div class="migration-step">
+            <div class="migration-num">1</div>
+            <div class="migration-content">
+              <h4>cvagent: pure fold + <code>graph export --json</code></h4>
+              <p>The data contract, fully spec-able, zero UI risk.</p>
+            </div>
+          </div>
+          <div class="migration-step">
+            <div class="migration-num">2</div>
+            <div class="migration-content">
+              <h4>cvagent: <code>commit_activity_collected</code> event</h4>
+              <p>Unblocks per-author/per-month edges; one new add-only event type, replay restores everything.</p>
+            </div>
+          </div>
+          <div class="migration-step">
+            <div class="migration-num">3</div>
+            <div class="migration-content">
+              <h4>cvagent: dashboard page + JSON endpoint + timeline brushing</h4>
+              <p>The first product: the portfolio graph with the time dimension, on existing surface.</p>
+            </div>
+          </div>
+          <div class="migration-step">
+            <div class="migration-num">4</div>
+            <div class="migration-content">
+              <h4>Atlas: content layer on go-graph-rag (+ metaengine adapter only if triggered)</h4>
+              <p>The differentiating second act: embeddings over file/doc/commit text, dependency web, cross-repo similarity. Adapter per seam-ADR triggers, not before.</p>
+            </div>
           </div>
         </section>
 
-        <!-- Appendix -->
-        <section id="appendix">
-          <h2><span class="num">03</span>Appendix</h2>
-          <p>
-            Methodology, links to related files, or a priority matrix can live
-            here.
-          </p>
-          <table class="compare">
-            <thead>
-              <tr>
-                <th>Issue</th>
-                <th>Severity</th>
-                <th>Effort</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Issue one</td>
-                <td class="no">Critical</td>
-                <td>Low</td>
-                <td class="no">Open</td>
-              </tr>
-              <tr>
-                <td>Issue two</td>
-                <td class="no">Important</td>
-                <td>Medium</td>
-                <td class="yes">In progress</td>
-              </tr>
-            </tbody>
-          </table>
+        <section id="decisions">
+          <h2><span class="num">07</span>Open decisions for the owner</h2>
+          <div class="table-wrap">
+            <table class="compare">
+              <thead>
+                <tr>
+                  <th>Decision</th>
+                  <th>Origin</th>
+                  <th>Recommendation</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Which lane owns "graph over the portfolio"?</td>
+                  <td class="no">This report (same-day split brain)</td>
+                  <td>Rule explicitly: declare both as complementary lenses, or pick one</td>
+                </tr>
+                <tr>
+                  <td>Journal vs direct git read for commit detail</td>
+                  <td>cvagent &sect;open points</td>
+                  <td class="yes">Journal (add-only event)</td>
+                </tr>
+                <tr>
+                  <td>Author date as the timeline default</td>
+                  <td>cvagent &sect;open points</td>
+                  <td class="yes">Yes &mdash; both designs independently agree</td>
+                </tr>
+                <tr>
+                  <td>Is an LLM <code>ask</code> surface wanted at all?</td>
+                  <td>cvagent &sect;open points</td>
+                  <td>Defer; least certain value, ships last either way</td>
+                </tr>
+                <tr>
+                  <td>chromem-go vs go-graph-rag SDK for the semantic layer</td>
+                  <td class="no">This report (consolidation point)</td>
+                  <td>go-graph-rag &mdash; its Search shape is exactly the planned top-k + k-hop expansion</td>
+                </tr>
+                <tr>
+                  <td>Metaengine store/search adapter for the SDK</td>
+                  <td>Seam ADR &sect;9 (trigger-gated)</td>
+                  <td>Not now; at metaengine graduation, v5, or the ~50k-node trigger</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </section>
 
-        <!-- Footer -->
+        <section id="appendix">
+          <h2><span class="num">08</span>Evidence &amp; method</h2>
+          <p>
+            Every API claim in this report was verified against source on
+            2026-11-13. Claims about cvagent's internals are its design doc's
+            own (marked as such) &mdash; its payload-shape cites were not
+            re-verified here.
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Verified</th>
+                  <th>Where</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>NodeAttrs.PostedAt *time.Time</code> &mdash; the time hook</td>
+                  <td>go-graph-rag/graph.go:52</td>
+                </tr>
+                <tr>
+                  <td><code>Document</code> contract (ID/Kind/Label/Text/Attrs), pure <code>Build</code>, pairwise similar-edge derivation</td>
+                  <td>go-graph-rag/build.go:39-144</td>
+                </tr>
+                <tr>
+                  <td><code>SearchOptions</code> / <code>SearcherOptions</code> (kind filters, no time filter), <code>SimilarPairs</code></td>
+                  <td>go-graph-rag/search.go:37-83</td>
+                </tr>
+                <tr>
+                  <td>One graph per DSN; <code>Cache</code> seam namespaced content-hash &times; provider &times; model</td>
+                  <td>go-graph-rag/store.go:22-66</td>
+                </tr>
+                <tr>
+                  <td><code>Edge</code>/<code>EdgeRemoval</code> ADT (label-free <code>Edge{From, To}</code>)</td>
+                  <td>go-cqrs-lite/metaengine/v4/types.go:60-73</td>
+                </tr>
+                <tr>
+                  <td>Depth-N traversal dispatch + undirected variant + multimap fallback</td>
+                  <td>metaengine/v4/execute.go:225-238, memory_graph.go:41-115, graph_fallback.go:32</td>
+                </tr>
+                <tr>
+                  <td><code>VectorBackend</code>/<code>VectorFilter</code>; vector-capable engines; memory engine assertion</td>
+                  <td>metaengine/v4/vector_search.go:31-40, engine.go:649, &lt;engine&gt;/v4/vector.go &times; 7</td>
+                </tr>
+                <tr>
+                  <td>13 engine backends incl. <code>dgraphengine</code>; graphadapter flat-identity limitation + experimental stamps</td>
+                  <td>metaengine/ tree listing; graphadapter/v4/doc.go</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <h3>Prior episodes cross-referenced</h3>
+          <p>
+            <code>2026-09-15_dgraph-adoption.md</code> (revisit at ~50k nodes,
+            scenario B/C) &middot;
+            <code>2026-09-15_metaengine-system-adoption.md</code> +
+            <code>2026-11-10_metaengine-system-reevaluation.md</code> (adopt
+            neither into the SDK; held) &middot;
+            <code>2026-09-19_metaengine-graph-vector-comparison.md</code>
+            (complementary layers &mdash; this report is its next episode,
+            extended from capability comparison to design synthesis) &middot;
+            <code>2026-09-19_metaengine-go-graph-rag-merge.md</code> (no
+            merge) &middot;
+            <code>2026-11-11_metaengine-dep-tree-quantification.md</code>
+            (184 modules / ~8 MB cost line).
+          </p>
+        </section>
+
         <footer class="footer">
           <p>
-            Generated YYYY-MM-DD &middot; Reviewed against version X.Y.Z
-            &middot; All claims verified against source code where noted
+            Generated 2026-11-13 &middot; Bauhaus Light editorial template,
+            zero dependencies &middot; All file:line claims verified against
+            source this session; prior series cross-referenced in &sect;08
           </p>
         </footer>
       </main>
